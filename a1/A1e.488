@@ -6,7 +6,7 @@ begin
 		%nested function without parameter that checks if the power is 0
 		integer function check_zero begin
 			integer i
-			if n == 0 
+			if n = 0 
 				then
 					i <= 1
 				else
@@ -16,7 +16,7 @@ begin
 		end
 
 		n <= check_zero(n)
-		if n == 1
+		if n = 1
 			then
 				return 1
 			else

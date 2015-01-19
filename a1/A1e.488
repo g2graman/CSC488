@@ -1,0 +1,73 @@
+begin
+
+	%recursive function with parameter that finds the power of two
+	integer function power_of_two (integer n) begin
+
+		%nested function without parameter that checks if the power is 0
+		integer function check_zero begin
+			integer i
+			if n == 0 
+				then
+					i <= 1
+				else
+					i <= n - 1
+			end
+			return i
+		end
+
+		n <= check_zero(n)
+		if n == 1
+			then
+				return 1
+			else
+				return (2 * power_of_two(n))
+		end
+
+	end
+
+	integer x
+	x <= 128
+	%recusive function without parameter
+	integer function find_power_of_two begin
+
+		if x = 1
+			then
+				return 0
+			else
+				x <= x/2
+				return (1 + find_power_of_two())
+		end
+	end
+
+	%recursive procedure with parameters
+	procedure factorial (integer i) begin
+
+		% nested procedure with parameter
+		procedure print_num (integer num) begin
+			put num
+			return
+		end
+
+		if i <= 1
+			then
+				return 1
+			else
+				print_num(i * factorial(i-1))
+		end
+		return
+	end
+
+	integer y
+	y <= 5
+	%recursive procedure without parameters
+	procedure three_to_the_power_of_five begin
+		put (3 * power_of_three(y - 1))
+		return
+	end
+
+	power_of_two(4)
+	find_power_of_two()
+	factorial(10)
+	three_to_the_power_of_five()
+
+end

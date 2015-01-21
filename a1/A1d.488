@@ -2,29 +2,33 @@ begin
 	integer x
 	x <= 0
 
-	% Test no parameters
+	% Test no parameter procedure
 	procedure proc begin
 		put "hello world"
-	end
+                return
+        end
 
-	% Test single parameter
+	% Test single parameter procedure
 	procedure proc2(boolean x) begin
 		if x then
 			put "x is true"
 		else
 			put "x is false"
 		end
+                return
 	end
 
-	% Test multiple parameters
+	% Test multiple parameters procedure
 	procedure proc3(boolean x, boolean y, integer n, integer m) begin
 		if (x = y) & (n = m) then
 			put "values are equal"
 		else
 			put "values are not equal"
 		end
+                return
 	end
 
+        % Test no parameter function
 	boolean function foo begin
 		return (true)
 	end
@@ -33,6 +37,7 @@ begin
 	procedure proc4(boolean x) begin
 		proc
 		proc2(foo)
+                return
 	end
 
 	% Test scoping with procedures
@@ -40,6 +45,7 @@ begin
 		x <= x + 1
 		put "The value of x:"
 		put x
+                return
 	end
 
 

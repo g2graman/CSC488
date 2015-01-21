@@ -66,6 +66,9 @@ begin
 		return (true)
 	end
 
+        % Testing anonymous function
+        put { put '1' yields 2} % should print 1 followed by 2
+
 	proc % should print hello world
 	proc2(true) % should print x is true
 	proc3(true, false, 3, 3) % should print values are not equal

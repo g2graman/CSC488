@@ -15,13 +15,13 @@ b - Francesco Gramano
 description: This program declares and initializes (some of the entries of) integer and boolean arrays, with 'generalBound' spanning finite ranges of non-negative and negative-inclusive indices. A two-dimensional array was also declared and initialized.
 
 c - Lana Borodina
-description:
+description: This program uses all forms of loop building and loop exit constructs.
 
 d - Winston Yeung
 description: This program contains several procedures and functions of varying number of parameters. It also includes function and procedure calls from within each other and the use of a yield statement.
 
 e - Chuang-Yu Chen
-description: This program uses recursive functions and procedures to calculate the power of an integer and the factorial of the paramter.
+description: This program uses recursive functions and procedures with a nested function or precedure to calculate the power of an integer and the factorial of the paramter.
 
 
 

@@ -9,7 +9,7 @@ g3chencm - Chuang-Yu Chen
 Each team member is responsible for each of the five programs.
 
 a - Eric Snyder
-description:
+description: This program performs a series of assignment operations using all arithmetic, logical and comparison operators in the 488 language. 
 
 b - Francesco Gramano
 description: This program declares and initializes (some of the entries of) integer and boolean arrays, with 'generalBound' spanning finite ranges of non-negative and negative-inclusive indices. A two-dimensional array was also declared and initialized.

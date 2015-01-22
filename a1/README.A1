@@ -1,7 +1,7 @@
 Team 2
 
 g4snyder - Eric Snyder
-g2graman - Francesco Garmano
+g2graman - Francesco Gramano
 g3lanabo - Lana Borodina
 g2yeungw - Winston Yeung
 g3chencm - Chuang-Yu Chen
@@ -11,8 +11,8 @@ Each team member is responsible for each of the five programs.
 a - Eric Snyder
 description:
 
-b - Francesco Garmano
-description:
+b - Francesco Gramano
+description: This program declares and initializes (some of the entries of) integer and boolean arrays, with 'generalBound' spanning finite ranges of non-negative and negative-inclusive indices. A two-dimensional array was also declared and initialized.
 
 c - Lana Borodina
 description:
@@ -21,7 +21,7 @@ d - Winston Yeung
 description:
 
 e - Chuang-Yu Chen
-description: This program uses recusive functions and procedures to calculate the power of an integer and the factorial of the paramter.
+description: This program uses recursive functions and procedures to calculate the power of an integer and the factorial of the paramter.
 
 
 

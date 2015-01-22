@@ -1,3 +1,5 @@
+% Author: Chuang-Yu Chen
+
 begin
 
 	%recursive function with parameter that finds the power of two
@@ -15,7 +17,7 @@ begin
 			return (i)
 		end
 
-		n <= check_zero(n)
+		n <= check_zero()
 		if n = 1
 			then
 				return (1)
@@ -39,29 +41,34 @@ begin
 		end
 	end
 
+	integer sum
+	sum <= 1
 	%recursive procedure with parameters
 	procedure factorial (integer i) begin
 
 		% nested procedure with parameter
-		procedure print_num (integer num) begin
-			put num
+		procedure factorial_sum (integer num) begin
+			sum <= sum * num
 			return
 		end
-
-		if i <= 1
+		if i > 0
 			then
-				return (1)
-			else
-				print_num(i * factorial(i-1))
+				factorial_sum(i)
+				factorial(i-1)
 		end
 		return
 	end
 
-	integer y
+	integer y, z
 	y <= 5
+	z <= 1
 	%recursive procedure without parameters
 	procedure three_to_the_power_of_five begin
-		put (3 * power_of_three(y - 1))
+		if y > 0
+			then
+				z <= z * 2
+				y <= y - 1
+				three_to_the_power_of_five()
 		return
 	end
 

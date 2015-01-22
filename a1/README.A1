@@ -18,7 +18,7 @@ c - Lana Borodina
 description:
 
 d - Winston Yeung
-description:
+description: This program contains several procedures and functions of varying number of parameters. It also includes function and procedure calls from within each other and the use of a yield statement.
 
 e - Chuang-Yu Chen
 description: This program uses recursive functions and procedures to calculate the power of an integer and the factorial of the paramter.

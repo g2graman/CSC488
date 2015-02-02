@@ -116,6 +116,18 @@ The nonterminals from your grammar go here
 
 ***********************************************************/
 
+nonterminal    variablename ;
+nonterminal    arrayname    ;
+nonterminal    functionname ;
+nonterminal    parametername;
+nonterminal    procedurename;
+nonterminal    output,      output_seq      ;
+nonterminal    input,       input_seq       ;
+nonterminal    type         ;
+nonterminal    arguments,   arguments_seq   ;
+nonterminal    parameters,  parameter_seq   ;
+nonterminal    variable     ;
+
 // Non-terminals that have a value.
 // nonterminal type  nameList ;
 
@@ -147,3 +159,49 @@ program  ::=   ;		// the main program
 
 ****************************************************************************/
 
+output_seq      ::=     output_seq  COMMA  output  
+                |       output
+                ;
+
+output          ::=     expression  
+                |       TEXTCONST  
+                |       SKIP
+                ;
+
+input_seq       ::=     input_seq COMMA input  
+                |       input
+                ;
+
+input           ::=     variable
+                ;
+
+type            ::=     INTEGER  
+                |       BOOLEAN
+                ;
+
+arguments_seq   ::=     arguments
+                |
+                ;
+
+arguments       ::=     expression
+                |       arguments  COMMA  expression
+                ;
+
+parameters_seq  ::=     parameters
+                |
+                ;
+
+parameters      ::=     type parametername
+                |       parameters  COMMA  type parametername
+                ;
+
+variable        ::=     variablename  
+                |       arrayname  L_SQUARE  expression  R_SQUARE  
+                |       arrayname  L_SQUARE  expression  COMMA expression  R_SQUARE
+                ;
+
+variablename    ::=     IDENT;
+arrayname       ::=     IDENT;
+functionname    ::=     IDENT;
+parametername   ::=     IDENT;
+procedurename   ::=     IDENT;

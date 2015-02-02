@@ -124,9 +124,12 @@ nonterminal    procedurename;
 nonterminal    output,      output_seq      ;
 nonterminal    input,       input_seq       ;
 nonterminal    type         ;
-nonterminal    arguments,   arguments_seq   ;
-nonterminal    parameters,  parameter_seq   ;
+nonterminal    arguments,   arguments_seq    ;
+nonterminal    parameters,  parameters_seq   ;
 nonterminal    variable     ;
+nonterminal    statement    ;
+nonterminal    expression, BoolConjunction, BoolNegation, BoolCmp;
+nonterminal    exprAdd, exprMult, factor, exprConstant, value;
 
 // Non-terminals that have a value.
 // nonterminal type  nameList ;
@@ -168,13 +171,6 @@ output          ::=     expression
                 |       SKIP
                 ;
 
-input_seq       ::=     input_seq COMMA input  
-                |       input
-                ;
-
-input           ::=     variable
-                ;
-
 type            ::=     INTEGER  
                 |       BOOLEAN
                 ;
@@ -195,9 +191,65 @@ parameters      ::=     type parametername
                 |       parameters  COMMA  type parametername
                 ;
 
+expression      ::=     expression OR BoolConjunction
+                |       BoolConjunction
+                ;
+
+BoolConjunction ::=     BoolConjunction AND BoolNegation
+                |       BoolNegation
+                ;
+
+BoolNegation    ::=     NOT BoolNegation
+                |       BoolCmp
+                ;
+
+BoolCmp         ::=     exprAdd EQUAL exprAdd
+                |       exprAdd NOT EQUAL exprAdd
+                |       exprAdd LESS exprAdd
+                |       exprAdd LESS EQUAL exprAdd
+                |       exprAdd GREATER exprAdd
+                |       exprAdd GREATER EQUAL exprAdd
+                |       exprAdd
+                ;
+
+exprAdd         ::=     exprAdd PLUS exprMult
+                |       exprAdd MINUS exprMult
+                |       exprMult
+                ;
+
+exprMult        ::=     exprMult TIMES factor
+                |       exprMult DIVIDE factor
+                |       factor
+                ;
+
+factor          ::=     value
+                |       MINUS value
+                ;
+
+exprConstant    ::=     INTCONST //Differentiate from TEXTCONST
+                |       TRUE
+                |       FALSE
+                ;
+
 variable        ::=     variablename  
-                |       arrayname  L_SQUARE  expression  R_SQUARE  
+                |       arrayname  L_SQUARE  expression  R_SQUARE
                 |       arrayname  L_SQUARE  expression  COMMA expression  R_SQUARE
+                ;
+
+input           ::=     variable
+                ;
+
+input_seq       ::=     input_seq COMMA input  
+                |       input
+                ;
+
+value           ::=     exprConstant
+                |       variable
+                |       functionname L_PAREN arguments_seq R_PAREN
+                |       L_PAREN expression R_PAREN
+                |       L_CURLEY statement YIELDS expression R_CURLEY
+                |       functionname //function calls with no arguments
+                |       parametername
                 ;
 
 variablename    ::=     IDENT;

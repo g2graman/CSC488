@@ -116,7 +116,7 @@ The nonterminals from your grammar go here
 
 ***********************************************************/
 
-nonterminal    variablename ;
+nonterminal    variablename, variablenames ;
 nonterminal    arrayname    ;
 nonterminal    functionname ;
 nonterminal    parametername;
@@ -127,10 +127,11 @@ nonterminal    type         ;
 nonterminal    arguments,   arguments_seq    ;
 nonterminal    parameters,  parameters_seq   ;
 nonterminal    variable     ;
+nonterminal    assignment   ;
 nonterminal    statement    ;
 nonterminal    expression, BoolConjunction, BoolNegation, BoolCmp;
 nonterminal    exprAdd, exprMult, factor, exprConstant, value;
-nonterminal    conditional, repeat, declaration;
+nonterminal    conditional, repeat, declaration, scope, bound, generalBound;
 
 // Non-terminals that have a value.
 // nonterminal type  nameList ;
@@ -153,7 +154,7 @@ start with program;
  * reads one more token before it will act on the production.
  */
 
-program  ::=   ;		// the main program
+program  ::=  scope ;		// the main program
 
 /*****************************************************************************
 
@@ -164,8 +165,6 @@ program  ::=   ;		// the main program
 ****************************************************************************/
 
 // Eric's Code begins here
-// program: 	scope
-program		::=	scope;
 
 // score: 	begin statement end
 // 			begin end
@@ -185,15 +184,15 @@ variablenames	::=	variablename
 				;
 
 variablename	::=	IDENT
-				|	IDENT L_SQUARE INTCONST R_SQUARE
-				|	IDENT L_SQUARE bound DOT DOT bound  R_SQUARE
-
+			|	IDENT L_SQUARE INTCONST R_SQUARE
+			|	IDENT L_SQUARE bound DOT DOT bound  R_SQUARE
+                        ;
 // bound:	integer,
-//			gemeralBound .. generalBound
+//		gemeralBound .. generalBound
 
 bound		::=	INTCONST
-			|	generalBound DOT DOT generalBound
-			;
+		|	generalBound DOT DOT generalBound
+		;
 
 // generalBound:	integer,
 //					- integer
@@ -202,9 +201,6 @@ generalBound		::=	INTCONST
 					;
 // Eric's code ends here
 
-scope           ::=     BEGIN statement END
-                |       BEGIN END
-                ;
 
 assignment      ::=     variable LESS EQUAL expression
                 ;

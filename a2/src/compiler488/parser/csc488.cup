@@ -162,6 +162,46 @@ program  ::=   ;		// the main program
 
 ****************************************************************************/
 
+// Eric's Code begins here
+// program: 	scope
+program		::=	scope;				
+
+// score: 	begin statement end
+// 			begin end
+
+scope		::=	BEGIN statement END  	
+			|	BEGIN END 			
+			;
+
+// variablenames: 	variablename,
+//					variablename [bound]
+//					variablename [bound, bound]
+//					variablenames, variablenames
+variablenames	::=	variablename 
+				|	variablename  L_SQUARE  bound R_SQUARE
+				|	variablename  L_SQUARE	bound COMMA bound R_SQUARE			
+				|	variablenames COMMA variablename 
+				;
+
+variablename	::=	IDENT 						
+				|	IDENT L_SQUARE INTCONST R_SQUARE		
+				|	IDENT L_SQUARE bound DOT DOT bound  R_SQUARE	
+
+// bound:	integer,
+//			gemeralBound .. generalBound
+
+bound		::=	INTCONST										
+			|	generalBound DOT DOT generalBound					
+			;		
+
+// generalBound:	integer,
+//					- integer
+generalBound		::=	INTCONST					
+					|	MINUS INTCONST					
+					;		
+// Eric's code ends here
+
+
 output_seq      ::=     output_seq  COMMA  output  
                 |       output
                 ;

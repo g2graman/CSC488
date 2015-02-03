@@ -12,13 +12,13 @@ import java_cup.runtime.*;		// Must always import this.
 // your code goes HERE
 //:};
 
-/* User code components 2: parser code components. 
+/* User code components 2: parser code components.
  * Modifications to the default generated parser
  */
 parser code {:
 
 	String lastError;
-	
+
     /** Override the report_error method so it will display the line and
      * column of where the error occurred in the input as well as the
      * reason for the error which is passed into the method in the
@@ -29,7 +29,7 @@ parser code {:
     public void report_error(String message, Object info)
 	{
 	String st =  "Error";
-   
+
         if (info instanceof java_cup.runtime.Symbol)
 	    {
             java_cup.runtime.Symbol s = ((java_cup.runtime.Symbol) info);
@@ -39,7 +39,7 @@ parser code {:
              * If either is < 0 the parser may have run off the end of the program
              * and a Syntax Error message without line number may be printed.
 	     */
-   
+
             if (s.left >= 0)				// Check line number.
 		{
                 st += " in line " + (s.left + 1);
@@ -53,13 +53,13 @@ parser code {:
         System.err.println (st);
         lastError = st;
 	}
-   
+
     /** Override the report_fatal_error method to use the report_error method. */
-    public void report_fatal_error (String message, Object info) 
+    public void report_fatal_error (String message, Object info)
 	{
         report_error (message, info);
 	}
-   
+
 :};
 
 /* User code components 3: initialization code.
@@ -86,9 +86,9 @@ init with {:
  * "left", "right", "nonassoc", "import", and "package".
  */
 
-// DEFINITIONS for CSC488S Source Language  Winter  2009/2010 
+// DEFINITIONS for CSC488S Source Language  Winter  2009/2010
 
-// Terminals returned by the scanner with no value attached.  
+// Terminals returned by the scanner with no value attached.
 terminal	AND,	OR,	NOT,	TRUE,	FALSE	;
 terminal 	BOOLEAN,INTEGER,FUNCTION,PROCEDURE	;
 terminal	BEGIN,	DO,	ELSE,	END,	EXIT	;
@@ -130,6 +130,7 @@ nonterminal    variable     ;
 nonterminal    statement    ;
 nonterminal    expression, BoolConjunction, BoolNegation, BoolCmp;
 nonterminal    exprAdd, exprMult, factor, exprConstant, value;
+nonterminal    conditional, repeat, declaration;
 
 // Non-terminals that have a value.
 // nonterminal type  nameList ;
@@ -164,54 +165,88 @@ program  ::=   ;		// the main program
 
 // Eric's Code begins here
 // program: 	scope
-program		::=	scope;				
+program		::=	scope;
 
 // score: 	begin statement end
 // 			begin end
 
-scope		::=	BEGIN statement END  	
-			|	BEGIN END 			
+scope		::=	BEGIN statement END
+			|	BEGIN END
 			;
 
 // variablenames: 	variablename,
 //					variablename [bound]
 //					variablename [bound, bound]
 //					variablenames, variablenames
-variablenames	::=	variablename 
+variablenames	::=	variablename
 				|	variablename  L_SQUARE  bound R_SQUARE
-				|	variablename  L_SQUARE	bound COMMA bound R_SQUARE			
-				|	variablenames COMMA variablename 
+				|	variablename  L_SQUARE	bound COMMA bound R_SQUARE
+				|	variablenames COMMA variablename
 				;
 
-variablename	::=	IDENT 						
-				|	IDENT L_SQUARE INTCONST R_SQUARE		
-				|	IDENT L_SQUARE bound DOT DOT bound  R_SQUARE	
+variablename	::=	IDENT
+				|	IDENT L_SQUARE INTCONST R_SQUARE
+				|	IDENT L_SQUARE bound DOT DOT bound  R_SQUARE
 
 // bound:	integer,
 //			gemeralBound .. generalBound
 
-bound		::=	INTCONST										
-			|	generalBound DOT DOT generalBound					
-			;		
+bound		::=	INTCONST
+			|	generalBound DOT DOT generalBound
+			;
 
 // generalBound:	integer,
 //					- integer
-generalBound		::=	INTCONST					
-					|	MINUS INTCONST					
-					;		
+generalBound		::=	INTCONST
+					|	MINUS INTCONST
+					;
 // Eric's code ends here
 
+scope           ::=     BEGIN statement END
+                |       BEGIN END
+                ;
 
-output_seq      ::=     output_seq  COMMA  output  
+assignment      ::=     variable LESS EQUAL expression
+                ;
+
+conditional     ::=     IF expression THEN statement END
+                |       IF expression THEN statement ELSE statement END
+                ;
+
+repeat          ::=     WHILE expression DO statement END
+                |       LOOP statement END
+                |       EXIT
+                |       EXIT WHEN expression
+                ;
+
+statement       ::=     PUT output
+                |       GET output
+                |       procedurename
+                |       procedurename L_PAREN arguments R_PAREN
+                |       scope
+                |       repeat
+                |       conditional
+                |       assignment
+                |       statement statement
+                ;
+
+declaration     ::=     type variablenames
+                |       type FUNCTION functionname scope
+                |       type FUNCTION functionname L_PAREN parameters R_PAREN scope
+                |       PROCEDURE procedurename scope
+                |       PROCEDURE procedurename L_PAREN parameters R_PAREN scope
+                ;
+
+output_seq      ::=     output_seq  COMMA  output
                 |       output
                 ;
 
-output          ::=     expression  
-                |       TEXTCONST  
+output          ::=     expression
+                |       TEXTCONST
                 |       SKIP
                 ;
 
-type            ::=     INTEGER  
+type            ::=     INTEGER
                 |       BOOLEAN
                 ;
 
@@ -271,7 +306,7 @@ exprConstant    ::=     INTCONST //Differentiate from TEXTCONST
                 |       FALSE
                 ;
 
-variable        ::=     variablename  
+variable        ::=     variablename
                 |       arrayname  L_SQUARE  expression  R_SQUARE
                 |       arrayname  L_SQUARE  expression  COMMA expression  R_SQUARE
                 ;
@@ -279,7 +314,7 @@ variable        ::=     variablename
 input           ::=     variable
                 ;
 
-input_seq       ::=     input_seq COMMA input  
+input_seq       ::=     input_seq COMMA input
                 |       input
                 ;
 

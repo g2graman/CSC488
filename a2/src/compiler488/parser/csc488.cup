@@ -117,21 +117,17 @@ The nonterminals from your grammar go here
 ***********************************************************/
 
 nonterminal    variablename, variablenames ;
-nonterminal    arrayname    ;
-nonterminal    functionname ;
-nonterminal    parametername;
-nonterminal    procedurename;
 nonterminal    output      ;
 nonterminal    input       ;
 nonterminal    type         ;
-nonterminal    arguments,   arguments_seq    ;
+nonterminal    arguments    ;
 nonterminal    parameters   ;
 nonterminal    variable     ;
 nonterminal    assignment   ;
 nonterminal    statement    ;
 nonterminal    expression, BoolConjunction, BoolNegation, BoolCmp;
 nonterminal    exprAdd, exprMult, factor, exprConstant, value;
-nonterminal    conditional, repeat, declaration, scope, bound, generalBound;
+nonterminal    conditional, repeat, declaration, declareParam, scope, bound, generalBound;
 
 // Non-terminals that have a value.
 // nonterminal type  nameList ;
@@ -168,13 +164,12 @@ program  ::=  scope ;		// the main program
 assignment      ::=     variable LESS EQUAL expression
                 ;
 
-conditional     ::=     IF expression THEN statement END
-                |       IF expression THEN statement ELSE statement END
+conditional     ::=     IF expression THEN statement ELSE statement END
+                |       IF expression THEN statement END
                 ;
 
 repeat          ::=     WHILE expression DO statement END
                 |       LOOP statement END
-                |       EXIT
                 |       EXIT WHEN expression
                 ;
 
@@ -182,21 +177,33 @@ statement       ::=     PUT output
                 |       GET input
                 |       RETURN L_PAREN expression R_PAREN
                 |       RETURN
-                |       procedurename
-                |       procedurename L_PAREN arguments R_PAREN
+                |       IDENT // calling a procedure
+                |       IDENT L_PAREN arguments R_PAREN // calling a procedure with parameters
                 |       declaration
                 |       scope
                 |       repeat
                 |       conditional
                 |       assignment
-                |       statement statement
+                |       statement PUT output
+                |       statement GET input
+                |       statement RETURN L_PAREN expression R_PAREN
+                |       statement RETURN
+                |       statement IDENT // calling a procedure
+                |       statement IDENT L_PAREN arguments R_PAREN // calling a procedure with parameters
+                |       statement declaration
+                |       statement scope
+                |       statement repeat
+                |       statement conditional
+                |       statement assignment
                 ;
 
 declaration     ::=     type variablenames
-                |       type FUNCTION functionname scope
-                |       type FUNCTION functionname L_PAREN parameters R_PAREN scope
-                |       PROCEDURE procedurename scope
-                |       PROCEDURE procedurename L_PAREN parameters R_PAREN scope
+                |       type FUNCTION IDENT declareParam // defining function
+                |       PROCEDURE IDENT declareParam // defining procedure
+                ;
+
+declareParam    ::=     scope // no parameters
+                |       L_PAREN parameters R_PAREN scope
                 ;
 
 // Eric's Code begins here
@@ -211,50 +218,43 @@ scope		::=	BEGIN statement END
 //					variablename [bound]
 //					variablename [bound, bound]
 //					variablenames, variablenames
-variablenames	::=	variablenames COMMA variablenames
-				|	variablename  L_SQUARE  bound R_SQUARE
-				|	variablename  L_SQUARE	bound COMMA bound R_SQUARE
+variablenames	::=	variablenames COMMA variablename
 				|	variablename
 				;
 
-variablename	::=	IDENT
-			    |	IDENT L_SQUARE INTCONST R_SQUARE
-			    |	IDENT L_SQUARE bound DOT DOT bound  R_SQUARE
+variablename	::=	IDENT L_SQUARE INTCONST R_SQUARE
+			    |	IDENT L_SQUARE bound COMMA bound  R_SQUARE
+                |   IDENT
                 ;
+
 // bound:	integer,
 //		gemeralBound .. generalBound
 
 bound		::=	INTCONST
-		|	generalBound DOT DOT generalBound
-		;
-
-// generalBound:	integer,
-//					- integer
-generalBound		::=	INTCONST
-					|	MINUS INTCONST
-					;
+            | INTCONST DOT DOT INTCONST
+            | MINUS INTCONST DOT DOT INTCONST
+            | MINUS INTCONST DOT DOT MINUS INTCONST
+		    ;
 // Eric's code ends here
 
 
 output          ::=     expression
                 |       TEXTCONST
                 |       SKIP
-                |       output COMMA output
+                |       output COMMA expression
+                |       output COMMA TEXTCONST
+                |       output COMMA SKIP
                 ;
 
 type            ::=     INTEGER
                 |       BOOLEAN
                 ;
 
-arguments_seq   ::=     arguments
-                |
-                ;
-
 arguments       ::=     expression
                 |       arguments  COMMA  expression
                 ;
 
-parameters      ::=     parameters  COMMA  type parametername
+parameters      ::=     parameters  COMMA  type IDENT
                 |       type IDENT
                 ;
 
@@ -299,24 +299,17 @@ exprConstant    ::=     INTCONST //Differentiate from TEXTCONST
                 ;
 
 variable        ::=     IDENT
-                |       arrayname  L_SQUARE  expression  R_SQUARE
-                |       arrayname  L_SQUARE  expression  COMMA expression  R_SQUARE
+                |       IDENT  L_SQUARE  expression  R_SQUARE // array
+                |       IDENT  L_SQUARE  expression  COMMA expression  R_SQUARE // 2d array
                 ;
 
-input           ::=     input COMMA input
+input           ::=     input COMMA variable
                 |       variable
                 ;
 
 value           ::=     exprConstant
                 |       variable
-                |       functionname L_PAREN arguments_seq R_PAREN
+                |       IDENT L_PAREN arguments R_PAREN
                 |       L_PAREN expression R_PAREN
                 |       L_CURLEY statement YIELDS expression R_CURLEY
-                |       functionname //function calls with no arguments
-                |       parametername
                 ;
-
-arrayname       ::=     IDENT;
-functionname    ::=     IDENT;
-parametername   ::=     IDENT;
-procedurename   ::=     IDENT;

@@ -1,4 +1,7 @@
-% This tests the most basic program
+% This tests a basic loop
 
 begin
+        loop
+                put "hello world!"
+        end
 end

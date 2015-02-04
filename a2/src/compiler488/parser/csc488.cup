@@ -121,11 +121,11 @@ nonterminal    arrayname    ;
 nonterminal    functionname ;
 nonterminal    parametername;
 nonterminal    procedurename;
-nonterminal    output,      output_seq      ;
-nonterminal    input,       input_seq       ;
+nonterminal    output      ;
+nonterminal    input       ;
 nonterminal    type         ;
 nonterminal    arguments,   arguments_seq    ;
-nonterminal    parameters,  parameters_seq   ;
+nonterminal    parameters   ;
 nonterminal    variable     ;
 nonterminal    assignment   ;
 nonterminal    statement    ;
@@ -164,43 +164,6 @@ program  ::=  scope ;		// the main program
 
 ****************************************************************************/
 
-// Eric's Code begins here
-
-// score: 	begin statement end
-// 			begin end
-
-scope		::=	BEGIN statement END
-			|	BEGIN END
-			;
-
-// variablenames: 	variablename,
-//					variablename [bound]
-//					variablename [bound, bound]
-//					variablenames, variablenames
-variablenames	::=	variablename
-				|	variablename  L_SQUARE  bound R_SQUARE
-				|	variablename  L_SQUARE	bound COMMA bound R_SQUARE
-				|	variablenames COMMA variablename
-				;
-
-variablename	::=	IDENT
-			|	IDENT L_SQUARE INTCONST R_SQUARE
-			|	IDENT L_SQUARE bound DOT DOT bound  R_SQUARE
-                        ;
-// bound:	integer,
-//		gemeralBound .. generalBound
-
-bound		::=	INTCONST
-		|	generalBound DOT DOT generalBound
-		;
-
-// generalBound:	integer,
-//					- integer
-generalBound		::=	INTCONST
-					|	MINUS INTCONST
-					;
-// Eric's code ends here
-
 
 assignment      ::=     variable LESS EQUAL expression
                 ;
@@ -216,9 +179,12 @@ repeat          ::=     WHILE expression DO statement END
                 ;
 
 statement       ::=     PUT output
-                |       GET output
+                |       GET input
+                |       RETURN L_PAREN expression R_PAREN
+                |       RETURN
                 |       procedurename
                 |       procedurename L_PAREN arguments R_PAREN
+                |       declaration
                 |       scope
                 |       repeat
                 |       conditional
@@ -233,13 +199,47 @@ declaration     ::=     type variablenames
                 |       PROCEDURE procedurename L_PAREN parameters R_PAREN scope
                 ;
 
-output_seq      ::=     output_seq  COMMA  output
-                |       output
+// Eric's Code begins here
+
+// scope: 	begin statement end
+// 			begin end
+scope		::=	BEGIN statement END
+			|	BEGIN END
+			;
+
+// variablenames: 	variablename,
+//					variablename [bound]
+//					variablename [bound, bound]
+//					variablenames, variablenames
+variablenames	::=	variablenames COMMA variablenames
+				|	variablename  L_SQUARE  bound R_SQUARE
+				|	variablename  L_SQUARE	bound COMMA bound R_SQUARE
+				|	variablename
+				;
+
+variablename	::=	IDENT
+			    |	IDENT L_SQUARE INTCONST R_SQUARE
+			    |	IDENT L_SQUARE bound DOT DOT bound  R_SQUARE
                 ;
+// bound:	integer,
+//		gemeralBound .. generalBound
+
+bound		::=	INTCONST
+		|	generalBound DOT DOT generalBound
+		;
+
+// generalBound:	integer,
+//					- integer
+generalBound		::=	INTCONST
+					|	MINUS INTCONST
+					;
+// Eric's code ends here
+
 
 output          ::=     expression
                 |       TEXTCONST
                 |       SKIP
+                |       output COMMA output
                 ;
 
 type            ::=     INTEGER
@@ -254,12 +254,8 @@ arguments       ::=     expression
                 |       arguments  COMMA  expression
                 ;
 
-parameters_seq  ::=     parameters
-                |
-                ;
-
-parameters      ::=     type parametername
-                |       parameters  COMMA  type parametername
+parameters      ::=     parameters  COMMA  type parametername
+                |       type IDENT
                 ;
 
 expression      ::=     expression OR BoolConjunction
@@ -302,16 +298,13 @@ exprConstant    ::=     INTCONST //Differentiate from TEXTCONST
                 |       FALSE
                 ;
 
-variable        ::=     variablename
+variable        ::=     IDENT
                 |       arrayname  L_SQUARE  expression  R_SQUARE
                 |       arrayname  L_SQUARE  expression  COMMA expression  R_SQUARE
                 ;
 
-input           ::=     variable
-                ;
-
-input_seq       ::=     input_seq COMMA input
-                |       input
+input           ::=     input COMMA input
+                |       variable
                 ;
 
 value           ::=     exprConstant
@@ -323,7 +316,6 @@ value           ::=     exprConstant
                 |       parametername
                 ;
 
-variablename    ::=     IDENT;
 arrayname       ::=     IDENT;
 functionname    ::=     IDENT;
 parametername   ::=     IDENT;

@@ -82,4 +82,11 @@ begin
 		put "hello world" , skip
 	end
 
+	% Test exit when in while loop
+	count <= 0
+	while true do
+		count <= count + 1
+		exit when count = 5
+	end
+
 end

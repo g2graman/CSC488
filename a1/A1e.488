@@ -62,12 +62,13 @@ begin
 	z <= 1
 	%recursive procedure without parameters that finds three to the power of five
 	procedure three_to_the_power_of_five begin
-		if y > 0
-			then
+		if y > 0 
+		then
 				z <= z * 3
 				y <= y - 1
 				three_to_the_power_of_five
-		return
+				return
+		end
 	end
 
 	power_of_two(4)

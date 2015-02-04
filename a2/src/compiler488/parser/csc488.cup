@@ -219,12 +219,12 @@ scope		::=	BEGIN statement END
 //					variablename [bound, bound]
 //					variablenames, variablenames
 variablenames	::=	variablenames COMMA variablename
-				|	variablename
-				;
+		|	variablename
+		;
 
-variablename	::=	IDENT L_SQUARE INTCONST R_SQUARE
-			    |	IDENT L_SQUARE bound COMMA bound  R_SQUARE
-                |   IDENT
+variablename	::=     IDENT L_SQUARE bound R_SQUARE               
+		|	IDENT L_SQUARE bound COMMA bound  R_SQUARE
+                |       IDENT
                 ;
 
 // bound:	integer,

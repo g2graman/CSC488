@@ -171,6 +171,7 @@ conditional     ::=     IF expression THEN statement ELSE statement END
 repeat          ::=     WHILE expression DO statement END
                 |       LOOP statement END
                 |       EXIT WHEN expression
+                |       EXIT
                 ;
 
 statement       ::=     PUT output

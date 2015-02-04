@@ -68,7 +68,7 @@ begin
 	end
 
         % Testing anonymous function
-        put { put '1' yields 2} % should print 1 followed by 2
+        put { put "1" yields 2} % should print 1 followed by 2
 
 	proc % should print hello world
 	proc2(true) % should print x is true

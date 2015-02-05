@@ -6,7 +6,7 @@ begin
 		put "Hello world", skip
 	end
 
-	procedure test2 (integer q)
+	procedure test2 (integer q) begin
 		put "Hello world", skip
 	end
 

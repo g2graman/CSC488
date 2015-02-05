@@ -1,0 +1,12 @@
+% Parameterless function called with arguments
+begin
+
+	integer function test1 begin
+		return 5
+	end
+
+	integer x
+
+	x <= test1(5, 6)
+
+end

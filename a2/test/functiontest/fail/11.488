@@ -1,0 +1,12 @@
+% Procedure called with incorrect number of arguments
+begin
+
+	procedure test1 (integer q, integer z) begin
+		put "hello world", skip
+	end
+
+	integer x
+
+	x <= test1(5, 6, 7)
+
+end

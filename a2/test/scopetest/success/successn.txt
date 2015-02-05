@@ -1,0 +1,8 @@
+Success
+======
+
+2) Tests a statement embedded within a single nested scope.
+
+3) Tests a succession of two empty scopes each with one empty nested scope.
+
+4) Tests loop embedded with main scope where all scopes are properly closed.

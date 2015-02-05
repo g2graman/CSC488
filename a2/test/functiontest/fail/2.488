@@ -1,0 +1,11 @@
+% Test procedure with type and assigning a variable from a procedure
+
+begin
+	integer x
+	integer procedure test1 begin
+		put "hello world"
+		return 5
+	end
+
+	x <= test1
+end

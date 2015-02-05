@@ -1,0 +1,4 @@
+begin
+	begin
+		put "This should fail!"
+end

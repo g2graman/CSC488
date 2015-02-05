@@ -1,0 +1,10 @@
+% Parameterless procedure called with arguments
+begin
+
+	procedure test1 begin
+		put "hello world", skip
+	end
+
+	test1(5, 6)
+
+end

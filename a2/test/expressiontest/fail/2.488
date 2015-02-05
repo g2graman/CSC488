@@ -1,6 +1,6 @@
 begin
 
 	integer x
-	x = abc
+	x <= !@#$%
 
 end

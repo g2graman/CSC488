@@ -1,0 +1,17 @@
+% test expressions with parathesis
+
+begin
+
+	boolean x
+	boolean y
+	x <= true
+	y <= false
+
+	if !(x | y) then
+		put "hello world"
+	end
+
+	put { put "hello" yields (x = y)}
+	
+
+end

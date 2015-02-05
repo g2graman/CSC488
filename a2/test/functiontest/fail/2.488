@@ -4,7 +4,7 @@ begin
 	integer x
 	integer procedure test1 begin
 		put "hello world"
-		return 5
+		return (5)
 	end
 
 	x <= test1

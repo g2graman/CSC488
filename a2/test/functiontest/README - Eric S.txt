@@ -18,9 +18,7 @@ Fail
 5 Anonymous function without statement
 6 Anonymous function without yield
 7 function without return
-8 Parameterless function called with arguments
-9 Function call with too many parameters
 12 Function with no name
 13 Procedure with no name
 
-note: 4, 10, 11 removed for being incorrect parser test cases
+note: Numbering is off because some actually correct cases were removed

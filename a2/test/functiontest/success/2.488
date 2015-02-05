@@ -7,7 +7,7 @@ begin
 	end
 
 	integer function test2 (integer q)
-		return (q)
+		return (6)
 	end
 
 	integer x

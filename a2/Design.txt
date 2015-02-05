@@ -1,0 +1,27 @@
+We designed our language by trying to mimic the struture of the source language reference
+grammar as much as possible. This generally worked for the most part, however
+there were some recursive elements that did not work. For instace:
+statement ::= statement statement
+would be ambiguous. So instead what we did was define another nonterminal and made
+it be left recursive. So the above would have became
+statements ::= statements statement
+            |   statement
+            ;
+statement  ::= <rest of grammar>
+
+We also applied the above modification with other recursive elements such as
+parameters, arguments, output and variablenames.
+
+Some other issues that we came across was the setting of the precedence for
+the expressions. The way we handled this was with our ordering and the way we
+nested the expressions.
+
+One problem we came across was the variablename, parametername, arrayname,
+functionname and procedurename in the source language. At first we had all of these
+listed as nonterminals and defined with an IDENT. Unfortunately this caused a lot
+of conflict. So instead what we did we replaced every instance of these with IDENT
+and removed the nonterminal.
+
+Another problem we had was the definition of a bound. There were conflicts with
+defining generalBound and bound both with integer. So instead what we did was
+removed generalBound and pushed it up to bound.

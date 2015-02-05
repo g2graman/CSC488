@@ -1,9 +1,0 @@
-% Anonymous function without statement
-
-begin
-    {
-    yields put "hello world", skip
-    }
-
-
-end

@@ -1,3 +1,0 @@
-% Test a program that is missing begin and end statements
-
-put "Hello world!"

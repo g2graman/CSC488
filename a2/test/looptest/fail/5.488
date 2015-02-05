@@ -1,7 +1,0 @@
-% Test a while loop with an illegal expression
-
-begin
-        while (put "hello world!") do
-                put "hello world"
-        end
-end

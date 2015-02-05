@@ -1,33 +1,24 @@
-Parser Responsibility:
-g2yeungw - statements for the source language
-g2graman - expressions
-g4Snyder - Page 1 of the source language except for the statements
-g3chencm - page 2 of the source language except for the expression
-
-
-Testing responsiblities:
-g2yeungw - loops
-g2graman - scope
-g4Snyder - functions
-g3chencm - expressions
+The way we tested our cup file was by writing simple programs that implement
+each feature of the language. For the failure test cases, what we did was
+omit certain keywords or did other common invalid syntax errors.
 
 Below is the documentation for our test cases
 
 =========================
 
-a1tests - corrected fils from assignment 1
+a1tests - corrected files from assignment 1
 
 =========================
-Scope Test
+Scope Tests
 
-Success:
+Passing:
 1. Test the most basic program
 2. Test a very simple program
 3. Tests a statement embedded within a single nested scope.
 4. Tests a succession of two empty scopes each with one empty nested scope.
 5. Tests loop embedded with main scope where all scopes are properly closed.
 
-Failure:
+Failing:
 1. Test a program missing the begin statement
 2. Test a program missing scope
 3. Tests the empty string.
@@ -37,16 +28,16 @@ Failure:
 
 
 ==========================
-Loop test
+Loop tests
 
-Success:
+Passing:
 1. Tests a basic loop
 2. Tests a while loop
 3. Tests a nested loop
 4. Tests exit statement
 5. Tests exit when statement
 
-Failure:
+Failing:
 1. Tests a loop with missing end
 2. Tests a while loop missing the do keyword
 3. Tests a while loop that is missing the while keyword
@@ -56,16 +47,16 @@ Failure:
 7. Tests an empty while loop
 
 =========================
-Function test
+Function tests
 
-Success
+Passing
 1. This tests the most basic program
 2. This tests function syntax
 3. This tests procedure syntax
 4. This tests anonymous function syntax
 
 
-Fail
+Failing
 1. Test a program that just has end
 2. Test procedure with type and assigning a variable from a procedure
 3. function without a return, assigned to variable
@@ -77,16 +68,16 @@ Fail
 
 note: Numbering is off because some actually correct cases were removed
 ==========================
-Expression test
+Expression tests
 
-Success
+Passing
 1. Tests basic operators with fixed values
 2. Tests arithmetic operators with variables
 3. Tests arithmetic operators with mix of variables and fixed integers
 4. Tests expressions with parathesis
 5. Tests function call expressions
 
-Fail
+Failing
 1. Tests illegal comparisons
 2. Tests illegal characters
 3. Tests illegal arithmetic operators

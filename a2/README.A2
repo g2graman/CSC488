@@ -1,0 +1,12 @@
+Parser Responsibility:
+g2yeungw - statements for the source language
+g2graman - expressions
+g4Snyder - Page 1 of the source language except for the statements
+g3chencm - page 2 of the source language except for the expression
+
+
+Testing responsiblities:
+g2yeungw - loops
+g2graman - scope
+g4Snyder - functions
+g3chencm - expressions

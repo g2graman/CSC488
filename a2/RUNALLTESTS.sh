@@ -1,5 +1,5 @@
 WHERE=.
-TESTS=$WHERE/test/
+TESTS=$WHERE/tests/
 
 
 for test in `find $TESTS -name '*.488'`

@@ -1,5 +1,0 @@
-% Tests a very simple program
-
-begin
-        put "hello world!"
-end

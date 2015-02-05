@@ -1,0 +1,12 @@
+% Function call with too many parameters
+begin
+
+	integer function test1 (integer q, integer z) begin
+		return 5
+	end
+
+	integer x
+
+	x <= test1(5, 6, 7)
+
+end

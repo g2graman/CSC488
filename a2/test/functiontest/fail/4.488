@@ -1,0 +1,14 @@
+% function call with too few parameters
+
+begin
+
+	integer x
+
+	integer function test1 (integer y, boolean q) begin
+		put "hello world", skip
+		return y
+	end
+
+	x <= test1(5)
+
+end

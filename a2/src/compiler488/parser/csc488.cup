@@ -160,91 +160,83 @@ program  ::=  scope ;		// the main program
 
 ****************************************************************************/
 
-// scope: 	begin statement end
-// 			begin end
-scope           ::=     BEGIN statements END
-                |       BEGIN END
+scope           ::=     BEGIN statements END    // scope with statements
+                |       BEGIN END   // simplest program
                 ;
 
-assignment      ::=     variable LESS EQUAL expression
+assignment      ::=     variable LESS EQUAL expression  // variable assignment
                 ;
 
-conditional     ::=     IF expression THEN statements ELSE statements END
+conditional     ::=     IF expression THEN statements ELSE statements END   // if statements
                 |       IF expression THEN statements END
                 ;
 
-repeat          ::=     WHILE expression DO statements END
-                |       LOOP statements END
-                |       EXIT WHEN expression
-                |       EXIT
+repeat          ::=     WHILE expression DO statements END  //  while loop
+                |       LOOP statements END                 // regular loop
+                |       EXIT WHEN expression                // exit on condition
+                |       EXIT                                // exit from loop
                 ;
 
 statements      ::=     statements statement
                 |       statement
                 ;
 
-statement       ::=     PUT outputs
-                |       GET input
-                |       RETURN L_PAREN expression R_PAREN
-                |       RETURN
-                |       IDENT // calling a procedure
-                |       IDENT L_PAREN arguments R_PAREN // calling a procedure with parameters
-                |       declaration
-                |       scope
-                |       repeat
-                |       conditional
-                |       assignment
+statement       ::=     PUT outputs                         // output statement
+                |       GET input                           // input statement
+                |       RETURN L_PAREN expression R_PAREN   // return from function
+                |       RETURN                              // return from procedure
+                |       IDENT                               // calling a procedure or function
+                |       IDENT L_PAREN arguments R_PAREN     // calling a procedure or function with parameters
+                |       declaration                         // declaring new variables or functions
+                |       scope                               // creating a new scope
+                |       repeat                              // loop statements
+                |       conditional                         // if statements
+                |       assignment                          // assigning variable
                 ;
 
-declaration     ::=     type variablenames
-                |       type FUNCTION IDENT declareParam // defining function
-                |       PROCEDURE IDENT declareParam // defining procedure
+declaration     ::=     type variablenames                  // declaring variables
+                |       type FUNCTION IDENT declareParam    // declaring function
+                |       PROCEDURE IDENT declareParam        // declaring procedure
                 ;
 
-declareParam    ::=     scope // no parameters
-                |       L_PAREN parameters R_PAREN scope
+declareParam    ::=     scope                               // no parameters
+                |       L_PAREN parameters R_PAREN scope    // parameters for function
                 ;
 
-// variablenames: 	variablename,
-//					variablename [bound]
-//					variablename [bound, bound]
-//					variablenames, variablenames
-variablenames   ::=     variablenames COMMA variablename
-                |       variablename
+variablenames   ::=     variablenames COMMA variablename    // multiple variables
+                |       variablename                        // single variable
                 ;
 
-variablename    ::=     IDENT L_SQUARE bound R_SQUARE
-                |       IDENT L_SQUARE bound COMMA bound  R_SQUARE
-                |       IDENT
+variablename    ::=     IDENT L_SQUARE bound R_SQUARE       // single dimension array
+                |       IDENT L_SQUARE bound COMMA bound  R_SQUARE  // two dimensional array
+                |       IDENT                               // variable name
                 ;
 
-// bound:	integer,
-//		gemeralBound .. generalBound
-bound           ::=     INTCONST
-                |       INTCONST DOT DOT INTCONST
-                |       MINUS INTCONST DOT DOT INTCONST
-                |       MINUS INTCONST DOT DOT MINUS INTCONST
+bound           ::=     INTCONST                            // positive array bound
+                |       INTCONST DOT DOT INTCONST           // +ve to +ve array bound
+                |       MINUS INTCONST DOT DOT INTCONST     // -ve to +ve array bound
+                |       MINUS INTCONST DOT DOT MINUS INTCONST   // -ve to -ve array bound
                 ;
 
-outputs         ::=     outputs COMMA output
-                |       output
+outputs         ::=     outputs COMMA output                // list of outputs
+                |       output                              // single output
                 ;
 
 output          ::=     expression
-                |       TEXTCONST
-                |       SKIP
+                |       TEXTCONST                           // text
+                |       SKIP                                // skip
                 ;
 
-type            ::=     INTEGER
-                |       BOOLEAN
+type            ::=     INTEGER                             // integer type
+                |       BOOLEAN                             // boolean type
                 ;
 
-arguments       ::=     expression
-                |       arguments  COMMA  expression
+arguments       ::=     expression                          // single argument
+                |       arguments  COMMA  expression        // list of arguments
                 ;
 
-parameters      ::=     parameters  COMMA  type IDENT
-                |       type IDENT
+parameters      ::=     parameters  COMMA  type IDENT       // list of parameters
+                |       type IDENT                          // single argument
                 ;
 
 expression      ::=     expression OR BoolConjunction
@@ -255,7 +247,7 @@ BoolConjunction ::=     BoolConjunction AND BoolNegation
                 |       BoolNegation
                 ;
 
-BoolNegation    ::=     NOT BoolNegation
+BoolNegation    ::=     NOT BoolNegation                    // negate boolean
                 |       BoolCmp
                 ;
 
@@ -282,23 +274,23 @@ factor          ::=     value
                 |       MINUS value
                 ;
 
-exprConstant    ::=     INTCONST //Differentiate from TEXTCONST
-                |       TRUE
-                |       FALSE
+exprConstant    ::=     INTCONST                            // Integer constant
+                |       TRUE                                // True value
+                |       FALSE                               // False value
                 ;
 
-variable        ::=     IDENT
+variable        ::=     IDENT                               // variable identifier
                 |       IDENT  L_SQUARE  expression  R_SQUARE // array
                 |       IDENT  L_SQUARE  expression  COMMA expression  R_SQUARE // 2d array
                 ;
 
-input           ::=     input COMMA variable
-                |       variable
+input           ::=     input COMMA variable                // list of inputs
+                |       variable                            // single input
                 ;
 
-value           ::=     exprConstant
-                |       variable
-                |       IDENT L_PAREN arguments R_PAREN
-                |       L_PAREN expression R_PAREN
-                |       L_CURLEY statements YIELDS expression R_CURLEY
+value           ::=     exprConstant                        // integer or boolean constant
+                |       variable                            // variable reference
+                |       IDENT L_PAREN arguments R_PAREN     // array reference
+                |       L_PAREN expression R_PAREN          // expression
+                |       L_CURLEY statements YIELDS expression R_CURLEY  // yield statement
                 ;

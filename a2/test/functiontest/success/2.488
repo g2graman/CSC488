@@ -3,11 +3,11 @@
 begin
 
 	integer function test1 begin
-		return 5
+		return (5)
 	end
 
 	integer function test2 (integer q)
-		return q
+		return (q)
 	end
 
 	integer x

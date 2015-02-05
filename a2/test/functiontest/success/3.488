@@ -3,11 +3,11 @@
 begin
 
 	procedure test1 begin
-		put "Hello world", skip
+		put 'Hello world', skip
 	end
 
 	procedure test2 (integer q)
-		put "Hello world", skip
+		put 'Hello world', skip
 	end
 
 	integer x

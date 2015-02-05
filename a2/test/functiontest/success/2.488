@@ -6,7 +6,7 @@ begin
 		return (5)
 	end
 
-	integer function test2 (integer q)
+	integer function test2 (integer q) begin
 		return (6)
 	end
 

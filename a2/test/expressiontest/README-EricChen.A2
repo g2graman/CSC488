@@ -1,0 +1,19 @@
+Parser Responsibility:
+g3chencm - page 2 of the source language except for the expression
+
+
+Test Cases for Expression
+
+sucess
+1.488 - tests basic operators with fixed values
+2.488 - tests arithmetic operators with variables
+3.488 - tests arithmetic operators with mix of variables and fixed integers
+4.488 - tests expression using correct parentheses
+5.488 - tests function call expressions
+
+fail
+1.488 - tests illegal comparisons
+2.488 - tests illegal characters
+3.488 - tests illegal arithmetic operators
+4.488 - tests illegal function call
+5.488 - tests illegal use of parentheses

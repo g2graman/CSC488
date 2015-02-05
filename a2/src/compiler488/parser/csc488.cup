@@ -117,17 +117,17 @@ The nonterminals from your grammar go here
 ***********************************************************/
 
 nonterminal    variablename, variablenames ;
-nonterminal    output      ;
+nonterminal    outputs, output      ;
 nonterminal    input       ;
 nonterminal    type         ;
 nonterminal    arguments    ;
 nonterminal    parameters   ;
 nonterminal    variable     ;
 nonterminal    assignment   ;
-nonterminal    statement    ;
+nonterminal    statements, statement    ;
 nonterminal    expression, BoolConjunction, BoolNegation, BoolCmp;
 nonterminal    exprAdd, exprMult, factor, exprConstant, value;
-nonterminal    conditional, repeat, declaration, declareParam, scope, bound, generalBound;
+nonterminal    conditional, repeat, declaration, declareParam, scope, bound;
 
 // Non-terminals that have a value.
 // nonterminal type  nameList ;
@@ -160,21 +160,30 @@ program  ::=  scope ;		// the main program
 
 ****************************************************************************/
 
+// scope: 	begin statement end
+// 			begin end
+scope           ::=     BEGIN statements END
+                |       BEGIN END
+                ;
 
 assignment      ::=     variable LESS EQUAL expression
                 ;
 
-conditional     ::=     IF expression THEN statement ELSE statement END
-                |       IF expression THEN statement END
+conditional     ::=     IF expression THEN statements ELSE statements END
+                |       IF expression THEN statements END
                 ;
 
-repeat          ::=     WHILE expression DO statement END
-                |       LOOP statement END
+repeat          ::=     WHILE expression DO statements END
+                |       LOOP statements END
                 |       EXIT WHEN expression
                 |       EXIT
                 ;
 
-statement       ::=     PUT output
+statements      ::=     statements statement
+                |       statement
+                ;
+
+statement       ::=     PUT outputs
                 |       GET input
                 |       RETURN L_PAREN expression R_PAREN
                 |       RETURN
@@ -185,17 +194,6 @@ statement       ::=     PUT output
                 |       repeat
                 |       conditional
                 |       assignment
-                |       statement PUT output
-                |       statement GET input
-                |       statement RETURN L_PAREN expression R_PAREN
-                |       statement RETURN
-                |       statement IDENT // calling a procedure
-                |       statement IDENT L_PAREN arguments R_PAREN // calling a procedure with parameters
-                |       statement declaration
-                |       statement scope
-                |       statement repeat
-                |       statement conditional
-                |       statement assignment
                 ;
 
 declaration     ::=     type variablenames
@@ -207,44 +205,34 @@ declareParam    ::=     scope // no parameters
                 |       L_PAREN parameters R_PAREN scope
                 ;
 
-// Eric's Code begins here
-
-// scope: 	begin statement end
-// 			begin end
-scope		::=	BEGIN statement END
-			|	BEGIN END
-			;
-
 // variablenames: 	variablename,
 //					variablename [bound]
 //					variablename [bound, bound]
 //					variablenames, variablenames
-variablenames	::=	variablenames COMMA variablename
-		|	variablename
-		;
+variablenames   ::=     variablenames COMMA variablename
+                |       variablename
+                ;
 
-variablename	::=     IDENT L_SQUARE bound R_SQUARE               
-		|	IDENT L_SQUARE bound COMMA bound  R_SQUARE
+variablename    ::=     IDENT L_SQUARE bound R_SQUARE
+                |       IDENT L_SQUARE bound COMMA bound  R_SQUARE
                 |       IDENT
                 ;
 
 // bound:	integer,
 //		gemeralBound .. generalBound
+bound           ::=     INTCONST
+                |       INTCONST DOT DOT INTCONST
+                |       MINUS INTCONST DOT DOT INTCONST
+                |       MINUS INTCONST DOT DOT MINUS INTCONST
+                ;
 
-bound		::=	INTCONST
-            | INTCONST DOT DOT INTCONST
-            | MINUS INTCONST DOT DOT INTCONST
-            | MINUS INTCONST DOT DOT MINUS INTCONST
-		    ;
-// Eric's code ends here
-
+outputs         ::=     outputs COMMA output
+                |       output
+                ;
 
 output          ::=     expression
                 |       TEXTCONST
                 |       SKIP
-                |       output COMMA expression
-                |       output COMMA TEXTCONST
-                |       output COMMA SKIP
                 ;
 
 type            ::=     INTEGER
@@ -312,5 +300,5 @@ value           ::=     exprConstant
                 |       variable
                 |       IDENT L_PAREN arguments R_PAREN
                 |       L_PAREN expression R_PAREN
-                |       L_CURLEY statement YIELDS expression R_CURLEY
+                |       L_CURLEY statements YIELDS expression R_CURLEY
                 ;

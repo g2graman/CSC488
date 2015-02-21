@@ -1,0 +1,11 @@
+# bin
+bin/
+
+# generated parser files, prevents the git changelog from being
+# polluted
+Parser.java
+Lexer.java
+sym.java
+
+# dump file names
+ast_dump.*

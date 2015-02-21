@@ -8,4 +8,4 @@ Lexer.java
 sym.java
 
 # dump file names
-ast_dump.txt
+ast_dump.*

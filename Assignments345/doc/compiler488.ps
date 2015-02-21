@@ -1,11 +1,11 @@
 %!PS-Adobe-3.0
-%%Creator: groff version 1.22.2
-%%CreationDate: Thu Jan 29 11:12:59 2015
+%%Creator: groff version 1.19.2
+%%CreationDate: Sat Feb 21 15:51:59 2015
 %%DocumentNeededResources: font Times-Roman
 %%+ font Times-Bold
 %%+ font Times-Italic
 %%+ font Courier
-%%DocumentSuppliedResources: procset grops 1.22 2
+%%DocumentSuppliedResources: procset grops 1.19 2
 %%Pages: 2
 %%PageOrder: Ascend
 %%DocumentMedia: Default 612 792 0 () ()
@@ -15,7 +15,7 @@
 %%PageMedia: Default
 %%EndDefaults
 %%BeginProlog
-%%BeginResource: procset grops 1.22 2
+%%BeginResource: procset grops 1.19 2
 %!PS-Adobe-3.0 Resource-ProcSet
 /setpacking where{
 pop
@@ -73,7 +73,6 @@ exch pop add exch pop
 /level0 save def
 1 setlinecap
 1 setlinejoin
-DEFS/BPhook known{DEFS begin BPhook end}if
 72 RES div dup scale
 LS{
 90 rotate
@@ -139,10 +138,7 @@ pop
 findfont
 dup maxlength 1 index/FontName known not{1 add}if dict begin
 {
-1 index/FID ne
-2 index/UniqueID ne
-and
-{def}{pop pop}ifelse
+1 index/FID ne{def}{pop pop}ifelse
 }forall
 /Encoding exch def
 dup/FontName exch def
@@ -180,10 +176,8 @@ newpath
 userdict begin
 /showpage{}def
 /setpagedevice{}def
-mark
 }bind def
 /PEND{
-cleartomark
 countdictstack CNT sub{end}repeat
 level1 restore
 }bind def
@@ -237,9 +231,8 @@ def/PL 792 def/LS false def/ENC0[/asciicircum/asciitilde/Scaron/Zcaron
 %%BeginPageSetup
 BP
 %%EndPageSetup
-/F0 10/Times-Roman@0 SF 97.9(COMPILER488\(1\) General)72 48 R
-(Commands Manual)2.5 E(COMPILER488\(1\))100.4 E/F1 10.95/Times-Bold@0 SF
--.219(NA)72 84 S(ME).219 E F0
+/F0 10/Times-Roman@0 SF 311.06(COMPILER488\(1\) COMPILER488\(1\))72 48 R
+/F1 10.95/Times-Bold@0 SF -.219(NA)72 84 S(ME).219 E F0
 (compiler488 \255 a compiler for the CSC488S Project Language)108 96 Q
 F1(SYNOPSIS)72 112.8 Q/F2 10/Times-Bold@0 SF 2.5(compiler488 [)108 124.8
 R<ad58>2.5 E F0 5(][)2.5 G F2<ad44>-2.5 E F0([)A/F3 10/Times-Italic@0 SF
@@ -265,19 +258,19 @@ plemented compiler for the CSC488S Course Project)3.661 F(Language.)108
 (\(if an)108 242.4 Q
 (y\) apply to all of the source \214les in the list.)-.15 E F1(OPTIONS)
 72 259.2 Q F0(The options currently implemented by the compiler488 are:)
-108 271.2 Q F2<ad58>108 288 Q F0 .735(Suppress e)168 288 R -.15(xe)-.15
-G .734(cution of the compiled program.).15 F(Sa)5.734 E -.15(ve)-.2 G
+108 271.2 Q F2<ad58>108 288 Q F0 .735(Suppress e)47.08 F -.15(xe)-.15 G
+.734(cution of the compiled program.).15 F(Sa)5.734 E -.15(ve)-.2 G
 3.234(st).15 G .734(ime when testing an incomplete code)-3.234 F
 (generator)168 300 Q(.)-.55 E F2<ad44>108 316.8 Q F0 .092
-(Specify dump options.)168 316.8 R .092(The letters)5.092 F F3(abxy)
-2.592 E F0 .093(indicate which information should be dumped to the)2.592
-F(compilers)168 328.8 Q F3(dumpF)2.5 E(ile)-.45 E F0(.)A F3(a)168 340.8
-Q F0 2.5<ad64>2.5 G(ump Abstract Syntax T)-2.5 E(ree after parsing.)-.35
-E F3(b)168 352.8 Q F0 2.5<ad64>2.5 G(ump Abstract Syntax T)-2.5 E
+(Specify dump options.)47.08 F .092(The letters)5.092 F F3(abxy)2.592 E
+F0 .093(indicate which information should be dumped to the)2.592 F
+(compilers)168 328.8 Q F3(dumpF)2.5 E(ile)-.45 E F0(.)A F3(a)168 340.8 Q
+F0 2.5<ad64>2.5 G(ump Abstract Syntax T)-2.5 E(ree after parsing.)-.35 E
+F3(b)168 352.8 Q F0 2.5<ad64>2.5 G(ump Abstract Syntax T)-2.5 E
 (ree after semantic analysis.)-.35 E F3(x)168 364.8 Q F0 2.5<ad64>2.5 G
 (ump the compiled code just before e)-2.5 E -.15(xe)-.15 G(cution).15 E
 F3(y)168 376.8 Q F0 2.5<ad64>2.5 G(ump symbol table information)-2.5 E
-F2<ad54>108 393.6 Q F0 .543(Specify trace options.)168 393.6 R .543
+F2<ad54>108 393.6 Q F0 .543(Specify trace options.)47.63 F .543
 (The letters)5.543 F F3(acilpsxy)3.043 E F0 .542
 (indicate which trace information should be writ-)3.043 F
 (ten to the compilers)168 405.6 Q F3(tr)2.5 E(aceF)-.15 E(ile)-.45 E F0
@@ -318,12 +311,11 @@ Cg EP
 %%BeginPageSetup
 BP
 %%EndPageSetup
-/F0 10/Times-Roman@0 SF 97.9(COMPILER488\(1\) General)72 48 R
-(Commands Manual)2.5 E(COMPILER488\(1\))100.4 E/F1 10/Times-Bold@0 SF
-<ad49>108 84 Q/F2 10/Times-Italic@0 SF(runInputF)7.5 E(ileName)-.45 E F0
-.321(Specify an alternati)168 96 R .621 -.15(ve \214)-.25 H .321
-(le to serv).15 F 2.821(ea)-.15 G 2.821(sas)-2.821 G .321
-(ouce of input during e)-2.821 F -.15(xe)-.15 G .322
+/F0 10/Times-Roman@0 SF 311.06(COMPILER488\(1\) COMPILER488\(1\))72 48 R
+/F1 10/Times-Bold@0 SF<ad49>108 84 Q/F2 10/Times-Italic@0 SF(runInputF)
+7.5 E(ileName)-.45 E F0 .321(Specify an alternati)168 96 R .621 -.15
+(ve \214)-.25 H .321(le to serv).15 F 2.821(ea)-.15 G 2.821(sas)-2.821 G
+.321(ouce of input during e)-2.821 F -.15(xe)-.15 G .322
 (cution of the compiled pro-).15 F 2.5(gram. Def)168 108 R(ault for e)
 -.1 E -.15(xe)-.15 G(cution time input is stdin.).15 E/F3 10.95
 /Times-Bold@0 SF(ENVIR)72 124.8 Q(ONMENT)-.329 E F0

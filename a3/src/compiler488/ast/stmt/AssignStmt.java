@@ -1,5 +1,6 @@
 package compiler488.ast.stmt;
 
+import compiler488.ast.ASTVisitor;
 import compiler488.ast.PrettyPrinter;
 import compiler488.ast.expn.Expn;
 
@@ -35,4 +36,10 @@ public class AssignStmt extends Stmt {
         rval.prettyPrint(p);
     }
 
+    @Override
+    public void accept(ASTVisitor visitor) {
+        visitor.visit(this);
+        lval.accept(visitor);
+        rval.accept(visitor);
+    }
 }

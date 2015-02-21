@@ -1,6 +1,7 @@
 package compiler488.ast.expn;
 
 import compiler488.ast.PrettyPrinter;
+import compiler488.ast.ASTVisitor;
 
 /**
  * The common features of binary expressions.
@@ -48,4 +49,8 @@ public abstract class BinaryExpn extends Expn {
         p.print(")");
     }
 
+    @Override
+    public void accept(ASTVisitor visitor) {
+        visitor.visit(this);
+    }
 }

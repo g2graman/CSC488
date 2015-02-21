@@ -26,4 +26,9 @@ public abstract class BaseAST implements AST {
         p.print(toString());
     }
 
+    @Override
+    public void accept(ASTVisitor visitor) {
+        visitor.visit(this);
+    }
+
 }

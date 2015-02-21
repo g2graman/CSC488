@@ -7,7 +7,6 @@ package compiler488.ast.type;
 public class BooleanType extends Type {
     @Override
     public String toString() {
-        return "boolean";
+        return Type.BOOL_TYPE;
     }
-
 }

@@ -64,9 +64,14 @@ public class SymbolTable {
      *         if the variable does not exist in this scope.
      */
     public SymbolTableEntry lookup(String varname){
-        return entry.get(varname);
+    	if(this.isLocal(varname))
+        	return entry.get(varname);
+        return null;
     }
 
+    public boolean isLocal(String varname) {
+    	return this.entry.containsKey(varname);
+    }
     /**
      * Add the symbol table entry to the symbol table.
      * @param varname The name of the variable to insert into the table

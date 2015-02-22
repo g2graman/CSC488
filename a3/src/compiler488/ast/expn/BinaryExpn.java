@@ -50,7 +50,7 @@ public abstract class BinaryExpn extends Expn {
     }
 
     @Override
-    public void accept(ASTVisitor visitor) {
-        visitor.visit(this);
+    public Boolean accept(ASTVisitor<Boolean> visitor) {
+        return visitor.visit(this);
     }
 }

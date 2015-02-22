@@ -1,5 +1,7 @@
 package compiler488.ast.expn;
 
+import compiler488.ast.ASTVisitor;
+
 
 /**
  * Place holder for all ordered comparisons expression where both operands must
@@ -20,4 +22,20 @@ public class CompareExpn extends BinaryExpn {
                 (opSymbol == OP_GREATER_EQUAL));
     }
 
+    
+    @Override
+    public Boolean accept(ASTVisitor<Boolean> visitor) {
+    	if(!super.accept(visitor)) {
+    		return false;
+    	}
+        
+    	if(!visitor.visit(this.left)) {
+    		return false;
+    	}
+        if(!visitor.visit(this.right)) {
+        	return false;
+        }
+    	
+        return visitor.visit(this);
+    }
 }

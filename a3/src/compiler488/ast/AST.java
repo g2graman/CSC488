@@ -14,5 +14,5 @@ package compiler488.ast;
 public interface AST extends PrettyPrintable {
     public void prettyPrint(PrettyPrinter p);
 
-    public void accept(ASTVisitor visitor);
+    public Boolean accept(ASTVisitor<Boolean> visitor);
 }

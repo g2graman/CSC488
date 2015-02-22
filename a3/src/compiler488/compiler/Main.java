@@ -381,7 +381,7 @@ public class Main {
 
   private static void semanticAnalysis( Program  programAST ) {
   try{
-      ASTVisitor visitor = new Semantics();
+      ASTVisitor<Boolean> visitor = new Semantics();
       programAST.accept(visitor);
   }
         catch( Exception e)

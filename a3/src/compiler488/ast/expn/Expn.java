@@ -1,6 +1,5 @@
 package compiler488.ast.expn;
 
-import compiler488.ast.ASTVisitor;
 import compiler488.ast.BaseAST;
 import compiler488.ast.Printable;
 import compiler488.ast.type.Type;
@@ -28,14 +27,14 @@ public abstract class Expn extends BaseAST implements Printable {
 
     public boolean isType(String typeString) {
         if(type == null) {
-          return true;
+          return false;
         }
         return type.toString().equals(typeString);
     }
 
     public boolean isType(Type type) {
         if(type == null) {
-          return true;
+          return false;
         }
         return isType(type.toString());
     }

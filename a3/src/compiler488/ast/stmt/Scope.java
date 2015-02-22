@@ -37,8 +37,8 @@ public class Scope extends Stmt {
     }
 
     @Override
-    public void accept(ASTVisitor visitor) {
-        visitor.visit(this);
-        this.body.accept(visitor);
+    public Boolean accept(ASTVisitor<Boolean> visitor) {
+        visitor.visit(this); // ProgramAST -> calls ASTNode visit in Semantics
+        return this.body.accept(visitor);
     }
 }

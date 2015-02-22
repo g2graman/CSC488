@@ -8,7 +8,8 @@ import java.util.LinkedList;
  * <p>This is implemented by extending {@link java.util.LinkedList}. Thanks to
  * this, any method that expects to take an instance of {@link
  * java.util.Collection} or {@link java.util.List} can take an
- * <code>ASTList</code> as well. You can also directly iterate over it using an
+ * <code>ASTList</code> as well. You can also directly 
+    public T visit(ASTList list);iterate over it using an
  * enhanced Java <code>for</code>.
  *
  * <p>This list is itself an AST node as well, since it implements the AST
@@ -131,10 +132,15 @@ public class ASTList<E extends AST> extends LinkedList<E> implements AST {
         return buf.toString();
     }
 
-    @Override
-    public void accept(ASTVisitor visitor) {
-        for(AST node : this) {
-            node.accept(visitor);
-        }
-    }
+	@Override
+    public Boolean accept(ASTVisitor<Boolean> visitor) {
+		Boolean bools = true;
+		for(AST node : this) {
+			// needs to be out to prevent short circuit (if bools is false, node.accept won't be called
+			// if it is bools = bools && node.accept
+			Boolean z = node.accept(visitor);
+			bools = bools && z;
+		}
+		return bools;
+	}
 }

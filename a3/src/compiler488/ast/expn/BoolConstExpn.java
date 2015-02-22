@@ -1,5 +1,7 @@
 package compiler488.ast.expn;
 
+import compiler488.ast.type.BooleanType;
+
 /**
  * Boolean literal constants.
  */
@@ -9,6 +11,8 @@ public class BoolConstExpn extends ConstExpn {
 
     public BoolConstExpn(boolean value) {
         super();
+        
+        this.setType(new BooleanType());
 
         this.value = value;
     }

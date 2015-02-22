@@ -37,9 +37,13 @@ public class AssignStmt extends Stmt {
     }
 
     @Override
-    public void accept(ASTVisitor visitor) {
-        visitor.visit(this);
-        lval.accept(visitor);
-        rval.accept(visitor);
+    public Boolean accept(ASTVisitor<Boolean> visitor) {
+    	if(!lval.accept(visitor)) {
+    		return false;
+    	}
+    	if(!rval.accept(visitor)) {
+    		return false;
+    	}
+        return visitor.visit(this);
     }
 }

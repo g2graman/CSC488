@@ -177,14 +177,15 @@ public class Semantics implements ASTVisitor<Boolean> {
 			
 			if(!argument.isType(parameter.getType())) {
 				// TODO create an error for S36
+				System.err.println("");
 				return false;
 			}
 		}
 		
-		// TODO actually look up the function
+		// TODO S42: look up the entry
 		SymbolTableEntry fn = new SymbolTableEntry(null, null, SymbolTableEntry.Kind.FUNCTION, null);
 		
-		// TODO S42: check that fn is actually declared as a function
+		// TODO S42: check that fn is declared as a function
 		
 		// S28
 		expn.setType(fn.getType());

@@ -8,26 +8,29 @@ package compiler488.ast;
  * @author Dave Wortman, Marsha Chechik, Danny House, Peter McCormick
  */
 public abstract class BaseAST implements AST {
-    /**
-     * Default constructor.
-     *
-     * <p>Add additional information to your AST tree nodes here.</p>
-     */
+	/**
+	 * Default constructor.
+	 *
+	 * <p>
+	 * Add additional information to your AST tree nodes here.
+	 * </p>
+	 */
 	public BaseAST() {
 	}
 
-    /**
-     * A default pretty-printer implementation that uses <code>toString</code>.
-     *
-     * @param p the printer to use
-     */
-    @Override
-    public void prettyPrint(PrettyPrinter p) {
-        p.print(toString());
-    }
+	/**
+	 * A default pretty-printer implementation that uses <code>toString</code>.
+	 *
+	 * @param p
+	 *            the printer to use
+	 */
+	@Override
+	public void prettyPrint(PrettyPrinter p) {
+		p.print(toString());
+	}
 
 	@Override
-    public Boolean accept(ASTVisitor<Boolean> visitor) {
+	public Boolean accept(ASTVisitor<Boolean> visitor) {
 		return visitor.visit(this);
 	}
 

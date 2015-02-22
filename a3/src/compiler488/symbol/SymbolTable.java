@@ -79,7 +79,7 @@ public class SymbolTable {
      * @param kind The kind(procedure, function, array or scalar) of the variable
      * @param node The AST node
      */
-    public void addEntry(String varname, Type type, String kind, AST node, String type_of_scope) {
+    public void addEntry(String varname, Type type, SymbolTableEntry.Kind kind, AST node, String type_of_scope) {
         SymbolTableEntry st_entry = new SymbolTableEntry(varname, type, kind, node);
         entry.put(varname, st_entry);
     }

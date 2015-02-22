@@ -44,7 +44,7 @@ public class ReturnStmt extends Stmt {
 
 	@Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-		if(!value.accept(visitor)) {
+		if(value != null && !value.accept(visitor)) {
 			return false;
 		}
 		return visitor.visit(this);

@@ -49,9 +49,9 @@ public abstract class UnaryExpn extends Expn {
 
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-//    	if(!super.accept(visitor)) {
-//    		return false;
-//    	}
+    	if(!operand.accept(visitor)) {
+    		return false;
+    	}
         return visitor.visit(this);
     }
 }

@@ -29,9 +29,9 @@ public class GetStmt extends Stmt {
 
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-//    	if(!super.accept(visitor)) {
-//    		return false;
-//    	}
+    	if(!inputs.accept(visitor)) {
+    		return false;
+    	}
         return visitor.visit(this);
     }
 }

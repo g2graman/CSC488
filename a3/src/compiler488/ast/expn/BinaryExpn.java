@@ -51,6 +51,13 @@ public abstract class BinaryExpn extends Expn {
 
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
+    	if(!this.left.accept(visitor)) {
+    		return false;
+    	}
+        if(!this.right.accept(visitor)) {
+        	return false;
+        }
+ 
         return visitor.visit(this);
     }
 }

@@ -7,7 +7,6 @@ import compiler488.ast.ASTVisitor;
 import compiler488.ast.AST;
 import compiler488.ast.BasePrettyPrinter;
 import compiler488.ast.PrettyPrinter;
-
 import compiler488.ast.decl.ArrayDeclPart;
 import compiler488.ast.decl.Declaration;
 import compiler488.ast.decl.MultiDeclarations;
@@ -51,7 +50,6 @@ import compiler488.ast.type.BooleanType;
 
 /** Implement semantic analysis for compiler 488
  *  @author  <B> Put your names here </B>
->>>>>>> a5c6e0db5afb6b2be3084771ae2509dc2ad0a4c8
  */
 public class Semantics implements ASTVisitor<Boolean> {
 
@@ -145,7 +143,16 @@ public class Semantics implements ASTVisitor<Boolean> {
 
 	// ADDITIONAL FUNCTIONS TO IMPLEMENT SEMANTIC ANALYSIS GO HERE
 
-	// NOTE: S37 and S39 I don't think we need to do.
+	// NOTE: Semantic actions not required to implement here
+	// TODO: double check these
+	// all of these are done by the AST / parser
+	// S03 
+	// S13 
+	// S14 
+	// S16 
+	// S23
+	// S37, S39
+	// S44, S45
 	
 	@Override
 	public Boolean visit(AST node) {
@@ -153,14 +160,38 @@ public class Semantics implements ASTVisitor<Boolean> {
 		return true;
 	}
 
-	public Boolean visit(ArrayDeclPart decl) {return true;}
-  	public Boolean visit(Declaration decl) {return true;}
-  	public Boolean visit(MultiDeclarations decl) {return true;}
-  	public Boolean visit(RoutineDecl decl) {return true;}
-  	public Boolean visit(ScalarDecl decl) {return true;}
+	public Boolean visit(ArrayDeclPart decl) {
+		// TODO S19
+		// TODO S46, S48
+		return true;
+	}
+  	public Boolean visit(Declaration decl) { return true; }
+  	public Boolean visit(MultiDeclarations decl) {
+  		// TODO S10, S19
+  		// TODO S46, S47,S48
+  		return true;
+  	}
+  	public Boolean visit(RoutineDecl decl) {
+  		// TODO S04,S05, S08,S09
+  		// TODO S11, S12
+  		// TODO S15, S17, S18
+  		// TODO S53
+  		return true;
+  	}
+  	public Boolean visit(ScalarDecl decl) {
+  		// TODO S10
+  		return true;
+  	}
 
-  	public Boolean visit(AnonFuncExpn expn) {return true;}
-  	public Boolean visit(ArithExpn expn) {return true;}
+  	public Boolean visit(AnonFuncExpn expn) {
+  		// TODO S24
+  		return true;
+  	}
+  	public Boolean visit(ArithExpn expn) {
+  		// TODO S31
+  		// TODO S21
+  		return true;
+  	}
 
 	// S32
 	@Override
@@ -177,28 +208,42 @@ public class Semantics implements ASTVisitor<Boolean> {
 		return true;
 	}
 	public Boolean visit(BoolConstExpn expn) {return true;}
-  	public Boolean visit(BoolExpn expn) {return true;}
+  	public Boolean visit(BoolExpn expn) {
+  		// TODO S30
+  		// TODO S20
+  		return true;
+  	}
 
 	// S31
 	@Override
 	public Boolean visit(CompareExpn expn) {
+		// S32 is done before this node is visited
 		if (!expn.getLeft().isInteger()) {
 			// TODO create an error for S31
 			System.err.println("left and right are not integers");
 			return false;
 		}
+		
+		// TODO S20
 
 		return true;
 	}
 	
 	public Boolean visit(ConstExpn expn) {return true;}
-  	public Boolean visit(EqualsExpn expn) {return true;}
+  	public Boolean visit(EqualsExpn expn) {
+  		// TODO S20
+  		return true;
+  	}
   
 	// S36
 	@Override
 	public Boolean visit(FunctionCallExpn expn) {
+		// TODO S40
+		
 		ASTList<ScalarDecl> parameters = new ASTList<ScalarDecl>();
 		ASTList<Expn> args = expn.getArguments();
+
+		// TODO S42
 		
 		// S43
 		if(parameters.size() != args.size()) {
@@ -242,13 +287,19 @@ public class Semantics implements ASTVisitor<Boolean> {
 	}
 	
 	public Boolean visit(IntConstExpn expn) {return true;}
-  	public Boolean visit(NotExpn expn) {return true;}
+  	public Boolean visit(NotExpn expn) {
+  		// TODO S30
+  		// TODO S20
+  		return true;
+  	}
   
   	public Boolean visit(SkipConstExpn expn) {return true;}
 
 	// S38
 	@Override
 	public Boolean visit(SubsExpn expn) {
+		// TODO S31
+		
 		// TODO S38: look up the entry
 		SymbolTableEntry entry = new SymbolTableEntry(null, null, SymbolTableEntry.Kind.SCALAR, null);
 		
@@ -267,31 +318,74 @@ public class Semantics implements ASTVisitor<Boolean> {
 	
 	public Boolean visit(TextConstExpn expn) {return true;}
   	public Boolean visit(UnaryExpn expn) {return true;}
-  	public Boolean visit(UnaryMinusExpn expn) {return true;}
+  	public Boolean visit(UnaryMinusExpn expn) {
+  		// TODO S31
+  		return true;
+  	}
   
-  	public Boolean visit(AssignStmt stmt) {return true;}
-  	public Boolean visit(ExitStmt stmt) {return true;}
-  	public Boolean visit(GetStmt stmt) {return true;}
-  	public Boolean visit(IfStmt stmt) {return true;}
+  	public Boolean visit(AssignStmt stmt) {
+  		// TODO S34
+  		return true;
+  	}
+  	public Boolean visit(ExitStmt stmt) {
+  		// TODO S30
+  		// TODO S50
+  		return true;
+  	}
+  	public Boolean visit(GetStmt stmt) {
+  		// TODO S31
+  		return true;
+  	}
+  	public Boolean visit(IfStmt stmt) {
+  		// TODO S30
+  		return true;
+  	}
   	public Boolean visit(LoopingStmt stmt) {return true;}
   	public Boolean visit(LoopStmt stmt) {return true;}
-  	public Boolean visit(ProcedureCallStmt stmt) {return true;}
-  	public Boolean visit(PutStmt stmt) {return true;}
+  	public Boolean visit(ProcedureCallStmt stmt) {
+  		// TODO S41
+		// TODO S42
+  		// TODO S43
+  		
+  		return true;
+  	}
+	public Boolean visit(Program stmt) {
+		// TODO S00, S01
+		return true;
+	}
+  	public Boolean visit(PutStmt stmt) {
+  		// TODO S31
+  		return true;
+  	}
 
 	// S35
 	@Override
 	public Boolean visit(ReturnStmt stmt) {
-		// TODO S35: use the function associated with this return statement
+		// TODO S51
+		
+		// TODO S52
+		
+		// TODO S35: use the function checked by S51
 		Type functionType = new IntegerType();
 		
 		return stmt.getValue().isType(functionType);
 	}
 
-	public Boolean visit(Scope stmt) {return true;}
+	public Boolean visit(Scope stmt) {
+		// TODO S06, S07
+		// NOTE: you have to make sure that you haven't already created a function 
+		// / procedure scope already since RoutineDecl will be visited before
+		// this
+		return true;
+	}
 	public Boolean visit(Stmt stmt) {return true;}
-	public Boolean visit(WhileDoStmt stmt) {return true;}
+	public Boolean visit(WhileDoStmt stmt) {
+		// TODO S30
+		return true;
+	}
   
 	public Boolean visit(BooleanType type) {return true;}
 	public Boolean visit(IntegerType type) {return true;}
+
   
 }

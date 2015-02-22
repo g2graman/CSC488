@@ -29,9 +29,9 @@ public class MultiDeclarations extends Declaration {
 
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-//    	if(!super.accept(visitor)) {
-//    		return false;
-//    	}
+    	if(!elements.accept(visitor)) {
+    		return false;
+    	}
         return visitor.visit(this);
     }
 }

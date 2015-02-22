@@ -51,9 +51,9 @@ public class ProcedureCallStmt extends Stmt {
 
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-//    	if(!super.accept(visitor)) {
-//    		return false;
-//    	}
+    	if(!arguments.accept(visitor)) {
+    		return false;
+    	}
         return visitor.visit(this);
     }
 }

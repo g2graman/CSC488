@@ -12,9 +12,9 @@ public class UnaryMinusExpn extends UnaryExpn {
 
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-//    	if(!super.accept(visitor)) {
-//    		return false;
-//    	}
+    	if(!super.accept(visitor)) {
+    		return false;
+    	}
         return visitor.visit(this);
     }
 }

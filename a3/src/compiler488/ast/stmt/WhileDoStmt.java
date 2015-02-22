@@ -26,9 +26,11 @@ public class WhileDoStmt extends LoopingStmt {
 
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-//    	if(!super.accept(visitor)) {
-//    		return false;
-//    	}
+    	// looping stmt
+    	if(!super.accept(visitor)) {
+    		return false;
+    	}
+    	// while do
         return visitor.visit(this);
     }
 }

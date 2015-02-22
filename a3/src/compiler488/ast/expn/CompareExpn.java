@@ -28,13 +28,6 @@ public class CompareExpn extends BinaryExpn {
     	if(!super.accept(visitor)) {
     		return false;
     	}
-        
-    	if(!visitor.visit(this.left)) {
-    		return false;
-    	}
-        if(!visitor.visit(this.right)) {
-        	return false;
-        }
     	
         return visitor.visit(this);
     }

@@ -63,10 +63,8 @@ public class SubsExpn extends Expn implements Readable {
 		if(!subscript1.accept(visitor)) {
 			return false;
 		}
-		if(subscript2 != null) {
-			if(!subscript2.accept(visitor)) {
-				return false;
-			}
+		if(subscript2 != null && !subscript2.accept(visitor)) {
+			return false;
 		}
 		return visitor.visit(this);
 	}

@@ -19,9 +19,6 @@ public class ScalarDecl extends Declaration {
 
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-//    	if(!super.accept(visitor)) {
-//    		return false;
-//    	}
         return visitor.visit(this);
     }
 }

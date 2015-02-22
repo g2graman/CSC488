@@ -47,9 +47,12 @@ public class AnonFuncExpn extends Expn {
 
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-//    	if(!super.accept(visitor)) {
-//    		return false;
-//    	}
+    	if(!body.accept(visitor)) {
+    		return false;
+    	}
+    	if(!expn.accept(visitor)) {
+    		return false;
+    	}
         return visitor.visit(this);
     }
     

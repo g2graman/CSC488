@@ -99,9 +99,12 @@ public class RoutineDecl extends Declaration {
     
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-//    	if(!super.accept(visitor)) {
-//    		return false;
-//    	}
+    	if(!parameters.accept(visitor)) {
+    		return false;
+    	}
+    	if(body != null && !body.accept(visitor)) {
+    		return false;
+    	}
         return visitor.visit(this);
     }
 }

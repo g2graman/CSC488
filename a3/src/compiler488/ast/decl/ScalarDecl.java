@@ -17,6 +17,10 @@ public class ScalarDecl extends Declaration {
         p.print(type + " " + name);
     }
 
+    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
+    	return super.accept(visitor);
+    }
+    
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
         return visitor.visit(this);

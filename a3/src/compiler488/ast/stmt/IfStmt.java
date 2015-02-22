@@ -61,17 +61,12 @@ public class IfStmt extends Stmt {
         p.println("end");
     }
     
+    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
+    	return super.accept(visitor);
+    }
+    
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-    	if(!condition.accept(visitor)) {
-    		return false;
-    	}
-    	if(!whenTrue.accept(visitor)) {
-    		return false;
-    	}
-    	if(whenFalse != null && !whenFalse.accept(visitor)) {
-    		return false;
-    	}
         return visitor.visit(this);
     }
 }

@@ -42,11 +42,12 @@ public class ReturnStmt extends Stmt {
         }
     }
 
+    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
+    	return super.accept(visitor);
+    }
+    
 	@Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-		if(value != null && !value.accept(visitor)) {
-			return false;
-		}
 		return visitor.visit(this);
 	}
 }

@@ -58,14 +58,12 @@ public class SubsExpn extends Expn implements Readable {
         p.print("]");
     }
     
+    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
+    	return super.accept(visitor);
+    }
+    
 	@Override
 	public Boolean accept(ASTVisitor<Boolean> visitor) {
-		if(!subscript1.accept(visitor)) {
-			return false;
-		}
-		if(subscript2 != null && !subscript2.accept(visitor)) {
-			return false;
-		}
 		return visitor.visit(this);
 	}
 }

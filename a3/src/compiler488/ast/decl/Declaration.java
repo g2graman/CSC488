@@ -29,6 +29,10 @@ public abstract class Declaration extends Stmt {
         return type;
     }
     
+    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
+    	return super.accept(visitor);
+    }
+    
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
         return visitor.visit(this);

@@ -1,5 +1,6 @@
 package compiler488.ast.decl;
 
+import compiler488.ast.ASTVisitor;
 import compiler488.ast.BaseAST;
 
 /**
@@ -18,4 +19,5 @@ public abstract class DeclarationPart extends BaseAST {
     public String getName() {
         return name;
     }
+    
 }

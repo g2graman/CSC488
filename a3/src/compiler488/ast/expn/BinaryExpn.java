@@ -39,7 +39,7 @@ public abstract class BinaryExpn extends Expn {
     public Expn getRight() {
         return right;
     }
-
+    
     @Override
     public void prettyPrint(PrettyPrinter p) {
         p.print("(");
@@ -49,15 +49,12 @@ public abstract class BinaryExpn extends Expn {
         p.print(")");
     }
 
+    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
+    	return super.accept(visitor);
+    }
+    
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-    	if(!this.left.accept(visitor)) {
-    		return false;
-    	}
-        if(!this.right.accept(visitor)) {
-        	return false;
-        }
- 
         return visitor.visit(this);
     }
 }

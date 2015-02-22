@@ -35,6 +35,10 @@ public class Scope extends Stmt {
         }
         p.print("end");
     }
+    
+    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
+    	return super.accept(visitor);
+    }
 
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {

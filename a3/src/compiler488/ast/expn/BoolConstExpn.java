@@ -27,11 +27,12 @@ public class BoolConstExpn extends ConstExpn {
         return value ? "true" : "false";
     }
 
+    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
+    	return super.accept(visitor);
+    }
+    
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-    	if(!super.accept(visitor)) {
-    		return false;
-    	}
         return visitor.visit(this);
     }
     

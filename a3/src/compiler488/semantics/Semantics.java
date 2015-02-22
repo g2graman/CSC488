@@ -143,6 +143,10 @@ public class Semantics implements ASTVisitor<Boolean> {
 
 	// ADDITIONAL FUNCTIONS TO IMPLEMENT SEMANTIC ANALYSIS GO HERE
 
+	public void outputError(Object type, String msg) {
+		System.err.println(type.getClass().toString() + " ERROR: " + msg);
+	}
+	
 	// NOTE: Semantic actions not required to implement here
 	// TODO: double check these
 	// all of these are done by the AST / parser
@@ -156,7 +160,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 	
 	@Override
 	public Boolean visit(AST node) {
-		System.out.println(node);
+		System.out.println("Hit ASTNode: " + node);
 		return true;
 	}
 
@@ -167,11 +171,24 @@ public class Semantics implements ASTVisitor<Boolean> {
 	}
   	public Boolean visit(Declaration decl) { return true; }
   	public Boolean visit(MultiDeclarations decl) {
+  		
+    	if(!decl.getParts().accept(this)) {
+    		return false;
+    	}
+  		
   		// TODO S10, S19
   		// TODO S46, S47,S48
   		return true;
   	}
   	public Boolean visit(RoutineDecl decl) {
+  		
+    	if(!decl.getParameters().accept(this)) {
+    		return false;
+    	}
+    	if(decl.getBody() != null && !decl.getBody().accept(this)) {
+    		return false;
+    	}
+  		
   		// TODO S04,S05, S08,S09
   		// TODO S11, S12
   		// TODO S15, S17, S18
@@ -184,60 +201,117 @@ public class Semantics implements ASTVisitor<Boolean> {
   	}
 
   	public Boolean visit(AnonFuncExpn expn) {
+  		
+    	if(!expn.getBody().accept(this)) {
+    		return false;
+    	}
+    	if(!expn.getExpn().accept(this)) {
+    		return false;
+    	}
+  		
   		// TODO S24
   		return true;
   	}
   	public Boolean visit(ArithExpn expn) {
+  		
+    	if(!expn.parentAccept(this)) {
+    		return false;
+    	}
+  		
   		// TODO S31
+    	if (!expn.getLeft().isInteger()) {
+    		outputError(expn, "left operand was not an integer");
+    		return false;
+    	}
+    	if (!expn.getRight().isInteger()) {
+    		outputError(expn, "right operand was not an integer");
+    		return false;
+    	}
+ 
   		// TODO S21
+    	expn.setType(new IntegerType());
   		return true;
   	}
 
-	// S32
 	@Override
 	public Boolean visit(BinaryExpn expn) {
-		// 
+		
+    	if(!expn.getLeft().accept(this)) {
+    		return false;
+    	}
+        if(!expn.getRight().accept(this)) {
+        	return false;
+        }
+		
+		// S32
 		if (!(expn.getLeft().isType(expn.getRight().getType()))) {
-			// TODO create an error for S32
 			expn.getLeft().prettyPrint(printer);
-			System.err.print(" and ");
 			expn.getRight().prettyPrint(printer);
-			System.err.println(" are not the same types");
+			outputError(expn, "not of the same types");
 			return false;
 		}
 		return true;
 	}
-	public Boolean visit(BoolConstExpn expn) {return true;}
+	public Boolean visit(BoolConstExpn expn) {
+    	if(!expn.parentAccept(this)) {
+    		return false;
+    	}
+		
+		return true;
+	}
   	public Boolean visit(BoolExpn expn) {
-  		// TODO S30
-  		// TODO S20
+  		
+    	if(!expn.parentAccept(this)) {
+    		return false;
+    	}
+  		
+  		// S30
+  		if (!expn.isBoolean()) {
+  			outputError(expn, "not boolean type");
+  		}
+  		// S20
+  		expn.setType(new BooleanType());
   		return true;
   	}
 
 	// S31
 	@Override
 	public Boolean visit(CompareExpn expn) {
-		// S32 is done before this node is visited
+		// S32
+    	if(!expn.parentAccept(this)) {
+    		return false;
+    	}
+		// S31
 		if (!expn.getLeft().isInteger()) {
-			// TODO create an error for S31
-			System.err.println("left and right are not integers");
+			outputError(expn, "left and right are not integers");
 			return false;
 		}
+		// S20
+		expn.setType(new BooleanType());
 		
-		// TODO S20
-
 		return true;
 	}
 	
 	public Boolean visit(ConstExpn expn) {return true;}
   	public Boolean visit(EqualsExpn expn) {
-  		// TODO S20
+  		
+    	if(!expn.parentAccept(this)) {
+    		return false;
+    	}
+  		// S20
+  		expn.setType(new BooleanType());
   		return true;
   	}
   
 	// S36
 	@Override
 	public Boolean visit(FunctionCallExpn expn) {
+		
+		if(!expn.getArguments().accept(this)) {
+			return false;
+		}
+		
+		
 		// TODO S40
 		
 		ASTList<ScalarDecl> parameters = new ASTList<ScalarDecl>();
@@ -259,7 +333,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 			
 			if(!argument.isType(parameter.getType())) {
 				// TODO create an error for S36
-				System.err.println("");
+				outputError(expn, "type of argument does nto match type of corresponding formal parameter");
 				return false;
 			}
 		}
@@ -286,27 +360,57 @@ public class Semantics implements ASTVisitor<Boolean> {
 		return true;
 	}
 	
-	public Boolean visit(IntConstExpn expn) {return true;}
+	public Boolean visit(IntConstExpn expn) {
+    	if(!expn.parentAccept(this)) {
+    		return false;
+    	}
+		return true;
+	}
   	public Boolean visit(NotExpn expn) {
-  		// TODO S30
-  		// TODO S20
+  		
+    	if(!expn.parentAccept(this)) {
+    		return false;
+    	}
+  		
+  		// S30
+  		if (!expn.isBoolean()) {
+  			outputError(expn, "not boolean type");
+  		}
+  		// S20
+  		expn.setType(new BooleanType());
+  		
   		return true;
   	}
   
-  	public Boolean visit(SkipConstExpn expn) {return true;}
+  	public Boolean visit(SkipConstExpn expn) {
+  	
+    	if(!expn.parentAccept(this)) {
+    		return false;
+    	}
+  		return true;
+  	}
 
 	// S38
 	@Override
 	public Boolean visit(SubsExpn expn) {
-		// TODO S31
 		
+		if(!expn.getSubscript1().accept(this)) {
+			return false;
+		}
+		if(expn.getSubscript2() != null && !expn.getSubscript2().accept(this)) {
+			return false;
+		}
+		
+		// S31
+  		if (!expn.isInteger()) {
+  			outputError(expn, "not integer type");
+  		}
 		// TODO S38: look up the entry
 		SymbolTableEntry entry = new SymbolTableEntry(null, null, SymbolTableEntry.Kind.SCALAR, null);
 		
+		// S38
 		if (entry.getKind() != SymbolTableEntry.Kind.ARRAY) {
-			// TODO create an error for S38
-			System.err.println("The identifier " + expn.getVariable() + 
-					" was not declared as an array!");
+			outputError(expn, "The identifier " + expn.getVariable() + " was not declared as an array!");
 			return false;
 		}
 		
@@ -315,34 +419,92 @@ public class Semantics implements ASTVisitor<Boolean> {
 		
 		return true;
 	}
-	
-	public Boolean visit(TextConstExpn expn) {return true;}
-  	public Boolean visit(UnaryExpn expn) {return true;}
-  	public Boolean visit(UnaryMinusExpn expn) {
-  		// TODO S31
+	public Boolean visit(TextConstExpn expn) {
+    	if(!expn.parentAccept(this)) {
+    		return false;
+    	}
+		
+		return true;
+	}
+  	public Boolean visit(UnaryExpn expn) {
+  		// S30 
+    	if(!expn.getOperand().accept(this)) {
+    		return false;
+    	}
+  		// S20
+  		expn.setType(new BooleanType());
   		return true;
   	}
-  
+  	public Boolean visit(UnaryMinusExpn expn) {
+  		
+    	if(!expn.parentAccept(this)) {
+    		return false;
+    	}
+  		
+  		// S31
+  		if (!expn.isInteger()) {
+  			outputError(expn, "not integer type");
+  		}
+  		return true;
+  	}
+  	
   	public Boolean visit(AssignStmt stmt) {
+    	if(!stmt.getLval().accept(this)) {
+    		return false;
+    	}
+    	if(!stmt.getRval().accept(this)) {
+    		return false;
+    	}
+  		
   		// TODO S34
   		return true;
   	}
   	public Boolean visit(ExitStmt stmt) {
-  		// TODO S30
+  		
+    	if(stmt.getExpn() != null && !stmt.getExpn().accept(this)) {
+    		return false;
+    	}
+  		
+  		// TODO S30	
   		// TODO S50
   		return true;
   	}
-  	public Boolean visit(GetStmt stmt) {
-  		// TODO S31
-  		return true;
-  	}
   	public Boolean visit(IfStmt stmt) {
-  		// TODO S30
+  		// S30
+    	if(!stmt.getCondition().accept(this)) {
+    		return false;
+    	}
+    	if(!stmt.getWhenTrue().accept(this)) {
+    		return false;
+    	}
+    	if(stmt.getWhenFalse() != null && !stmt.getWhenFalse().accept(this)) {
+    		return false;
+    	}
   		return true;
   	}
-  	public Boolean visit(LoopingStmt stmt) {return true;}
-  	public Boolean visit(LoopStmt stmt) {return true;}
+  	public Boolean visit(LoopingStmt stmt) {
+    	if(stmt.getExpn() != null && !stmt.getExpn().accept(this)) {
+    		return false;
+    	}
+    	if(!stmt.getBody().accept(this)) {
+    		return false;
+    	}
+  		
+  		return true;
+  	}
+  	public Boolean visit(LoopStmt stmt) {
+    	if(!stmt.parentAccept(this)) {
+    		return false;
+    	}
+  		
+  		return true;
+  	}
   	public Boolean visit(ProcedureCallStmt stmt) {
+  		
+    	if(!stmt.getArguments().accept(this)) {
+    		return false;
+    	}
+  		
   		// TODO S41
 		// TODO S42
   		// TODO S43
@@ -354,6 +516,11 @@ public class Semantics implements ASTVisitor<Boolean> {
 		return true;
 	}
   	public Boolean visit(PutStmt stmt) {
+  		
+    	if(!stmt.getOutputs().accept(this)) {
+    		return false;
+    	}
+  		
   		// TODO S31
   		return true;
   	}
@@ -361,6 +528,11 @@ public class Semantics implements ASTVisitor<Boolean> {
 	// S35
 	@Override
 	public Boolean visit(ReturnStmt stmt) {
+		
+		if(stmt.getValue() != null && !stmt.getValue().accept(this)) {
+			return false;
+		}
+		
 		// TODO S51
 		
 		// TODO S52
@@ -380,12 +552,26 @@ public class Semantics implements ASTVisitor<Boolean> {
 	}
 	public Boolean visit(Stmt stmt) {return true;}
 	public Boolean visit(WhileDoStmt stmt) {
-		// TODO S30
+    	
+		if(!stmt.parentAccept(this)) {
+    		return false;
+    	}
+		if (!stmt.getExpn().accept(this)) {
+			return false;
+		}
+		if (!stmt.getBody().accept(this)) {
+			return false;
+		}
+		
 		return true;
 	}
   
 	public Boolean visit(BooleanType type) {return true;}
 	public Boolean visit(IntegerType type) {return true;}
+	public Boolean visit(GetStmt stmt) {
+
+		return stmt.getInputs().accept(this);
+	}
 
   
 }

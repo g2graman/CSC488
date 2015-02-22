@@ -24,13 +24,12 @@ public class WhileDoStmt extends LoopingStmt {
         p.println("end");
     }
 
+    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
+    	return super.accept(visitor);
+    }
+    
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-    	// looping stmt
-    	if(!super.accept(visitor)) {
-    		return false;
-    	}
-    	// while do
         return visitor.visit(this);
     }
 }

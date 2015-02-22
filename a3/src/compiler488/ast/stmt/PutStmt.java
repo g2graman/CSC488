@@ -28,11 +28,12 @@ public class PutStmt extends Stmt {
         outputs.prettyPrintCommas(p);
     }
 
+    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
+    	return super.accept(visitor);
+    }
+    
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-    	if(!outputs.accept(visitor)) {
-    		return false;
-    	}
         return visitor.visit(this);
     }
 }

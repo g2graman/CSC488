@@ -18,11 +18,12 @@ public class BoolExpn extends BinaryExpn {
                 (opSymbol == OP_AND));
     }
 
+    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
+    	return super.accept(visitor);
+    }
+    
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-    	if(!super.accept(visitor)) {
-    		return false;
-    	}
         return visitor.visit(this);
     }
     

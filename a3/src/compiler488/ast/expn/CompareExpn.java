@@ -23,12 +23,12 @@ public class CompareExpn extends BinaryExpn {
     }
 
     
+    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
+    	return super.accept(visitor);
+    }
+    
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-    	if(!super.accept(visitor)) {
-    		return false;
-    	}
-    	
         return visitor.visit(this);
     }
 }

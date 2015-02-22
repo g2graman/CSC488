@@ -28,6 +28,10 @@ public class IdentExpn extends Expn implements Readable {
         return ident;
     }
 
+    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
+    	return super.accept(visitor);
+    }
+    
 	@Override
 	public Boolean accept(ASTVisitor<Boolean> visitor) {
 		return visitor.visit(this);

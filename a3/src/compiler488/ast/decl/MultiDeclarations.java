@@ -27,11 +27,12 @@ public class MultiDeclarations extends Declaration {
         elements.prettyPrintCommas(p);
     }
 
+    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
+    	return super.accept(visitor);
+    }
+    
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-    	if(!elements.accept(visitor)) {
-    		return false;
-    	}
         return visitor.visit(this);
     }
 }

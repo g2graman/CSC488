@@ -3,6 +3,7 @@ package compiler488.symbol;
 import java.io.*;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import compiler488.ast.AST;
 import compiler488.ast.type.Type;
@@ -54,19 +55,21 @@ public class Scope {
 		this.scopes.add(tbl); // Add to end for LIFO
 	}
 
+	public SymbolTable getMostLocalScope() {
+		return this.scopes.getLast();
+	}
+
 	/**
 	* Called for popping the most local scope
 	*/
 	public SymbolTable removeScope() {
 		if(!this.scopes.isEmpty())
-			SymbolTable copyScope = this.getMostLocalScope()
+		{
+			SymbolTable copyScope = this.getMostLocalScope();
 			this.scopes.removeLast(); // Pop from end for LIFO
 			return copyScope;
+		}
 		return null;
-	}
-
-	public SymbolTable getMostLocalScope() {
-		return this.scopes.getLast();
 	}
 
 	public LinkedList<SymbolTable> getRemainingScopes() {

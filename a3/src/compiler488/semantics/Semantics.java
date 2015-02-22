@@ -482,7 +482,14 @@ public class Semantics implements ASTVisitor<Boolean> {
     		return false;
     	}
   		
-  		// TODO S34
+  		// S34
+    	if (stmt.getLval() == null || stmt.getRval() == null ) {
+    		return false;
+    	}
+    	if (!stmt.getLval().isType(stmt.getRval().getType())) {
+    		return false;
+    	}
+    	
   		return true;
   	}
   	public Boolean visit(ExitStmt stmt) {

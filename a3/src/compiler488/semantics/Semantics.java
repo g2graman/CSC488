@@ -165,6 +165,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 	}
 
 	public Boolean visit(ArrayDeclPart decl) {
+		
 		// TODO S19
 		// TODO S46, S48
 		return true;
@@ -218,7 +219,7 @@ public class Semantics implements ASTVisitor<Boolean> {
     		return false;
     	}
   		
-  		// TODO S31
+  		// S31
     	if (!expn.getLeft().isInteger()) {
     		outputError(expn, "left operand was not an integer");
     		return false;
@@ -228,7 +229,7 @@ public class Semantics implements ASTVisitor<Boolean> {
     		return false;
     	}
  
-  		// TODO S21
+  		// S21
     	expn.setType(new IntegerType());
   		return true;
   	}
@@ -250,13 +251,16 @@ public class Semantics implements ASTVisitor<Boolean> {
 			outputError(expn, "not of the same types");
 			return false;
 		}
+		
+		
+		
 		return true;
 	}
 	public Boolean visit(BoolConstExpn expn) {
     	if(!expn.parentAccept(this)) {
     		return false;
     	}
-		
+    	expn.setType(new BooleanType());
 		return true;
 	}
   	public Boolean visit(BoolExpn expn) {
@@ -266,8 +270,11 @@ public class Semantics implements ASTVisitor<Boolean> {
     	}
   		
   		// S30
-  		if (!expn.isBoolean()) {
-  			outputError(expn, "not boolean type");
+  		if (!expn.getLeft().isBoolean()) {
+  			outputError(expn, "left operand not boolean type");
+  		}
+  		if (!expn.getRight().isBoolean()) {
+  			outputError(expn, "right operand not boolean type");
   		}
   		// S20
   		expn.setType(new BooleanType());
@@ -277,13 +284,16 @@ public class Semantics implements ASTVisitor<Boolean> {
 	// S31
 	@Override
 	public Boolean visit(CompareExpn expn) {
-		// S32
     	if(!expn.parentAccept(this)) {
     		return false;
     	}
 		// S31
 		if (!expn.getLeft().isInteger()) {
-			outputError(expn, "left and right are not integers");
+			outputError(expn, "left are not integers");
+			return false;
+		}
+		if (!expn.getRight().isInteger()) {
+			outputError(expn, "right are not integers");
 			return false;
 		}
 		// S20
@@ -298,6 +308,15 @@ public class Semantics implements ASTVisitor<Boolean> {
     	if(!expn.parentAccept(this)) {
     		return false;
     	}
+    	
+		// S32
+		if (!(expn.getLeft().isType(expn.getRight().getType()))) {
+			expn.getLeft().prettyPrint(printer);
+			expn.getRight().prettyPrint(printer);
+			outputError(expn, "not of the same types");
+			return false;
+		}
+    	
   		// S20
   		expn.setType(new BooleanType());
   		return true;
@@ -364,6 +383,9 @@ public class Semantics implements ASTVisitor<Boolean> {
     	if(!expn.parentAccept(this)) {
     		return false;
     	}
+    	
+    	// S21
+    	expn.setType(new IntegerType());
 		return true;
 	}
   	public Boolean visit(NotExpn expn) {
@@ -445,6 +467,9 @@ public class Semantics implements ASTVisitor<Boolean> {
   		if (!expn.isInteger()) {
   			outputError(expn, "not integer type");
   		}
+  		
+  		// S21
+  		expn.setType(new IntegerType());
   		return true;
   	}
   	

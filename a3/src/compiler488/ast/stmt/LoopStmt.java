@@ -1,6 +1,7 @@
 package compiler488.ast.stmt;
 
 import compiler488.ast.ASTList;
+import compiler488.ast.ASTVisitor;
 import compiler488.ast.PrettyPrinter;
 
 /**
@@ -20,5 +21,12 @@ public class LoopStmt extends LoopingStmt {
         body.prettyPrintNewlines(p);
         p.println("end");
     }
-
+    
+    @Override
+    public Boolean accept(ASTVisitor<Boolean> visitor) {
+//    	if(!super.accept(visitor)) {
+//    		return false;
+//    	}
+        return visitor.visit(this);
+    }
 }

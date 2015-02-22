@@ -7,8 +7,17 @@ import compiler488.ast.ASTVisitor;
 import compiler488.ast.AST;
 import compiler488.ast.BasePrettyPrinter;
 import compiler488.ast.PrettyPrinter;
+
+import compiler488.ast.decl.ArrayDeclPart;
+import compiler488.ast.decl.Declaration;
+import compiler488.ast.decl.MultiDeclarations;
+import compiler488.ast.decl.RoutineDecl;
 import compiler488.ast.decl.ScalarDecl;
+import compiler488.ast.expn.AnonFuncExpn;
+import compiler488.ast.expn.ArithExpn;
 import compiler488.ast.expn.BinaryExpn;
+import compiler488.ast.expn.BoolConstExpn;
+import compiler488.ast.expn.BoolExpn;
 import compiler488.ast.expn.CompareExpn;
 import compiler488.ast.expn.Expn;
 import compiler488.ast.expn.FunctionCallExpn;
@@ -18,11 +27,31 @@ import compiler488.ast.stmt.ReturnStmt;
 import compiler488.ast.type.IntegerType;
 import compiler488.ast.type.Type;
 import compiler488.symbol.SymbolTableEntry;
+import compiler488.ast.expn.ConstExpn;
+import compiler488.ast.expn.EqualsExpn;
+import compiler488.ast.expn.IntConstExpn;
+import compiler488.ast.expn.NotExpn;
+import compiler488.ast.expn.SkipConstExpn;
+import compiler488.ast.expn.TextConstExpn;
+import compiler488.ast.expn.UnaryExpn;
+import compiler488.ast.expn.UnaryMinusExpn;
+import compiler488.ast.stmt.AssignStmt;
+import compiler488.ast.stmt.ExitStmt;
+import compiler488.ast.stmt.GetStmt;
+import compiler488.ast.stmt.IfStmt;
+import compiler488.ast.stmt.LoopStmt;
+import compiler488.ast.stmt.LoopingStmt;
+import compiler488.ast.stmt.ProcedureCallStmt;
+import compiler488.ast.stmt.Program;
+import compiler488.ast.stmt.PutStmt;
+import compiler488.ast.stmt.Scope;
+import compiler488.ast.stmt.Stmt;
+import compiler488.ast.stmt.WhileDoStmt;
+import compiler488.ast.type.BooleanType;
 
-/**
- * Implement semantic analysis for compiler 488
- * 
- * @author <B> Put your names here </B>
+/** Implement semantic analysis for compiler 488
+ *  @author  <B> Put your names here </B>
+>>>>>>> a5c6e0db5afb6b2be3084771ae2509dc2ad0a4c8
  */
 public class Semantics implements ASTVisitor<Boolean> {
 
@@ -115,6 +144,8 @@ public class Semantics implements ASTVisitor<Boolean> {
 	}
 
 	// ADDITIONAL FUNCTIONS TO IMPLEMENT SEMANTIC ANALYSIS GO HERE
+
+	// NOTE: S37 and S39 I don't think we need to do.
 	
 	@Override
 	public Boolean visit(AST node) {
@@ -122,17 +153,14 @@ public class Semantics implements ASTVisitor<Boolean> {
 		return true;
 	}
 
-	@Override
-	// S31
-	public Boolean visit(CompareExpn expn) {
-		if (!expn.getLeft().isInteger()) {
-			// TODO create an error for S31
-			System.err.println("left and right are not integers");
-			return false;
-		}
+	public Boolean visit(ArrayDeclPart decl) {return true;}
+  	public Boolean visit(Declaration decl) {return true;}
+  	public Boolean visit(MultiDeclarations decl) {return true;}
+  	public Boolean visit(RoutineDecl decl) {return true;}
+  	public Boolean visit(ScalarDecl decl) {return true;}
 
-		return true;
-	}
+  	public Boolean visit(AnonFuncExpn expn) {return true;}
+  	public Boolean visit(ArithExpn expn) {return true;}
 
 	// S32
 	@Override
@@ -148,15 +176,24 @@ public class Semantics implements ASTVisitor<Boolean> {
 		}
 		return true;
 	}
+	public Boolean visit(BoolConstExpn expn) {return true;}
+  	public Boolean visit(BoolExpn expn) {return true;}
 
-	// S35
+	// S31
 	@Override
-	public Boolean visit(ReturnStmt stmt) {
-		Type functionType = new IntegerType();
-		
-		return stmt.getValue().isType(functionType);
-	}
+	public Boolean visit(CompareExpn expn) {
+		if (!expn.getLeft().isInteger()) {
+			// TODO create an error for S31
+			System.err.println("left and right are not integers");
+			return false;
+		}
 
+		return true;
+	}
+	
+	public Boolean visit(ConstExpn expn) {return true;}
+  	public Boolean visit(EqualsExpn expn) {return true;}
+  
 	// S36
 	@Override
 	public Boolean visit(FunctionCallExpn expn) {
@@ -193,6 +230,22 @@ public class Semantics implements ASTVisitor<Boolean> {
 		return true;
 	}
 
+	// S25,S26
+	@Override
+	public Boolean visit(IdentExpn expn) {
+		// TODO S25,S26: look up the entry
+		SymbolTableEntry entry = new SymbolTableEntry(null, null, null, null);
+		
+		expn.setType(entry.getType());
+		
+		return true;
+	}
+	
+	public Boolean visit(IntConstExpn expn) {return true;}
+  	public Boolean visit(NotExpn expn) {return true;}
+  
+  	public Boolean visit(SkipConstExpn expn) {return true;}
+
 	// S38
 	@Override
 	public Boolean visit(SubsExpn expn) {
@@ -212,16 +265,33 @@ public class Semantics implements ASTVisitor<Boolean> {
 		return true;
 	}
 	
-	// S37 and S39 I don't think we need to do.
+	public Boolean visit(TextConstExpn expn) {return true;}
+  	public Boolean visit(UnaryExpn expn) {return true;}
+  	public Boolean visit(UnaryMinusExpn expn) {return true;}
+  
+  	public Boolean visit(AssignStmt stmt) {return true;}
+  	public Boolean visit(ExitStmt stmt) {return true;}
+  	public Boolean visit(GetStmt stmt) {return true;}
+  	public Boolean visit(IfStmt stmt) {return true;}
+  	public Boolean visit(LoopingStmt stmt) {return true;}
+  	public Boolean visit(LoopStmt stmt) {return true;}
+  	public Boolean visit(ProcedureCallStmt stmt) {return true;}
+  	public Boolean visit(PutStmt stmt) {return true;}
 
-	// S25,S26
+	// S35
 	@Override
-	public Boolean visit(IdentExpn expn) {
-		// TODO S25,S26: look up the entry
-		SymbolTableEntry entry = new SymbolTableEntry(null, null, null, null);
+	public Boolean visit(ReturnStmt stmt) {
+		// TODO S35: use the function associated with this return statement
+		Type functionType = new IntegerType();
 		
-		expn.setType(entry.getType());
-		
-		return true;
+		return stmt.getValue().isType(functionType);
 	}
+
+	public Boolean visit(Scope stmt) {return true;}
+	public Boolean visit(Stmt stmt) {return true;}
+	public Boolean visit(WhileDoStmt stmt) {return true;}
+  
+	public Boolean visit(BooleanType type) {return true;}
+	public Boolean visit(IntegerType type) {return true;}
+  
 }

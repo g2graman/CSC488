@@ -1,5 +1,6 @@
 package compiler488.ast.decl;
 
+import compiler488.ast.ASTVisitor;
 import compiler488.ast.stmt.Stmt;
 import compiler488.ast.type.Type;
 
@@ -26,5 +27,13 @@ public abstract class Declaration extends Stmt {
 
     public Type getType() {
         return type;
+    }
+    
+    @Override
+    public Boolean accept(ASTVisitor<Boolean> visitor) {
+//    	if(!super.accept(visitor)) {
+//    		return false;
+//    	}
+        return visitor.visit(this);
     }
 }

@@ -1,6 +1,7 @@
 package compiler488.ast.stmt;
 
 import compiler488.ast.ASTList;
+import compiler488.ast.ASTVisitor;
 import compiler488.ast.expn.Expn;
 
 /**
@@ -32,4 +33,11 @@ public abstract class LoopingStmt extends Stmt {
         return body;
     }
 
+    @Override
+    public Boolean accept(ASTVisitor<Boolean> visitor) {
+//    	if(!super.accept(visitor)) {
+//    		return false;
+//    	}
+        return visitor.visit(this);
+    }
 }

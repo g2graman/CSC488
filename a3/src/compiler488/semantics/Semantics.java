@@ -210,7 +210,8 @@ public class Semantics implements ASTVisitor<Boolean> {
     		return false;
     	}
   		
-  		// TODO S24
+  		// S24
+    	expn.setType(expn.getExpn().getType());
   		return true;
   	}
   	public Boolean visit(ArithExpn expn) {
@@ -490,21 +491,32 @@ public class Semantics implements ASTVisitor<Boolean> {
     		return false;
     	}
   		
-  		// TODO S30	
-  		// TODO S50
+  		// S30	
+  		if (stmt.getExpn() != null && !stmt.getExpn().isBoolean()) {
+  			outputError(stmt, "statment is not a boolean type");
+  			return false;
+  		}
+    	
+    	// TODO S50
   		return true;
   	}
   	public Boolean visit(IfStmt stmt) {
-  		// S30
-    	if(!stmt.getCondition().accept(this)) {
+  		
+    	if(stmt.getCondition() != null && !stmt.getCondition().accept(this)) {
     		return false;
     	}
-    	if(!stmt.getWhenTrue().accept(this)) {
+    	if(stmt.getWhenTrue() != null && !stmt.getWhenTrue().accept(this)) {
     		return false;
     	}
     	if(stmt.getWhenFalse() != null && !stmt.getWhenFalse().accept(this)) {
     		return false;
     	}
+    	
+    	// S30
+    	if (!stmt.getCondition().isBoolean()) {
+    		return false;
+    	}
+    	
   		return true;
   	}
   	public Boolean visit(LoopingStmt stmt) {
@@ -545,8 +557,7 @@ public class Semantics implements ASTVisitor<Boolean> {
     	if(!stmt.getOutputs().accept(this)) {
     		return false;
     	}
-  		
-  		// TODO S31
+
   		return true;
   	}
 
@@ -581,12 +592,17 @@ public class Semantics implements ASTVisitor<Boolean> {
 		if(!stmt.parentAccept(this)) {
     		return false;
     	}
-		if (!stmt.getExpn().accept(this)) {
+		if (stmt.getExpn() != null && !stmt.getExpn().accept(this)) {
 			return false;
 		}
-		if (!stmt.getBody().accept(this)) {
+		if (stmt.getExpn() != null && !stmt.getBody().accept(this)) {
 			return false;
 		}
+		
+    	// S30
+    	if (!stmt.getExpn().isBoolean()) {
+    		return false;
+    	}
 		
 		return true;
 	}
@@ -594,7 +610,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 	public Boolean visit(BooleanType type) {return true;}
 	public Boolean visit(IntegerType type) {return true;}
 	public Boolean visit(GetStmt stmt) {
-
+		
 		return stmt.getInputs().accept(this);
 	}
 

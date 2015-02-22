@@ -1,6 +1,7 @@
 package compiler488.ast.decl;
 
 import compiler488.ast.ASTList;
+import compiler488.ast.ASTVisitor;
 import compiler488.ast.PrettyPrinter;
 import compiler488.ast.type.Type;
 
@@ -26,4 +27,11 @@ public class MultiDeclarations extends Declaration {
         elements.prettyPrintCommas(p);
     }
 
+    @Override
+    public Boolean accept(ASTVisitor<Boolean> visitor) {
+//    	if(!super.accept(visitor)) {
+//    		return false;
+//    	}
+        return visitor.visit(this);
+    }
 }

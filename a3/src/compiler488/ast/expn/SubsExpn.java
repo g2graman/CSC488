@@ -1,5 +1,6 @@
 package compiler488.ast.expn;
 
+import compiler488.ast.ASTVisitor;
 import compiler488.ast.PrettyPrinter;
 import compiler488.ast.Readable;
 
@@ -57,4 +58,11 @@ public class SubsExpn extends Expn implements Readable {
         p.print("]");
     }
 
+    @Override
+    public Boolean accept(ASTVisitor<Boolean> visitor) {
+//    	if(!super.accept(visitor)) {
+//    		return false;
+//    	}
+        return visitor.visit(this);
+    }
 }

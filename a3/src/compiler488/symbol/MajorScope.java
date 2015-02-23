@@ -18,11 +18,11 @@ import compiler488.ast.type.Type;
  *  @author  <B> PUT YOUR NAMES HERE </B>
  */
 
-public class Scope {
+public class MajorScope {
 
 	private LinkedList<SymbolTable> scopes;
 
-    public Scope () {
+    public MajorScope() {
         this.scopes = new LinkedList<SymbolTable>();
     }
 

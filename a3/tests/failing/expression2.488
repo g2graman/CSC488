@@ -1,0 +1,6 @@
+begin
+
+	integer x
+	x <= !@#$%
+
+end

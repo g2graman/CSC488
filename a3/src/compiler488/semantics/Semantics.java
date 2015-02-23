@@ -61,6 +61,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 	public File f;
 	
 	public PrettyPrinter printer;
+	private MajorScope scope = new MajorScope();
 
 	/** SemanticAnalyzer constructor */
 	public Semantics() {
@@ -197,8 +198,13 @@ public class Semantics implements ASTVisitor<Boolean> {
   		return true;
   	}
   	public Boolean visit(ScalarDecl decl) {
-  		// TODO S10
-  		return true;
+  		// S10
+  		SymbolTable mostLocalTable = scope.getMostLocalScope();
+  		if ( mostLocalTable.lookup(decl.getName() == null ) {
+  			mostLocalTable.addEntry(decl.getName(),decl.getType(), SymbolTableEntry.Kind.SCALAR, decl, null);
+  			return true;
+  		}
+  		return false;
   	}
 
   	public Boolean visit(AnonFuncExpn expn) {

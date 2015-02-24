@@ -203,19 +203,24 @@ public class Semantics implements ASTVisitor<Boolean> {
   		return true;
   	}
   	public Boolean visit(RoutineDecl decl) {
-  		
-    	if(!decl.getParameters().accept(this)) {
-    		return false;
+    	Object declBody = decl.getBody();
+
+    	boolean declAcceptBody = true; //Default to true on empty body
+    	if(declBody != null) {
+    		declAcceptBody = decl.getBody().accept(this);
     	}
-    	if(decl.getBody() != null && !decl.getBody().accept(this)) {
-    		return false;
+    	
+    	Object parameters = decl.getParameters();
+    	boolean declParameters = true; //Default to true on paramaterless routine
+    	if(decl.getParameters() != null) {
+    		declParameters = decl.getParameters().accept(this);
     	}
-  		
+
   		// TODO S04,S05, S08,S09
   		// TODO S11, S12
   		// TODO S15, S17, S18
   		// TODO S53
-  		return true;
+  		return declAcceptBody && declParameters;
   	}
   	public Boolean visit(ScalarDecl decl) {
   		// S10
@@ -622,7 +627,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 
 		//Precondition: haven't already created a function 
 		// / procedure scope already since RoutineDecl will be visited before this
-		
+
 		scope.addScope(new SymbolTable());
 		boolean result = stmt.getBody().accept(this);
 		scope.removeScope(); //Remove scope nonetheless for when short-circuiting is removed

@@ -194,6 +194,9 @@ public class Semantics implements ASTVisitor<Boolean> {
     	}
   		
   		// TODO S04,S05, S08,S09
+    	scope.newScope();
+		stmt.getBody().accept(this);
+		scope.removeScope();
   		// TODO S11, S12
   		// TODO S15, S17, S18
   		// TODO S53
@@ -361,7 +364,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 			
 			if(!argument.isType(parameter.getType())) {
 				// TODO create an error for S36
-				outputError(expn, "type of argument does nto match type of corresponding formal parameter");
+				outputError(expn, "type of argument does not match type of corresponding formal parameter");
 				return false;
 			}
 		}
@@ -565,6 +568,10 @@ public class Semantics implements ASTVisitor<Boolean> {
   	}
 	public Boolean visit(Program stmt) {
 		// TODO S00, S01
+		// Program extends scope so I assume this is the same?
+		scope.newScope();
+		stmt.getBody().accept(this);
+		scope.removeScope();
 		return true;
 	}
   	public Boolean visit(PutStmt stmt) {
@@ -596,9 +603,15 @@ public class Semantics implements ASTVisitor<Boolean> {
 
 	public Boolean visit(Scope stmt) {
 		// TODO S06, S07
+		//scope.newScope();
+		//stmt.getBody().accept(this);
+		//scope.removeScope();
 		// NOTE: you have to make sure that you haven't already created a function 
 		// / procedure scope already since RoutineDecl will be visited before
 		// this
+
+		// Actually if RoutineDecl makes a scope before this does this need to
+		// Do anything?
 		return true;
 	}
 	public Boolean visit(Stmt stmt) {return true;}

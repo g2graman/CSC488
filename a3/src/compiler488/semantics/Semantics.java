@@ -212,8 +212,8 @@ public class Semantics implements ASTVisitor<Boolean> {
     	}
   		
   		// TODO S04,S05, S08,S09
-    	scope.newScope();
-		stmt.getBody().accept(this);
+    	scope.addScope(new SymbolTable());
+		decl.getBody().accept(this);
 		scope.removeScope();
   		// TODO S11, S12
   		// TODO S15, S17, S18
@@ -587,7 +587,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 	public Boolean visit(Program stmt) {
 		// TODO S00, S01
 		// Program extends scope so I assume this is the same?
-		scope.newScope();
+		scope.addScope(new SymbolTable());
 		stmt.getBody().accept(this);
 		scope.removeScope();
 		return true;

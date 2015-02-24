@@ -93,6 +93,10 @@ public class ArrayDeclPart extends DeclarationPart {
         return ub2;
     }
 
+    public boolean isTwoDimenstional(){
+        return isTwoDimensional;
+    }
+
     @Override
     public void prettyPrint(PrettyPrinter p) {
         p.print(name + "[" + lb1 + ".." + ub1);

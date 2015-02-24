@@ -170,7 +170,25 @@ public class Semantics implements ASTVisitor<Boolean> {
 	public Boolean visit(ArrayDeclPart decl) {
 		
 		// TODO S19
-		// TODO S46, S48
+		// TODO S48
+
+        SymbolTable mostLocalTable = scope.getMostLocalScope();
+        if (mostLocalTable.lookup(decl.getName()) == null){
+            // TODO: insert into symbol table
+        } else {
+            return false;
+        }
+
+        // S46
+        if (decl.getLowerBoundary1() > decl.getUpperBoundary1()){
+            return false;
+        }
+        if (decl.isTwoDimenstional()){
+            if (decl.getLowerBoundary2() > decl.getUpperBoundary2()){
+                return false;
+            }
+        }
+
 		return true;
 	}
   	public Boolean visit(Declaration decl) { return true; }

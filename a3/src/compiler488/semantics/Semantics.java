@@ -25,7 +25,6 @@ import compiler488.ast.expn.SubsExpn;
 import compiler488.ast.stmt.ReturnStmt;
 import compiler488.ast.type.IntegerType;
 import compiler488.ast.type.Type;
-import compiler488.symbol.SymbolTableEntry;
 import compiler488.ast.expn.ConstExpn;
 import compiler488.ast.expn.EqualsExpn;
 import compiler488.ast.expn.IntConstExpn;
@@ -47,6 +46,9 @@ import compiler488.ast.stmt.Scope;
 import compiler488.ast.stmt.Stmt;
 import compiler488.ast.stmt.WhileDoStmt;
 import compiler488.ast.type.BooleanType;
+import compiler488.symbol.SymbolTableEntry;
+import compiler488.symbol.SymbolTable;
+import compiler488.symbol.MajorScope;
 
 /** Implement semantic analysis for compiler 488
  *  @author  <B> Put your names here </B>
@@ -200,7 +202,7 @@ public class Semantics implements ASTVisitor<Boolean> {
   	public Boolean visit(ScalarDecl decl) {
   		// S10
   		SymbolTable mostLocalTable = scope.getMostLocalScope();
-  		if ( mostLocalTable.lookup(decl.getName() == null ) {
+  		if ( mostLocalTable.lookup(decl.getName()) == null) {
   			mostLocalTable.addEntry(decl.getName(),decl.getType(), SymbolTableEntry.Kind.SCALAR, decl, null);
   			return true;
   		}

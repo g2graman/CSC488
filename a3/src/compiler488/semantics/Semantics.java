@@ -585,8 +585,7 @@ public class Semantics implements ASTVisitor<Boolean> {
   		return true;
   	}
 	public Boolean visit(Program stmt) {
-		// TODO S00, S01
-		// Program extends scope so I assume this is the same?
+		// S00, S01
 		scope.addScope(new SymbolTable());
 		stmt.getBody().accept(this);
 		scope.removeScope();
@@ -621,15 +620,12 @@ public class Semantics implements ASTVisitor<Boolean> {
 
 	public Boolean visit(Scope stmt) {
 		// TODO S06, S07
-		//scope.newScope();
-		//stmt.getBody().accept(this);
-		//scope.removeScope();
-		// NOTE: you have to make sure that you haven't already created a function 
-		// / procedure scope already since RoutineDecl will be visited before
-		// this
 
-		// Actually if RoutineDecl makes a scope before this does this need to
-		// Do anything?
+		//Precondition: haven't already created a function 
+		// / procedure scope already since RoutineDecl will be visited before this
+		scope.addScope(new SymbolTable());
+		stmt.getBody().accept(this);
+		scope.removeScope();
 		return true;
 	}
 	public Boolean visit(Stmt stmt) {return true;}

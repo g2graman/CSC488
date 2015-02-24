@@ -212,9 +212,6 @@ public class Semantics implements ASTVisitor<Boolean> {
     	}
   		
   		// TODO S04,S05, S08,S09
-    	scope.addScope(new SymbolTable());
-		decl.getBody().accept(this);
-		scope.removeScope();
   		// TODO S11, S12
   		// TODO S15, S17, S18
   		// TODO S53
@@ -586,10 +583,12 @@ public class Semantics implements ASTVisitor<Boolean> {
   	}
 	public Boolean visit(Program stmt) {
 		// S00, S01
-		scope.addScope(new SymbolTable());
-		stmt.getBody().accept(this);
-		scope.removeScope();
-		return true;
+		if(stmt.getBody() == null) {
+			return false;
+		}
+
+		boolean result = stmt.getBody().accept(this);
+		return result;
 	}
   	public Boolean visit(PutStmt stmt) {
   		
@@ -623,10 +622,11 @@ public class Semantics implements ASTVisitor<Boolean> {
 
 		//Precondition: haven't already created a function 
 		// / procedure scope already since RoutineDecl will be visited before this
+		
 		scope.addScope(new SymbolTable());
-		stmt.getBody().accept(this);
-		scope.removeScope();
-		return true;
+		boolean result = stmt.getBody().accept(this);
+		scope.removeScope(); //Remove scope nonetheless for when short-circuiting is removed
+		return result;
 	}
 	public Boolean visit(Stmt stmt) {return true;}
 	public Boolean visit(WhileDoStmt stmt) {

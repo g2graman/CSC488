@@ -792,7 +792,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 	}
 
 	public Boolean visit(Scope stmt) {
-		// TODO S06, S07
+		// S06, S07
 
 		//Precondition: haven't already created a function 
 		// / procedure scope already since RoutineDecl will be visited before this

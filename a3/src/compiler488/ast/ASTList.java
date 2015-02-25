@@ -30,6 +30,7 @@ public class ASTList<E extends AST> extends LinkedList<E> implements AST {
         super();
     }
 
+
     /**
      * Create an AST list and add one element to begin with.
      *

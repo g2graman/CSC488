@@ -1,0 +1,6 @@
+% Test an empty while loop
+
+begin
+        while true do
+        end
+end

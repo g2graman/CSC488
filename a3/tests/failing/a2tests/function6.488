@@ -1,0 +1,7 @@
+% Anonymous function without yield
+
+begin
+    {
+    put "hello world", skip
+    }
+end

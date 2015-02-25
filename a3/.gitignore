@@ -1,5 +1,6 @@
 # bin
 bin/
+dist/
 
 # generated parser files, prevents the git changelog from being
 # polluted

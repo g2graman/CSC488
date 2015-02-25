@@ -1,6 +1,9 @@
 package compiler488.semantics;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import compiler488.ast.ASTList;
 import compiler488.ast.ASTVisitor;
@@ -9,9 +12,11 @@ import compiler488.ast.BasePrettyPrinter;
 import compiler488.ast.PrettyPrinter;
 import compiler488.ast.decl.ArrayDeclPart;
 import compiler488.ast.decl.Declaration;
+import compiler488.ast.decl.DeclarationPart;
 import compiler488.ast.decl.MultiDeclarations;
 import compiler488.ast.decl.RoutineDecl;
 import compiler488.ast.decl.ScalarDecl;
+import compiler488.ast.decl.ScalarDeclPart;
 import compiler488.ast.expn.AnonFuncExpn;
 import compiler488.ast.expn.ArithExpn;
 import compiler488.ast.expn.BinaryExpn;
@@ -146,8 +151,12 @@ public class Semantics implements ASTVisitor<Boolean> {
 
 	// ADDITIONAL FUNCTIONS TO IMPLEMENT SEMANTIC ANALYSIS GO HERE
 
-	public void outputError(Object type, String msg) {
-		System.err.println(type.getClass().toString() + " ERROR: " + msg);
+	public void outputError(Object obj, String format, Object... inputArgs) {
+		List<Object> args = new ArrayList<Object>();
+		args.add(obj.getClass().toString());
+		args.addAll(Arrays.asList(inputArgs));
+		
+		System.err.println(String.format("ERROR (%s): " + format, args));
 	}
 	
 	// NOTE: Semantic actions not required to implement here
@@ -175,7 +184,7 @@ public class Semantics implements ASTVisitor<Boolean> {
             //TODO: check the type?
             mostLocalTable.addEntry(decl.getName(), null, SymbolTableEntry.Kind.ARRAY, decl, null);
         } else {
-            outputError(decl, "Symbol already declared");
+            outputError(decl, "Symbol '%s' already declared", decl.getName());
             return false;
         }
 
@@ -194,9 +203,24 @@ public class Semantics implements ASTVisitor<Boolean> {
 		return true;
 	}
   	public Boolean visit(Declaration decl) { return true; }
+  	
   	public Boolean visit(MultiDeclarations decl) {
-        return decl.getParts().accept(this);
+  		ASTList<DeclarationPart> parts = decl.getParts();
+  		
+  		Boolean declarationsValid = true;
+  		for(DeclarationPart part : parts) {
+  			if(part instanceof ScalarDeclPart) {
+  				Boolean scalar = this.visit(new ScalarDecl(part.getName(), decl.getType()));
+  				declarationsValid = declarationsValid && scalar;
+  			} else {
+  				Boolean array = this.visit(part);
+  				declarationsValid = declarationsValid && array;
+  			}
+  		}
+  		
+        return declarationsValid;
   	}
+  	
   	public Boolean visit(RoutineDecl decl) {
     	Scope declBody = decl.getBody();
 
@@ -207,8 +231,8 @@ public class Semantics implements ASTVisitor<Boolean> {
     	
     	ASTList<ScalarDecl> parameters = decl.getParameters();
     	boolean declParameters = true; //Default to true on paramaterless routine
-    	if(decl.getParameters() != null) {
-    		declParameters = decl.getParameters().accept(this);
+    	if(parameters != null) {
+    		declParameters = parameters.accept(this);
     	}
   		// TODO S04,S05, S08,S09
   		// S11, S12
@@ -304,9 +328,12 @@ public class Semantics implements ASTVisitor<Boolean> {
 		return true;
 	}
 	public Boolean visit(BoolConstExpn expn) {
-    	if(!expn.parentAccept(this)) {
-    		return false;
-    	}
+		// this is annoying in the output :P
+//    	if(!expn.parentAccept(this)) {
+//    		return false;
+//    	}
+		
+		// S20
     	expn.setType(new BooleanType());
 		return true;
 	}
@@ -377,13 +404,12 @@ public class Semantics implements ASTVisitor<Boolean> {
 			return false;
 		}
 		
-		
 		// S40
         SymbolTable mostLocalTable = scope.getMostLocalScope();
         SymbolTableEntry entry = mostLocalTable.lookup(expn.getIdent());
         RoutineDecl decl = (RoutineDecl) entry.getNode();
 
-        if (entry == null){
+        if (entry == null) {
             outputError(expn, "function not declared");
             return false;
         }
@@ -424,18 +450,24 @@ public class Semantics implements ASTVisitor<Boolean> {
 	// S25,S26
 	@Override
 	public Boolean visit(IdentExpn expn) {
-		// TODO S25,S26: look up the entry
-		SymbolTableEntry entry = new SymbolTableEntry(null, null, null, null);
+		SymbolTableEntry entry = scope.getMostLocalScope().lookup(expn.getIdent());
 		
+		if(entry == null) {
+			// TODO error message for S25, S26
+			outputError(expn, String.format("The identifier '%s' was not declared!", expn.getIdent()));
+			
+			return false;
+		}
 		expn.setType(entry.getType());
 		
 		return true;
 	}
 	
 	public Boolean visit(IntConstExpn expn) {
-    	if(!expn.parentAccept(this)) {
-    		return false;
-    	}
+		// this is quite annoying in the output :P
+//    	if(!expn.parentAccept(this)) {
+//    		return false;
+//    	}
     	
     	// S21
     	expn.setType(new IntegerType());
@@ -480,10 +512,15 @@ public class Semantics implements ASTVisitor<Boolean> {
   		if (!expn.isInteger()) {
   			outputError(expn, "not integer type");
   		}
-		// TODO S38: look up the entry
-		SymbolTableEntry entry = new SymbolTableEntry(null, null, SymbolTableEntry.Kind.SCALAR, null);
+  		
+		SymbolTableEntry entry = scope.getMostLocalScope().lookup(expn.getVariable());
 		
 		// S38
+		if (entry == null) {
+			// TODO error message for undeclared array identifier
+			
+			return false;
+		}
 		if (entry.getKind() != SymbolTableEntry.Kind.ARRAY) {
 			outputError(expn, "The identifier " + expn.getVariable() + " was not declared as an array!");
 			return false;
@@ -630,6 +667,9 @@ public class Semantics implements ASTVisitor<Boolean> {
 		if(stmt.getBody() == null) {
 			return false;
 		}
+		
+		// visit scope
+		stmt.parentAccept(this);
 
 		boolean result = stmt.getBody().accept(this);
 		return result;
@@ -668,7 +708,9 @@ public class Semantics implements ASTVisitor<Boolean> {
 		// / procedure scope already since RoutineDecl will be visited before this
 
 		scope.addScope(new SymbolTable());
+		
 		boolean result = stmt.getBody().accept(this);
+		
 		scope.removeScope(); //Remove scope nonetheless for when short-circuiting is removed
 		return result;
 	}

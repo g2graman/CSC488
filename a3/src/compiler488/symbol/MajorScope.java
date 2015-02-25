@@ -1,12 +1,6 @@
 package compiler488.symbol;
 
-import java.io.*;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.LinkedList;
-
-import compiler488.ast.AST;
-import compiler488.ast.type.Type;
 
 /** Symbol Table
  *  This almost empty class is a framework for implementing

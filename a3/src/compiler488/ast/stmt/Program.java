@@ -14,15 +14,13 @@ public class Program extends Scope {
     public Program(Scope scope) {
         super(scope.getBody());
     }
+    
+    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
+    	return super.accept(visitor);
+    }
 
     @Override
     public Boolean accept(ASTVisitor<Boolean> visitor) {
-    	// visit program
-        if(!visitor.visit(this)) {
-        	return false;
-        }
-        
-        // visit scope
-        return super.accept(visitor);
+        return visitor.visit(this);
     }
 }

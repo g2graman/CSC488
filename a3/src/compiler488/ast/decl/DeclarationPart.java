@@ -1,6 +1,5 @@
 package compiler488.ast.decl;
 
-import compiler488.ast.ASTVisitor;
 import compiler488.ast.BaseAST;
 
 /**

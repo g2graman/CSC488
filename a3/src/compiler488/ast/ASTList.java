@@ -23,6 +23,9 @@ public class ASTList<E extends AST> extends LinkedList<E> implements AST {
 	private int line;
 	private int column;
 
+	private int line;
+	private int column;
+    
     /**
      * Create an empty AST list
      */
@@ -41,6 +44,12 @@ public class ASTList<E extends AST> extends LinkedList<E> implements AST {
         append(elem);
     }
 
+    
+	public void setLocation(int line, int column) {
+		this.line = line;
+		this.column = column;
+	}
+    
     /**
      * Append an element to the list, while return the list itself.
      *

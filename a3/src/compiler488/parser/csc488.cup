@@ -179,11 +179,11 @@ start with program;
  */
 
 program   ::= scope:SCOPE
-      {: RESULT = new Program( SCOPE ); :}
+      {: RESULT = new Program( SCOPE ); RESULT.setLocation(SCOPEleft, SCOPEright); :}
       ;       // the main program
 
 scope   ::= BEGIN declarationsAndStatements:BODY END  // non empty scope
-      {: RESULT = new Scope( BODY ); :}
+      {: RESULT = new Scope( BODY ); RESULT.setLocation(BODYleft, BODYright); :}
 
       | BEGIN END       // empty scope
       {: RESULT = new Scope(); :}
@@ -191,103 +191,103 @@ scope   ::= BEGIN declarationsAndStatements:BODY END  // non empty scope
 
 //  sequence of arbitrarily intermixed declarations and statements
 declarationsAndStatements ::= statement:STMT
-        {: RESULT = new ASTList<Stmt>( STMT ); :}
+        {: RESULT = new ASTList<Stmt>( STMT ); RESULT.setLocation(STMTleft, STMTright); :}
 
         | declaration:DECL
-        {: RESULT = new ASTList<Stmt>( DECL ); :}
+        {: RESULT = new ASTList<Stmt>( DECL ); RESULT.setLocation(DECLleft, DECLright); :}
 
         | declarationsAndStatements:STMT_LIST statement:STMT
-        {: RESULT = STMT_LIST.append( STMT ); :}
+        {: RESULT = STMT_LIST.append( STMT ); RESULT.setLocation(STMT_LISTleft, STMTright); :}
 
         | declarationsAndStatements:STMT_LIST declaration:DECL
-        {: RESULT = STMT_LIST.append( DECL ); :}
+        {: RESULT = STMT_LIST.append( DECL ); RESULT.setLocation(STMT_LISTleft, DECLright); :}
         ;
 
 statement ::= variable:LVALUE LESS EQUAL expression:RVALUE        // assignment statement
-    {: RESULT = new AssignStmt( LVALUE, RVALUE ); :}
+    {: RESULT = new AssignStmt( LVALUE, RVALUE ); RESULT.setLocation(LVALUEleft, LVALUEright); :}
 
     | IF expression:EXPN THEN declarationsAndStatements:TRUECASE END  // if statements
-    {: RESULT = new IfStmt( EXPN, TRUECASE ); :}
+    {: RESULT = new IfStmt( EXPN, TRUECASE ); RESULT.setLocation(EXPNleft, EXPNright); :}
 
     | IF expression:EXPN THEN declarationsAndStatements:TRUECASE ELSE declarationsAndStatements:FALSECASE END
-    {: RESULT = new IfStmt( EXPN, TRUECASE, FALSECASE ); :}
+    {: RESULT = new IfStmt( EXPN, TRUECASE, FALSECASE ); RESULT.setLocation(EXPNleft, EXPNright); :}
 
     | WHILE expression:EXPN DO declarationsAndStatements:BODY END // while statement
-    {: RESULT = new WhileDoStmt( EXPN, BODY); :}
+    {: RESULT = new WhileDoStmt( EXPN, BODY); RESULT.setLocation(EXPNleft, EXPNright); :}
 
     | LOOP declarationsAndStatements:BODY END     // loop statement
-    {: RESULT = new LoopStmt( BODY ); :}
+    {: RESULT = new LoopStmt( BODY ); RESULT.setLocation(BODYleft, BODYright); :}
 
     | EXIT              // exit statements
     {: RESULT = new ExitStmt(); :}
 
     | EXIT WHEN expression:EXPN
-    {: RESULT = new ExitStmt( EXPN ); :}
+    {: RESULT = new ExitStmt( EXPN ); RESULT.setLocation(EXPNleft, EXPNright); :}
 
     | RETURN              // return statements
     {: RESULT = new ReturnStmt(); :}
 
     | RETURN L_PAREN expression:VALUE R_PAREN
-    {: RESULT = new ReturnStmt( VALUE ); :}
+    {: RESULT = new ReturnStmt( VALUE ); RESULT.setLocation(VALUEleft, VALUEright); :}
 
     | PUT outputs:OUT_LIST            // input/output statments
-    {: RESULT = new PutStmt( OUT_LIST ); :}
+    {: RESULT = new PutStmt( OUT_LIST ); RESULT.setLocation(OUT_LISTleft, OUT_LISTright); :}
 
     | GET  inputs:IN_LIST
-    {: RESULT = new GetStmt( IN_LIST ); :}
+    {: RESULT = new GetStmt( IN_LIST ); RESULT.setLocation(IN_LISTleft, IN_LISTright); :}
 
     | procedureCall:CALLNAME            // procedure call
-    {: RESULT = CALLNAME; :}
+    {: RESULT = CALLNAME; RESULT.setLocation(CALLNAMEleft, CALLNAMEright); :}
 
     | scope:SCOPE             // embedded scope
-    {: RESULT = SCOPE; :}
+    {: RESULT = SCOPE; RESULT.setLocation(SCOPEleft, SCOPEright); :}
     ;
 
 procedureCall ::= IDENT:NAME          // call procedure with no parameters
-    {: RESULT = new ProcedureCallStmt( NAME ); :}
+    {: RESULT = new ProcedureCallStmt( NAME ); RESULT.setLocation(NAMEleft, NAMEright); :}
 
     | IDENT:NAME L_PAREN arguments:ARGS R_PAREN   // call procedure with parameters
-    {: RESULT = new ProcedureCallStmt( NAME, ARGS ); :}
+    {: RESULT = new ProcedureCallStmt( NAME, ARGS ); RESULT.setLocation(ARGSleft, ARGSright); :}
     ;
 
 declaration ::= type:TYPE variablenames:VAR_LIST      // declare scalar/array variables
-    {: RESULT = new MultiDeclarations( TYPE, VAR_LIST ); :}
+    {: RESULT = new MultiDeclarations( TYPE, VAR_LIST ); RESULT.setLocation(TYPEleft, TYPEright); :}
 
     | type:TYPE FUNCTION IDENT:NAME scope:SCOPE   // declare function
-    {: RESULT = new RoutineDecl( NAME, TYPE, SCOPE ); :}
+    {: RESULT = new RoutineDecl( NAME, TYPE, SCOPE ); RESULT.setLocation(NAMEleft, NAMEright); :}
 
     | type:TYPE FUNCTION IDENT:NAME L_PAREN parameters:PARAM_LIST R_PAREN scope:SCOPE
-    {: RESULT = new RoutineDecl( NAME, TYPE, PARAM_LIST, SCOPE ); :}
+    {: RESULT = new RoutineDecl( NAME, TYPE, PARAM_LIST, SCOPE ); RESULT.setLocation(NAMEleft, NAMEright); :}
 
     | PROCEDURE IDENT:NAME scope:SCOPE      //  declare procedure
-    {: RESULT =  new RoutineDecl( NAME, SCOPE ); :}
+    {: RESULT =  new RoutineDecl( NAME, SCOPE ); RESULT.setLocation(NAMEleft, NAMEright); :}
 
     | PROCEDURE IDENT:NAME L_PAREN parameters:PARAM_LIST R_PAREN scope:SCOPE
-    {: RESULT =  new RoutineDecl( NAME, PARAM_LIST, SCOPE ); :}
+    {: RESULT =  new RoutineDecl( NAME, PARAM_LIST, SCOPE ); RESULT.setLocation(NAMEleft, NAMEright); :}
     ;
 
 variablenames ::= variablename:VAR_NAME         // list of variables being declared
-    {: RESULT = new ASTList<DeclarationPart>( VAR_NAME ); :}
+    {: RESULT = new ASTList<DeclarationPart>( VAR_NAME ); RESULT.setLocation(VAR_NAMEleft, VAR_NAMEright); :}
 
     | variablenames:VAR_LIST COMMA variablename:VAR_NAME
-    {: RESULT = VAR_LIST.append( VAR_NAME ); :}
+    {: RESULT = VAR_LIST.append( VAR_NAME ); RESULT.setLocation(VAR_LISTleft, VAR_LISTright); :}
     ;
 
 variablename  ::= IDENT:NAME            // scalar variable
-    {: RESULT = new ScalarDeclPart( NAME ); :}
+    {: RESULT = new ScalarDeclPart( NAME ); RESULT.setLocation(NAMEleft, NAMEright); :}
 
     | IDENT:NAME L_SQUARE bound:UPPERB R_SQUARE     // one dimensional array variable
-    {: RESULT = new ArrayDeclPart( NAME, UPPERB ); :}
+    {: RESULT = new ArrayDeclPart( NAME, UPPERB ); RESULT.setLocation(UPPERBleft, UPPERBright); :}
 
     | IDENT:NAME L_SQUARE bound:LOWERB COMMA bound:UPPERB  R_SQUARE // two dimensional array variable
-    {: RESULT = new ArrayDeclPart( NAME, LOWERB, UPPERB ); :}
+    {: RESULT = new ArrayDeclPart( NAME, LOWERB, UPPERB ); RESULT.setLocation(LOWERBleft, UPPERBright); :}
     ;
 
 bound   ::= INTCONST:VAL          // positive array bound
     {: RESULT = new Integer[] { 1, VAL }; :}
 
     | generalBound:LOWERB DOT DOT generalBound:UPPERB   // positive or negative array bounds
-    {: RESULT = new Integer[] { UPPERB, LOWERB }; :}
+    {: RESULT = new Integer[] { LOWERB, UPPERB }; :}
     ;
 
 generalBound  ::= INTCONST:VAL    // positive array bound
@@ -305,144 +305,144 @@ type    ::= INTEGER     // integer type
     ;
 
 outputs   ::= output:OUT      // list of output expressions
-    {: RESULT = new ASTList<Printable>( OUT ); :}
+    {: RESULT = new ASTList<Printable>( OUT ); RESULT.setLocation(OUTleft, OUTright); :}
 
     | outputs:OUT_LIST COMMA output:OUT
-    {: RESULT = OUT_LIST.append( OUT ); :}
+    {: RESULT = OUT_LIST.append( OUT ); RESULT.setLocation(OUT_LISTleft, OUTright); :}
     ;
 
 output    ::= expression:EXPN   // integer expression
-    {: RESULT = EXPN; :}
+    {: RESULT = EXPN; RESULT.setLocation(EXPNleft, EXPNright); :}
 
     | TEXTCONST:TXT   // text constant
-    {: RESULT = new TextConstExpn( TXT ); :}
+    {: RESULT = new TextConstExpn( TXT ); RESULT.setLocation(TXTleft, TXTright); :}
 
     | SKIP      // skip pseudo constant
     {: RESULT = new SkipConstExpn(); :}
     ;
 
 inputs    ::= variable:VAR_EXPN   // list of variables being read into
-    {: RESULT = new ASTList<Expn>( VAR_EXPN ); :}
+    {: RESULT = new ASTList<Expn>( VAR_EXPN ); RESULT.setLocation(VAR_EXPNleft, VAR_EXPNright); :}
 
     | inputs:IN_LIST COMMA variable:IN
-    {: RESULT = IN_LIST.append( IN ); :}
+    {: RESULT = IN_LIST.append( IN ); RESULT.setLocation(IN_LISTleft, INright); :}
     ;
 
 arguments ::= expression:EXPN     // list of function/procedure arguments
-    {: RESULT = new ASTList<Expn>( EXPN ); :}
+    {: RESULT = new ASTList<Expn>( EXPN ); RESULT.setLocation(EXPNleft, EXPNright); :}
 
     | arguments:ARGS COMMA expression:EXPN
-    {: RESULT = ARGS.append( EXPN ); :}
+    {: RESULT = ARGS.append( EXPN ); RESULT.setLocation(ARGSleft, EXPNright); :}
     ;
 
 parameters  ::= parameter:PARAMVAL      // list of function/procedure formal parameters
-    {: RESULT = new ASTList<ScalarDecl>( PARAMVAL ); :}
+    {: RESULT = new ASTList<ScalarDecl>( PARAMVAL ); RESULT.setLocation(PARAMVALleft, PARAMVALright); :}
 
     | parameters:PARAMS COMMA parameter:PARAMITEM
-    {: RESULT = PARAMS.append( PARAMITEM ); :}
+    {: RESULT = PARAMS.append( PARAMITEM ); RESULT.setLocation(PARAMSleft, PARAMITEMright); :}
     ;
 
 parameter ::= type:TYPE IDENT:NAME      // declare one parameter
-    {: RESULT = new ScalarDecl( NAME, TYPE ); :}
+    {: RESULT = new ScalarDecl( NAME, TYPE ); RESULT.setLocation(NAMEleft, NAMEright); :}
     ;
 
 expression  ::= conjunction:EXPRSN      // disjunctions, associate left-to-right
-    {: RESULT = EXPRSN; :}
+    {: RESULT = EXPRSN; RESULT.setLocation(EXPRSNleft, EXPRSNright); :}
 
     | expression:LEFT OR conjunction:RIGHT
-    {: RESULT = new BoolExpn( "|", LEFT, RIGHT ); :}
+    {: RESULT = new BoolExpn( "|", LEFT, RIGHT ); RESULT.setLocation(LEFTleft, RIGHTright); :}
     ;
 
 conjunction ::= negation:EXPRSN     // conjunctions, associate left-to-right
-    {: RESULT = EXPRSN; :}
+    {: RESULT = EXPRSN; RESULT.setLocation(EXPRSNleft, EXPRSNright); :}
 
     | conjunction:LEFT AND negation:RIGHT
-    {: RESULT = new BoolExpn( "&", LEFT, RIGHT ); :}
+    {: RESULT = new BoolExpn( "&", LEFT, RIGHT ); RESULT.setLocation(LEFTleft, RIGHTright); :}
     ;
 
 negation  ::= compareExpn:EXPRSN      // negations
-    {: RESULT = EXPRSN; :}
+    {: RESULT = EXPRSN; RESULT.setLocation(EXPRSNleft, EXPRSNright); :}
 
     | NOT negation:EXPRSN
-    {: RESULT = new NotExpn( EXPRSN ); :}
+    {: RESULT = new NotExpn( EXPRSN ); RESULT.setLocation(EXPRSNleft, EXPRSNright); :}
     ;
 
 // type is Expn
 compareExpn ::= arithExpn:EXPRSN      // comparisons, do not associate
-    {: RESULT = EXPRSN; :}
+    {: RESULT = EXPRSN; RESULT.setLocation(EXPRSNleft, EXPRSNright); :}
 
     | arithExpn:LEFT EQUAL arithExpn:RIGHT
-    {: RESULT = new EqualsExpn( "=", LEFT, RIGHT ); :}
+    {: RESULT = new EqualsExpn( "=", LEFT, RIGHT ); RESULT.setLocation(LEFTleft, RIGHTright); :}
 
-    |   arithExpn:LEFT NOT EQUAL arithExpn:RIGHT
-    {: RESULT = new EqualsExpn( "!=", LEFT, RIGHT ); :}
+    | arithExpn:LEFT NOT EQUAL arithExpn:RIGHT
+    {: RESULT = new EqualsExpn( "!=", LEFT, RIGHT ); RESULT.setLocation(LEFTleft, RIGHTright); :}
 
     | arithExpn:LEFT LESS arithExpn:RIGHT
-    {: RESULT = new CompareExpn( "<", LEFT, RIGHT ); :}
+    {: RESULT = new CompareExpn( "<", LEFT, RIGHT ); RESULT.setLocation(LEFTleft, RIGHTright); :}
 
     | arithExpn:LEFT LESS EQUAL arithExpn:RIGHT
-    {: RESULT = new CompareExpn( "<=", LEFT, RIGHT ); :}
+    {: RESULT = new CompareExpn( "<=", LEFT, RIGHT ); RESULT.setLocation(LEFTleft, RIGHTright); :}
 
     | arithExpn:LEFT GREATER arithExpn:RIGHT
-    {: RESULT = new CompareExpn( ">", LEFT, RIGHT ); :}
+    {: RESULT = new CompareExpn( ">", LEFT, RIGHT ); RESULT.setLocation(LEFTleft, RIGHTright); :}
 
     | arithExpn:LEFT GREATER EQUAL arithExpn:RIGHT
-    {: RESULT = new CompareExpn( ">=", LEFT, RIGHT ); :}
+    {: RESULT = new CompareExpn( ">=", LEFT, RIGHT ); RESULT.setLocation(LEFTleft, RIGHTright); :}
     ;
 
 // type is ArithExpn
 arithExpn ::= term:EXPRSN       // expressions, associate + , - left-to-right
-    {: RESULT = EXPRSN; :}
+    {: RESULT = EXPRSN; RESULT.setLocation(EXPRSNleft, EXPRSNright); :}
 
     | arithExpn:LEFT  PLUS  term:RIGHT
-    {: RESULT = new ArithExpn( "+", LEFT, RIGHT ); :}
+    {: RESULT = new ArithExpn( "+", LEFT, RIGHT ); RESULT.setLocation(LEFTleft, RIGHTright); :}
 
     | arithExpn:LEFT  MINUS term:RIGHT
-    {: RESULT = new ArithExpn( "-", LEFT, RIGHT ); :}
+    {: RESULT = new ArithExpn( "-", LEFT, RIGHT ); RESULT.setLocation(LEFTleft, RIGHTright); :}
     ;
 
 // type is expn
 term    ::= factor:EXPRSN       // terms, associate * , /   left-to-right
-    {: RESULT = EXPRSN; :}
+    {: RESULT = EXPRSN; RESULT.setLocation(EXPRSNleft, EXPRSNright); :}
 
     | term:LEFT TIMES factor:RIGHT
-    {: RESULT = new ArithExpn( "*", LEFT, RIGHT ); :}
+    {: RESULT = new ArithExpn( "*", LEFT, RIGHT ); RESULT.setLocation(LEFTleft, RIGHTright); :}
 
     | term:LEFT DIVIDE factor:RIGHT
-    {: RESULT = new ArithExpn( "/", LEFT, RIGHT ); :}
+    {: RESULT = new ArithExpn( "/", LEFT, RIGHT ); RESULT.setLocation(LEFTleft, RIGHTright); :}
     ;
 
 // factor type is expression
 factor    ::= primary:EXPRSN        // unary minus
-    {: RESULT = EXPRSN; :}
+    {: RESULT = EXPRSN; RESULT.setLocation(EXPRSNleft, EXPRSNright); :}
 
     | MINUS factor:EXPN
-        {: RESULT = new UnaryMinusExpn( EXPN ); :}
+    {: RESULT = new UnaryMinusExpn( EXPN ); RESULT.setLocation(EXPNleft, EXPNright); :}
     ;
 
 // type is Expn
 primary   ::= constant:CONST        // integer or boolean constant
-    {: RESULT = CONST; :}
+    {: RESULT = CONST; RESULT.setLocation(CONSTleft, CONSTright); :}
 
     | variable:VAR_EXPN       // scalar, array variable or function call
-    {: RESULT = VAR_EXPN; :}
+    {: RESULT = VAR_EXPN; RESULT.setLocation(VAR_EXPNleft, VAR_EXPNright); :}
 
     | IDENT:NAME L_PAREN arguments:ARG_LIST R_PAREN   // function call
-    {: RESULT = new FunctionCallExpn( NAME, ARG_LIST ); :}
+    {: RESULT = new FunctionCallExpn( NAME, ARG_LIST ); RESULT.setLocation(NAMEleft, NAMEright); :}
 
     |   L_PAREN  expression:EXPRSN  R_PAREN   // parenthesized expression
-    {: RESULT = EXPRSN; :}
+    {: RESULT = EXPRSN; RESULT.setLocation(EXPRSNleft, EXPRSNright); :}
 
     | L_CURLEY declarationsAndStatements:STMT YIELDS expression:EXPN R_CURLEY // anon function
     {:
       //RESULT = new RoutineDecl(null, new IntegerType(), new Scope( STMT.append( new ReturnStmt( EXPN ))));
-      RESULT = new AnonFuncExpn(STMT, EXPN);
+      RESULT = new AnonFuncExpn(STMT, EXPN); RESULT.setLocation(STMTleft, STMTright); 
     :}
     ;
 
 // type is ConstExpn
 constant  ::= INTCONST:INT  // integer constant
-    {: RESULT = new IntConstExpn( INT ); :}
+    {: RESULT = new IntConstExpn( INT ); RESULT.setLocation(INTleft, INTright); :}
 
     | TRUE    // constant true
     {: RESULT = new BoolConstExpn( true ); :}
@@ -453,13 +453,13 @@ constant  ::= INTCONST:INT  // integer constant
 
 // type is Expn
 variable  ::= IDENT:NAME          // scalar variable or function call
-    {: RESULT = new IdentExpn( NAME ); :}
+    {: RESULT = new IdentExpn( NAME ); RESULT.setLocation(NAMEleft, NAMEright); :}
 
     | IDENT:NAME L_SQUARE expression:EXPN R_SQUARE  // element of a 1-D  array
-    {: RESULT = new SubsExpn( NAME, EXPN ); :}
+    {: RESULT = new SubsExpn( NAME, EXPN ); RESULT.setLocation(EXPNleft, EXPNright); :}
 
     | IDENT:NAME L_SQUARE expression:LOWERB COMMA expression:UPPERB R_SQUARE  // element of a 2-D array
-    {: RESULT = new SubsExpn( NAME, LOWERB, UPPERB ); :}
+    {: RESULT = new SubsExpn( NAME, LOWERB, UPPERB ); RESULT.setLocation(NAMEleft, NAMEright); :}
     ;
 
 

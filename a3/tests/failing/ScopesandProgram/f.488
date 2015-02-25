@@ -1,0 +1,8 @@
+
+% S06 Start ordinary scope.
+% End a second scope without beginning
+
+begin
+
+end
+end

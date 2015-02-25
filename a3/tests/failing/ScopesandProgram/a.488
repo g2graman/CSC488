@@ -1,0 +1,3 @@
+% S00 Start program scope.
+% The program scope is never opened, so this should fail
+end 

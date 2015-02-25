@@ -1,0 +1,14 @@
+% S05 End function scope.
+
+begin
+
+	integer x
+
+	% This never ends so it should fail
+	integer function test1 begin
+		return (5)
+	
+
+	x <= test1
+
+end

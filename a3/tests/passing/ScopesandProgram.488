@@ -12,7 +12,6 @@ begin % S00 Start program scope.
 
 	% S04 Start function scope.
 	integer function test1 begin
-		integer scopeTest
 		scopeTest <= 10
 		return (5)
 	% S05 End function scope.
@@ -20,7 +19,6 @@ begin % S00 Start program scope.
 
 	% S08 Start procedure scope.
 	procedure test2 begin
-		integer scopeTest
 		scopeTest <= 10
 		put "Hello world", skip
 	% S09 End procedure scope
@@ -32,6 +30,7 @@ begin % S00 Start program scope.
 	% S03 Associate declarations and statements with scope.
 	if (scopeTest = 10) then 
 		put "S03 failed", skip
+	end
 
 
 % S01 End program scope.

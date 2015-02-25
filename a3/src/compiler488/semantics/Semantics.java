@@ -168,23 +168,25 @@ public class Semantics implements ASTVisitor<Boolean> {
 	}
 
 	public Boolean visit(ArrayDeclPart decl) {
-		
-		// TODO S19
-		// TODO S48
 
+        // S19 S48
         SymbolTable mostLocalTable = scope.getMostLocalScope();
         if (mostLocalTable.lookup(decl.getName()) == null){
-            // TODO: insert into symbol table
+            //TODO: check the type?
+            mostLocalTable.addEntry(decl.getName(), null, SymbolTableEntry.Kind.ARRAY, decl, null);
         } else {
+            outputError(decl, "Symbol already declared");
             return false;
         }
 
         // S46
         if (decl.getLowerBoundary1() > decl.getUpperBoundary1()){
+            outputError(decl, "Array lower bound greater than upper bound");
             return false;
         }
         if (decl.isTwoDimenstional()){
             if (decl.getLowerBoundary2() > decl.getUpperBoundary2()){
+                outputError(decl, "Array lower bound greater than upper bound");
                 return false;
             }
         }
@@ -193,14 +195,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 	}
   	public Boolean visit(Declaration decl) { return true; }
   	public Boolean visit(MultiDeclarations decl) {
-  		
-    	if(!decl.getParts().accept(this)) {
-    		return false;
-    	}
-  		
-  		// TODO S10, S19
-  		// TODO S46, S47,S48
-  		return true;
+        return decl.getParts().accept(this);
   	}
   	public Boolean visit(RoutineDecl decl) {
     	Scope declBody = decl.getBody();
@@ -215,10 +210,29 @@ public class Semantics implements ASTVisitor<Boolean> {
     	if(decl.getParameters() != null) {
     		declParameters = decl.getParameters().accept(this);
     	}
-    	SymbolTable mostLocalTable = scope.getMostLocalScope();
   		// TODO S04,S05, S08,S09
-  		// TODO S11, S12
-    	// TODO S15, S17, S18
+  		// S11, S12
+        SymbolTable mostLocalTable = scope.getMostLocalScope();
+        // S17, S18
+        if (decl.getType() == null) { 
+        	// procedure has no return type
+	        if (mostLocalTable.lookup(decl.getName()) == null){
+	            mostLocalTable.addEntry(decl.getName(), decl.getType(), SymbolTableEntry.Kind.PROCEDURE, decl, null);
+	        } else {
+	            outputError(decl, "procedure name already declared");
+	            return false;
+	        }
+        } else { 
+        	// function
+	        if (mostLocalTable.lookup(decl.getName()) == null){
+	            mostLocalTable.addEntry(decl.getName(), decl.getType(), SymbolTableEntry.Kind.FUNCTION, decl, null);
+	        } else {
+	            outputError(decl, "function name already declared");
+	            return false;
+	        }
+	    }
+
+  		// TODO S15
   		// TODO S53
   		return declAcceptBody && declParameters;
   	}
@@ -229,6 +243,7 @@ public class Semantics implements ASTVisitor<Boolean> {
   			mostLocalTable.addEntry(decl.getName(),decl.getType(), SymbolTableEntry.Kind.SCALAR, decl, null);
   			return true;
   		}
+        outputError(decl, "symbol already declared");
   		return false;
   	}
 
@@ -363,16 +378,26 @@ public class Semantics implements ASTVisitor<Boolean> {
 		}
 		
 		
-		// TODO S40
-		
-		ASTList<ScalarDecl> parameters = new ASTList<ScalarDecl>();
-		ASTList<Expn> args = expn.getArguments();
+		// S40
+        SymbolTable mostLocalTable = scope.getMostLocalScope();
+        SymbolTableEntry entry = mostLocalTable.lookup(expn.getIdent());
+        RoutineDecl decl = (RoutineDecl) entry.getNode();
 
-		// TODO S42
+        if (entry == null){
+            outputError(expn, "function not declared");
+            return false;
+        }
+
+        if (entry.getKind() != SymbolTableEntry.Kind.FUNCTION){
+            outputError(expn, "not declared as a function");
+        }
+
+		ASTList<ScalarDecl> parameters = decl.getParameters();
+		ASTList<Expn> args = expn.getArguments();
 		
-		// S43
+		// S42 S43
 		if(parameters.size() != args.size()) {
-			// TODO create an error for S43
+            outputError(expn, "parameter count mismatch");
 			return false;
 		}
 		
@@ -388,14 +413,10 @@ public class Semantics implements ASTVisitor<Boolean> {
 				return false;
 			}
 		}
-		
-		// TODO S42: look up the entry
-		SymbolTableEntry fn = new SymbolTableEntry(null, null, SymbolTableEntry.Kind.FUNCTION, null);
-		
-		// TODO S42: check that fn is declared as a function
+
 		
 		// S28
-		expn.setType(fn.getType());
+		expn.setType(decl.getType());
 		
 		return true;
 	}
@@ -584,17 +605,20 @@ public class Semantics implements ASTVisitor<Boolean> {
   		SymbolTable mostLocalTable = scope.mostLocalTable();
   		SymbolTableEntry result = mostLocalTable.lookup(stmt.getName());
   		if ( result == null ) {
+  			outputError(expn, "procedure not declared");
   			return false;
   		} else {
   			if ( result.getKind() != SymbolTableEntry.Kind.PROCEDURE ) {
+  				outputError(expn, "not declared as a procedure");
   				return false;
   			}
   		}
 
   		// S42 S43
   		ASTList<Expn> arguments = stmt.getArguments();
-  		ASTList<ScalarDecl> parameters = result.getNode();
+  		ASTList<ScalarDecl> parameters = result.getNode().getParameters();
   		if (parameters.size() != arguments.size()) {
+  			outputError(expn, "parameter count mismatch");
   			return false;
   		}
   		

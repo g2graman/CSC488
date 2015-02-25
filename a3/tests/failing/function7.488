@@ -1,7 +1,0 @@
-% function without return
-
-begin
-	integer function test 1 begin
-		put "hello world", skip
-	end
-end

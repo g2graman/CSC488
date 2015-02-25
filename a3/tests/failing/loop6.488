@@ -1,6 +1,0 @@
-% Test an empty loop
-
-begin
-        loop
-        end
-end

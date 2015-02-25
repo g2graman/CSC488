@@ -9,6 +9,7 @@ import compiler488.ast.ASTList;
 import compiler488.ast.ASTVisitor;
 import compiler488.ast.AST;
 import compiler488.ast.BasePrettyPrinter;
+import compiler488.ast.PrettyPrintable;
 import compiler488.ast.PrettyPrinter;
 import compiler488.ast.decl.ArrayDeclPart;
 import compiler488.ast.decl.Declaration;
@@ -67,14 +68,12 @@ public class Semantics implements ASTVisitor<Boolean> {
 	public FileWriter Tracer;
 	public File f;
 	
-	public PrettyPrinter printer;
 	private MajorScope scope = new MajorScope();
 
 	/** SemanticAnalyzer constructor */
 	public Semantics() {
-		printer = new BasePrettyPrinter(System.err);
+		;
 	}
-
 	/** semanticsInitialize - called once by the parser at the */
 	/* start of compilation */
 	void Initialize() {
@@ -150,13 +149,39 @@ public class Semantics implements ASTVisitor<Boolean> {
 	}
 
 	// ADDITIONAL FUNCTIONS TO IMPLEMENT SEMANTIC ANALYSIS GO HERE
+	
+	public String prettyPrintToString(PrettyPrintable printable) {
+		ByteArrayOutputStream printerStream = new ByteArrayOutputStream();
+		PrettyPrinter printer = new BasePrettyPrinter(new PrintStream(printerStream));
+		printable.prettyPrint(printer);
+		
+		return printerStream.toString();
+	}
 
-	public void outputError(Object obj, String format, Object... inputArgs) {
+	public void outputError(AST ast, String format, Object... inputArgs) {
 		List<Object> args = new ArrayList<Object>();
-		args.add(obj.getClass().toString());
+		args.add(ast.getLine());
+		args.add(ast.getCol());
 		args.addAll(Arrays.asList(inputArgs));
 		
-		System.err.println(String.format("ERROR (%s): " + format, args));
+		String errorMessage = String.format("ERROR (line: %d, col %d): " + format, args.toArray());
+		System.err.println(errorMessage);
+	}
+	
+	public void outputTypeError(Expn expn, Type desiredType) {
+		outputError(expn, "%s is not %s type!", prettyPrintToString(expn), desiredType);
+	}
+	
+	public void outputAlreadyDeclaredError(AST ast, String name) {
+		SymbolTableEntry entry = scope.getMostLocalScope().lookup(name);
+		
+		outputError(ast, "at %s", prettyPrintToString(ast));
+		outputError(ast, "'%s' is already declared on line %d", name, entry.getNode().getLine());
+		outputError(ast, "%s %s", entry.getType(), prettyPrintToString(entry.getNode()));
+	}
+	
+	public void outputNotDeclaredError(AST ast, String name, String prefix) {
+		outputError(ast, "%s'%s' is not declared!", prefix, name);
 	}
 	
 	// NOTE: Semantic actions not required to implement here
@@ -177,25 +202,29 @@ public class Semantics implements ASTVisitor<Boolean> {
 	}
 
 	public Boolean visit(ArrayDeclPart decl) {
-
         // S19 S48
         SymbolTable mostLocalTable = scope.getMostLocalScope();
         if (mostLocalTable.lookup(decl.getName()) == null){
-            //TODO: check the type?
-            mostLocalTable.addEntry(decl.getName(), null, SymbolTableEntry.Kind.ARRAY, decl, null);
+            mostLocalTable.addEntry(decl.getName(), decl.getType(), SymbolTableEntry.Kind.ARRAY, decl, null);
         } else {
-            outputError(decl, "Symbol '%s' already declared", decl.getName());
+            outputError(decl, "'%s' is already declared!", decl.getName());
             return false;
         }
 
         // S46
         if (decl.getLowerBoundary1() > decl.getUpperBoundary1()){
-            outputError(decl, "Array lower bound greater than upper bound");
+            outputError(decl, "Array (%s %s) lower bound (%d) is greater than upper bound (%d)!",
+            		decl.getType(),
+            		prettyPrintToString(decl),
+            		decl.getLowerBoundary1(), decl.getUpperBoundary1());
             return false;
         }
         if (decl.isTwoDimenstional()){
             if (decl.getLowerBoundary2() > decl.getUpperBoundary2()){
-                outputError(decl, "Array lower bound greater than upper bound");
+                outputError(decl, "Array (%s %s) lower bound (%d) is greater than upper bound (%d)!",
+                		decl.getType(),
+                		prettyPrintToString(decl),
+                		decl.getLowerBoundary2(), decl.getUpperBoundary2());
                 return false;
             }
         }
@@ -213,7 +242,10 @@ public class Semantics implements ASTVisitor<Boolean> {
   				Boolean scalar = this.visit(new ScalarDecl(part.getName(), decl.getType()));
   				declarationsValid = declarationsValid && scalar;
   			} else {
-  				Boolean array = this.visit(part);
+  				ArrayDeclPart arrayDecl = (ArrayDeclPart) part;
+  				arrayDecl.setType(decl.getType());
+  				
+  				Boolean array = this.visit(arrayDecl);
   				declarationsValid = declarationsValid && array;
   			}
   		}
@@ -243,7 +275,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 	        if (mostLocalTable.lookup(decl.getName()) == null){
 	            mostLocalTable.addEntry(decl.getName(), decl.getType(), SymbolTableEntry.Kind.PROCEDURE, decl, null);
 	        } else {
-	            outputError(decl, "procedure name already declared");
+	            outputAlreadyDeclaredError(decl, decl.getName());
 	            return false;
 	        }
         } else { 
@@ -251,7 +283,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 	        if (mostLocalTable.lookup(decl.getName()) == null){
 	            mostLocalTable.addEntry(decl.getName(), decl.getType(), SymbolTableEntry.Kind.FUNCTION, decl, null);
 	        } else {
-	            outputError(decl, "function name already declared");
+	            outputAlreadyDeclaredError(decl, decl.getName());
 	            return false;
 	        }
 	    }
@@ -267,7 +299,7 @@ public class Semantics implements ASTVisitor<Boolean> {
   			mostLocalTable.addEntry(decl.getName(),decl.getType(), SymbolTableEntry.Kind.SCALAR, decl, null);
   			return true;
   		}
-        outputError(decl, "symbol already declared");
+        outputAlreadyDeclaredError(decl, decl.getName());
   		return false;
   	}
 
@@ -317,9 +349,8 @@ public class Semantics implements ASTVisitor<Boolean> {
 		
 		// S32
 		if (!(expn.getLeft().isType(expn.getRight().getType()))) {
-			expn.getLeft().prettyPrint(printer);
-			expn.getRight().prettyPrint(printer);
-			outputError(expn, "not of the same types");
+			outputError(expn, "(%s) and (%s) are not the same type!",
+					prettyPrintToString(expn.getLeft()), prettyPrintToString(expn.getRight()));
 			return false;
 		}
 		
@@ -385,8 +416,6 @@ public class Semantics implements ASTVisitor<Boolean> {
     	
 		// S32
 		if (!(expn.getLeft().isType(expn.getRight().getType()))) {
-			expn.getLeft().prettyPrint(printer);
-			expn.getRight().prettyPrint(printer);
 			outputError(expn, "not of the same types");
 			return false;
 		}
@@ -407,12 +436,13 @@ public class Semantics implements ASTVisitor<Boolean> {
 		// S40
         SymbolTable mostLocalTable = scope.getMostLocalScope();
         SymbolTableEntry entry = mostLocalTable.lookup(expn.getIdent());
-        RoutineDecl decl = (RoutineDecl) entry.getNode();
 
         if (entry == null) {
-            outputError(expn, "function not declared");
+            outputNotDeclaredError(expn, expn.getIdent(), "Function ");
             return false;
         }
+        
+        RoutineDecl decl = (RoutineDecl) entry.getNode();
 
         if (entry.getKind() != SymbolTableEntry.Kind.FUNCTION){
             outputError(expn, "not declared as a function");
@@ -480,8 +510,8 @@ public class Semantics implements ASTVisitor<Boolean> {
     	}
   		
   		// S30
-  		if (!expn.isBoolean()) {
-  			outputError(expn, "not boolean type");
+  		if (!expn.getOperand().isBoolean()) {
+  			outputError(expn, "%s is not boolean type", prettyPrintToString(expn.getOperand()));
   		}
   		// S20
   		expn.setType(new BooleanType());
@@ -504,25 +534,34 @@ public class Semantics implements ASTVisitor<Boolean> {
 		if(!expn.getSubscript1().accept(this)) {
 			return false;
 		}
-		if(expn.getSubscript2() != null && !expn.getSubscript2().accept(this)) {
+		
+		// S31
+  		if (!expn.getSubscript1().isInteger()) {
+  			outputTypeError(expn.getSubscript1(), new IntegerType());
+  		}
+		
+		if(expn.getSubscript2() != null) {
+			if(!expn.getSubscript2().accept(this)) {
+				return false;
+			}
+			// S31
+	  		if (!expn.getSubscript2().isInteger()) {
+	  			outputTypeError(expn.getSubscript2(), new IntegerType());
+	  		}
+	  		
 			return false;
 		}
 		
-		// S31
-  		if (!expn.isInteger()) {
-  			outputError(expn, "not integer type");
-  		}
-  		
+		
 		SymbolTableEntry entry = scope.getMostLocalScope().lookup(expn.getVariable());
 		
 		// S38
 		if (entry == null) {
-			// TODO error message for undeclared array identifier
-			
+			outputError(expn, "%s was not declared!", expn.getVariable());
 			return false;
 		}
 		if (entry.getKind() != SymbolTableEntry.Kind.ARRAY) {
-			outputError(expn, "The identifier " + expn.getVariable() + " was not declared as an array!");
+			outputError(expn, "%s was not declared as an array!", expn.getVariable());
 			return false;
 		}
 		
@@ -543,8 +582,6 @@ public class Semantics implements ASTVisitor<Boolean> {
     	if(!expn.getOperand().accept(this)) {
     		return false;
     	}
-  		// S20
-  		expn.setType(new BooleanType());
   		return true;
   	}
   	public Boolean visit(UnaryMinusExpn expn) {
@@ -554,8 +591,8 @@ public class Semantics implements ASTVisitor<Boolean> {
     	}
   		
   		// S31
-  		if (!expn.isInteger()) {
-  			outputError(expn, "not integer type");
+  		if (!expn.getOperand().isInteger()) {
+  			outputError(expn, "%s is not an integer!", prettyPrintToString(expn));
   		}
   		
   		// S21
@@ -709,7 +746,11 @@ public class Semantics implements ASTVisitor<Boolean> {
 
 		scope.addScope(new SymbolTable());
 		
-		boolean result = stmt.getBody().accept(this);
+		ASTList<Stmt> body = stmt.getBody();
+		boolean result = true;
+		if(body != null) {
+			result = body.accept(this);
+		}
 		
 		scope.removeScope(); //Remove scope nonetheless for when short-circuiting is removed
 		return result;

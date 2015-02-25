@@ -41,11 +41,13 @@ public abstract class BaseAST implements AST {
 		this.line = line;
 		this.column = column;
 	}
-	
+
+	@Override
 	public int getLine() {
 		return line;
 	}
 	
+	@Override
 	public int getCol() {
 		return column;
 	}

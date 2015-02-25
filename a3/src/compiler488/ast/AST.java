@@ -19,4 +19,7 @@ public interface AST extends PrettyPrintable {
 	public void prettyPrint(PrettyPrinter p);
 
 	public Boolean accept(ASTVisitor<Boolean> visitor);
+
+	public int getLine();
+	public int getCol();
 }

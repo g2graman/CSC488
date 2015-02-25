@@ -2,6 +2,7 @@ package compiler488.ast.decl;
 
 import compiler488.ast.ASTVisitor;
 import compiler488.ast.PrettyPrinter;
+import compiler488.ast.type.Type;
 
 /**
  * Holds the declaration part of an array.
@@ -21,6 +22,8 @@ public class ArrayDeclPart extends DeclarationPart {
 
     /** True iff this is an 2D array */
     private Boolean isTwoDimensional = false;
+    
+    private Type type;
 
     public ArrayDeclPart(String name, Integer lb1, Integer ub1) {
         super(name);
@@ -95,6 +98,14 @@ public class ArrayDeclPart extends DeclarationPart {
 
     public boolean isTwoDimenstional(){
         return isTwoDimensional;
+    }
+    
+    public void setType(Type type) {
+    	this.type = type;
+    }
+    
+    public Type getType() {
+    	return this.type;
     }
 
     @Override

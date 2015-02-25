@@ -19,7 +19,7 @@ import java.util.LinkedList;
  */
 public class ASTList<E extends AST> extends LinkedList<E> implements AST {
     private static final long serialVersionUID = 1L;
-
+    
 	private int line;
 	private int column;
     
@@ -29,6 +29,7 @@ public class ASTList<E extends AST> extends LinkedList<E> implements AST {
     public ASTList() {
         super();
     }
+
 
     /**
      * Create an AST list and add one element to begin with.
@@ -151,5 +152,15 @@ public class ASTList<E extends AST> extends LinkedList<E> implements AST {
 			bools = bools && z;
 		}
 		return bools;
+	}
+	
+	@Override
+	public int getLine() {
+		return line;
+	}
+	
+	@Override
+	public int getCol() {
+		return column;
 	}
 }

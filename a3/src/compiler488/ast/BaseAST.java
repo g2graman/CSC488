@@ -8,6 +8,9 @@ package compiler488.ast;
  * @author Dave Wortman, Marsha Chechik, Danny House, Peter McCormick
  */
 public abstract class BaseAST implements AST {
+	
+	private int line;
+	private int column;
 	/**
 	 * Default constructor.
 	 *
@@ -34,4 +37,16 @@ public abstract class BaseAST implements AST {
 		return visitor.visit(this);
 	}
 
+	public void setLocation(int line, int column) {
+		this.line = line;
+		this.column = column;
+	}
+	
+	public int getLine() {
+		return line;
+	}
+	
+	public int getCol() {
+		return column;
+	}
 }

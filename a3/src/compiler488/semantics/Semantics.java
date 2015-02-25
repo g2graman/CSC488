@@ -254,6 +254,7 @@ public class Semantics implements ASTVisitor<Boolean> {
   	}
   	
   	public Boolean visit(RoutineDecl decl) {
+  		scope.addScope(new SymbolTable());
     	Scope declBody = decl.getBody();
 
     	boolean declAcceptBody = true; //Default to true on empty body
@@ -266,7 +267,8 @@ public class Semantics implements ASTVisitor<Boolean> {
     	if(parameters != null) {
     		declParameters = parameters.accept(this);
     	}
-  		// TODO S04,S05, S08,S09
+  		// S04,S05, S08,S09
+
   		// S11, S12
         SymbolTable mostLocalTable = scope.getMostLocalScope();
         // S17, S18
@@ -290,6 +292,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 
   		// TODO S15
   		// TODO S53
+  		scope.removeScope(); 
   		return declAcceptBody && declParameters;
   	}
   	public Boolean visit(ScalarDecl decl) {
@@ -739,7 +742,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 	}
 
 	public Boolean visit(Scope stmt) {
-		// TODO S06, S07
+		// S06, S07
 
 		//Precondition: haven't already created a function 
 		// / procedure scope already since RoutineDecl will be visited before this

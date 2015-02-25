@@ -602,23 +602,24 @@ public class Semantics implements ASTVisitor<Boolean> {
     	}
   		
   		// S41
-  		SymbolTable mostLocalTable = scope.mostLocalTable();
+  		SymbolTable mostLocalTable = scope.getMostLocalScope();
   		SymbolTableEntry result = mostLocalTable.lookup(stmt.getName());
   		if ( result == null ) {
-  			outputError(expn, "procedure not declared");
+  			outputError(stmt, "procedure not declared");
   			return false;
   		} else {
   			if ( result.getKind() != SymbolTableEntry.Kind.PROCEDURE ) {
-  				outputError(expn, "not declared as a procedure");
+  				outputError(stmt, "not declared as a procedure");
   				return false;
   			}
   		}
 
   		// S42 S43
   		ASTList<Expn> arguments = stmt.getArguments();
-  		ASTList<ScalarDecl> parameters = result.getNode().getParameters();
+  		RoutineDecl decl = (RoutineDecl) result.getNode();
+  		ASTList<ScalarDecl> parameters = decl.getParameters();
   		if (parameters.size() != arguments.size()) {
-  			outputError(expn, "parameter count mismatch");
+  			outputError(stmt, "parameter count mismatch");
   			return false;
   		}
   		

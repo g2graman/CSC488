@@ -16,7 +16,7 @@ public class NotExpn extends UnaryExpn {
     }
     
     @Override
-    public Boolean accept(ASTVisitor<Boolean> visitor) {
+    public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
     

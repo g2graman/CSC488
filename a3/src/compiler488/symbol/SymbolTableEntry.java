@@ -40,4 +40,9 @@ public class SymbolTableEntry {
 	public AST getNode() {
 		return node;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s %s %s", this.kind, this.type, this.varname);
+	}
 }

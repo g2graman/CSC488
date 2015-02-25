@@ -16,13 +16,9 @@ public class ScalarDecl extends Declaration {
     public void prettyPrint(PrettyPrinter p) {
         p.print(type + " " + name);
     }
-
-    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
-    	return super.accept(visitor);
-    }
     
     @Override
-    public Boolean accept(ASTVisitor<Boolean> visitor) {
+    public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }

@@ -35,17 +35,9 @@ public class Scope extends Stmt {
         }
         p.print("end");
     }
-    
-    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
-    	return super.accept(visitor);
-    }
 
     @Override
-    public Boolean accept(ASTVisitor<Boolean> visitor) {
-    	// visit scope first
-        Boolean result = visitor.visit(this);
-        // visit body after scope
-        Boolean bodyResult = body != null && body.accept(visitor);
-        return result && bodyResult;
+    public <T> T accept(ASTVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

@@ -203,22 +203,22 @@ public class Semantics implements ASTVisitor<Boolean> {
   		return true;
   	}
   	public Boolean visit(RoutineDecl decl) {
-    	Object declBody = decl.getBody();
+    	Scope declBody = decl.getBody();
 
     	boolean declAcceptBody = true; //Default to true on empty body
     	if(declBody != null) {
     		declAcceptBody = decl.getBody().accept(this);
     	}
     	
-    	Object parameters = decl.getParameters();
+    	ASTList<ScalarDecl> parameters = decl.getParameters();
     	boolean declParameters = true; //Default to true on paramaterless routine
     	if(decl.getParameters() != null) {
     		declParameters = decl.getParameters().accept(this);
     	}
-
+    	SymbolTable mostLocalTable = scope.getMostLocalScope();
   		// TODO S04,S05, S08,S09
   		// TODO S11, S12
-  		// TODO S15, S17, S18
+    	// TODO S15, S17, S18
   		// TODO S53
   		return declAcceptBody && declParameters;
   	}
@@ -580,9 +580,23 @@ public class Semantics implements ASTVisitor<Boolean> {
     		return false;
     	}
   		
-  		// TODO S41
-		// TODO S42
-  		// TODO S43
+  		// S41
+  		SymbolTable mostLocalTable = scope.mostLocalTable();
+  		SymbolTableEntry result = mostLocalTable.lookup(stmt.getName());
+  		if ( result == null ) {
+  			return false;
+  		} else {
+  			if ( result.getKind() != SymbolTableEntry.Kind.PROCEDURE ) {
+  				return false;
+  			}
+  		}
+
+  		// S42 S43
+  		ASTList<Expn> arguments = stmt.getArguments();
+  		ASTList<ScalarDecl> parameters = result.getNode();
+  		if (parameters.size() != arguments.size()) {
+  			return false;
+  		}
   		
   		return true;
   	}

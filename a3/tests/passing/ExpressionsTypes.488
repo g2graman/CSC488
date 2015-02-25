@@ -1,1 +1,9 @@
  
+%S20 Set result type to boolean.
+%S21 Set result type to integer.
+%S23 Set result type to type of expression.
+%S24 Set result type to type of anonymous function
+%S25 Set result type to type of parametername.
+%S26 Set result type to type of variablename.
+%S27 Set result type to type of array element.
+%S28 Set result type to result type of function.

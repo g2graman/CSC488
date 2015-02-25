@@ -17,12 +17,8 @@ public class SkipConstExpn extends ConstExpn implements Printable {
         return "skip";
     }
 
-    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
-    	return super.accept(visitor);
-    }
-
     @Override
-    public Boolean accept(ASTVisitor<Boolean> visitor) {
+    public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }

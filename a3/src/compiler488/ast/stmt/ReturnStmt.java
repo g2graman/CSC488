@@ -41,13 +41,9 @@ public class ReturnStmt extends Stmt {
             p.print(")");
         }
     }
-
-    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
-    	return super.accept(visitor);
-    }
     
-	@Override
-    public Boolean accept(ASTVisitor<Boolean> visitor) {
-		return visitor.visit(this);
-	}
+    @Override
+    public <T> T accept(ASTVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

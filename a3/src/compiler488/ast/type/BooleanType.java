@@ -13,10 +13,7 @@ public class BooleanType extends Type {
     }
     
     @Override
-    public Boolean accept(ASTVisitor<Boolean> visitor) {
-//    	if(!super.accept(visitor)) {
-//    		return false;
-//    	}
+    public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }

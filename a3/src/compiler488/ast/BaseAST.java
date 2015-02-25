@@ -32,14 +32,14 @@ public abstract class BaseAST implements AST {
 		p.print(toString());
 	}
 
-	@Override
-	public Boolean accept(ASTVisitor<Boolean> visitor) {
-		return visitor.visit(this);
-	}
+    @Override
+    public <T> T accept(ASTVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 
 	public void setLocation(int line, int column) {
-		this.line = line;
-		this.column = column;
+		this.line = line + 1;
+		this.column = column + 1;
 	}
 
 	@Override

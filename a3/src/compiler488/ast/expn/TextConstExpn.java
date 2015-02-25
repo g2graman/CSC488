@@ -27,13 +27,9 @@ public class TextConstExpn extends ConstExpn implements Printable {
     public String toString() {
         return "\"" + value + "\"";
     }
-
-    public Boolean parentAccept(ASTVisitor<Boolean> visitor) {
-    	return super.accept(visitor);
-    }
     
     @Override
-    public Boolean accept(ASTVisitor<Boolean> visitor) {
+    public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }

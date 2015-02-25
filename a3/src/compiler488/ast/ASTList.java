@@ -22,9 +22,6 @@ public class ASTList<E extends AST> extends LinkedList<E> implements AST {
     
 	private int line;
 	private int column;
-
-	private int line;
-	private int column;
     
     /**
      * Create an empty AST list
@@ -46,8 +43,8 @@ public class ASTList<E extends AST> extends LinkedList<E> implements AST {
 
     
 	public void setLocation(int line, int column) {
-		this.line = line;
-		this.column = column;
+		this.line = line + 1;
+		this.column = column + 1;
 	}
     
     /**
@@ -143,18 +140,12 @@ public class ASTList<E extends AST> extends LinkedList<E> implements AST {
 
         return buf.toString();
     }
+    
+    @Override
+    public <T> T accept(ASTVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 
-	@Override
-    public Boolean accept(ASTVisitor<Boolean> visitor) {
-		Boolean bools = true;
-		for(AST node : this) {
-			// needs to be out to prevent short circuit (if bools is false, node.accept won't be called
-			// if it is bools = bools && node.accept
-			Boolean z = node.accept(visitor);
-			bools = bools && z;
-		}
-		return bools;
-	}
 	
 	@Override
 	public int getLine() {

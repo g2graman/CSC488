@@ -41,6 +41,7 @@ import compiler488.ast.type.IntegerType;
 public interface ASTVisitor<T> {
 
     public T visit(AST node);
+    public <A extends AST> T visit(ASTList<A> list);
 
     public T visit(ArrayDeclPart decl);
     public T visit(Declaration decl);

@@ -1,6 +1,5 @@
 package compiler488.symbol;
 
-import java.io.*;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -27,51 +26,22 @@ public class SymbolTable {
         this.entry = new HashMap<String, SymbolTableEntry>();
     }
 
-	/**  Initialize - called once by semantic analysis
-	 *                at the start of  compilation
-	 *                May be unnecessary if constructor
- 	 *                does all required initialization
-	 */
-	public void Initialize() {
-
-	   /**   Initialize the symbol table
-	    *	Any additional symbol table initialization
-	    *  GOES HERE
-	    */
-
-	}
-
-	/**  Finalize - called once by Semantics at the end of compilation
-	 *              May be unnecessary
-	 */
-	public void Finalize(){
-
-	  /**  Additional finalization code for the
-	   *  symbol table  class GOES HERE.
-	   *
-	   */
-	}
-
 
 	/** The rest of Symbol Table
 	 *  Data structures, public and private functions
  	 *  to implement the Symbol Table
 	 *  GO HERE.
 	 */
-/**
+    
+    /**
      * @param varname The name of the variable to lookup
      * @return The symbol table entry that corresponds to the specific variable name. Returns null
      *         if the variable does not exist in this scope.
      */
-    public SymbolTableEntry lookup(String varname){
-    	if(this.isLocal(varname))
-        	return entry.get(varname);
-        return null;
+    public SymbolTableEntry lookup(String varname) {
+        return entry.get(varname);
     }
 
-    public boolean isLocal(String varname) {
-    	return this.entry.containsKey(varname);
-    }
     /**
      * Add the symbol table entry to the symbol table.
      * @param varname The name of the variable to insert into the table
@@ -79,8 +49,18 @@ public class SymbolTable {
      * @param kind The kind(procedure, function, array or scalar) of the variable
      * @param node The AST node
      */
-    public void addEntry(String varname, Type type, SymbolTableEntry.Kind kind, AST node, String type_of_scope) {
+    public void addEntry(String varname, Type type, SymbolTableEntry.Kind kind, AST node) {
         SymbolTableEntry st_entry = new SymbolTableEntry(varname, type, kind, node);
         entry.put(varname, st_entry);
+    }
+    
+    @Override
+    public String toString() {
+    	StringBuilder bldr = new StringBuilder();
+    	for(String var : entry.keySet()) {
+    		bldr.append(entry.get(var).toString());
+    		bldr.append('\n');
+    	}
+    	return bldr.toString();
     }
 }

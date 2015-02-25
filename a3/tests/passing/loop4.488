@@ -1,7 +1,0 @@
-% Test exit statement
-
-begin
-        loop   
-                exit
-        end
-end

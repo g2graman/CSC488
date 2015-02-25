@@ -1,5 +1,0 @@
-begin
-	begin
-		put "This should pass!"
-	end
-end

@@ -1,0 +1,7 @@
+% Test a while loop missing the do keyword
+
+begin
+        while true
+                put "Hello world!"
+        end
+end

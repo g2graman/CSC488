@@ -1,0 +1,14 @@
+% function without a return, assigned to variable
+
+begin
+
+	integer x
+
+	function test1 begin
+		put "hello world", skip
+		return (5)
+	end
+
+	x <= test1
+
+end

@@ -1,0 +1,13 @@
+begin
+
+	integer x
+	x <= 1
+	x = abc
+
+	boolean y
+	y <= true
+	y = 123
+
+	x = y
+
+end

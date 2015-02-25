@@ -30,7 +30,7 @@ begin % S00 Start program scope.
 	test2 % Call procedure test
 
 	% S03 Associate declarations and statements with scope.
-	if (scopeTest == 10) then 
+	if (scopeTest = 10) then 
 		put "S03 failed", skip
 
 

@@ -38,7 +38,14 @@ import compiler488.runtime.ExecutionException ;
  *      startMSP        initial value for msp
  *      startMLP        initial value for mlp
  * </pre>
- * @author  <B> PUT YOUR NAMES HERE </B>
+ *  @author  <B> 
+                Benson Quach (g0quachb)
+                Eric Chen (g3chencm)
+                Eric Snyder (g4snyder)
+                Francesco Gramano (g2graman)
+                Nicholas Dujay (c4dujayn)
+                Winston Yeung (g2yeungw) 
+            </B>
  */
 
 public class CodeGen

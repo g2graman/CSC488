@@ -12,7 +12,14 @@ import compiler488.symbol.SymbolTableEntry.SymbolKind;
  *  Each implementation can change/modify/delete this class
  *  as they see fit.
  *
- *  @author  <B> PUT YOUR NAMES HERE </B>
+ *  @author  <B> 
+                Benson Quach (g0quachb)
+                Eric Chen (g3chencm)
+                Eric Snyder (g4snyder)
+                Francesco Gramano (g2graman)
+                Nicholas Dujay (c4dujayn)
+                Winston Yeung (g2yeungw) 
+            </B>
  */
 
 public class MajorScope {

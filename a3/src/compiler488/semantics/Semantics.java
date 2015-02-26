@@ -59,7 +59,14 @@ import compiler488.symbol.SymbolTableEntry.SymbolKind;
 import compiler488.symbol.MajorScope;
 
 /** Implement semantic analysis for compiler 488
- *  @author  <B> Put your names here </B>
+ *  @author  <B> 
+                Benson Quach (g0quachb)
+                Eric Chen (g3chencm)
+                Eric Snyder (g4snyder)
+                Francesco Gramano (g2graman)
+                Nicholas Dujay (c4dujayn)
+                Winston Yeung (g2yeungw) 
+            </B>
  */
 public class Semantics implements ASTVisitor<Boolean> {
 

@@ -232,7 +232,6 @@ public class Semantics implements ASTVisitor<Boolean> {
 	}
 
 	// NOTE: Semantic actions not required to implement here
-	// TODO: double check these
 	// all of these are done by the AST / parser
 	// S03
 	// S13
@@ -261,16 +260,13 @@ public class Semantics implements ASTVisitor<Boolean> {
 	}
 
 	public Boolean visit(ArrayDeclPart decl) {
-        // S19 S48
         SymbolTableEntry entry = lookup(decl.getName(), true);
-        if (entry == null){
-            addEntry(decl.getName(), decl.getType(), SymbolKind.ARRAY, decl);
-        } else {
+        if (entry != null){
         	outputAlreadyDeclaredError(decl, decl.getName());
-            return false;
-        }
+        	return false;
+        } 
 
-        // S46
+        // S46 
         if (decl.getLowerBoundary1() > decl.getUpperBoundary1()){
             outputError(decl, "Array (%s %s) lower bound (%d) is greater than upper bound (%d)!",
             		decl.getType(),
@@ -278,7 +274,7 @@ public class Semantics implements ASTVisitor<Boolean> {
             		decl.getLowerBoundary1(), decl.getUpperBoundary1());
             return false;
         }
-        if (decl.isTwoDimenstional()){
+        if (decl.isTwoDimensional()){
             if (decl.getLowerBoundary2() > decl.getUpperBoundary2()){
                 outputError(decl, "Array (%s %s) lower bound (%d) is greater than upper bound (%d)!",
                 		decl.getType(),
@@ -287,6 +283,9 @@ public class Semantics implements ASTVisitor<Boolean> {
                 return false;
             }
         }
+        
+        // S19 S48
+        addEntry(decl.getName(), decl.getType(), SymbolKind.ARRAY, decl);
 
 		return true;
 	}
@@ -664,7 +663,6 @@ public class Semantics implements ASTVisitor<Boolean> {
 			return false;
 		}
 
-
 		// S27
 		expn.setType(entry.getType());
 
@@ -726,7 +724,7 @@ public class Semantics implements ASTVisitor<Boolean> {
   			return false;
   		}
 
-    	// TODO S50
+    	// S50
   		if(currentLoop == null) {
   			outputError(stmt, "An exit must be inside a loop!");
   		}

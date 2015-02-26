@@ -96,7 +96,7 @@ public class ArrayDeclPart extends DeclarationPart {
         return ub2;
     }
 
-    public boolean isTwoDimenstional(){
+    public boolean isTwoDimensional(){
         return isTwoDimensional;
     }
     

@@ -4,6 +4,7 @@ begin
     integer x
     integer y
     integer z
+    integer r
     boolean b
 
     integer function foo begin
@@ -36,14 +37,14 @@ begin
     b <= foo >= y
     b <= foo < y
     b <= y <= foo
-    b <= foo * y
-    b <= foo / y
+    r <= foo * y
+    r <= foo / y
 
     b <= 1 > x
     b <= 1 >= x
     b <= 1 < x
     b <= 1 <= x
-    b <= foo * 1
-    b <= foo / y
+    r <= foo * 1
+    r <= foo / y
 
 end

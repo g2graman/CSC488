@@ -710,12 +710,33 @@ public class Semantics implements ASTVisitor<Boolean> {
     	if(!stmt.getRval().accept(this)) {
     		return false;
     	}
-
-  		// S34
-    	if (stmt.getLval() == null || stmt.getRval() == null ) {
+    	
+    	// S37, S38, S39
+    	Expn left = stmt.getLval();
+    	String varname = "";
+    	if(left instanceof IdentExpn) {
+    		varname = ((IdentExpn) left).getIdent();
+    	} else if(left instanceof SubsExpn) {
+    		varname = ((SubsExpn) left).getVariable();
+    	} else {
+    		// INVALID STATE
+    	}
+    	SymbolTableEntry entry = lookup(varname, false);
+    	if(entry.getKind() != SymbolKind.SCALAR
+    			&& entry.getKind() != SymbolKind.ARRAY) {
+    		outputError(stmt, "%s can not be assigned %s", varname, prettyPrintToString(stmt.getRval()));
     		return false;
     	}
-    	if (!stmt.getLval().isType(stmt.getRval().getType())) {
+    	left.setType(entry.getType());
+
+  		// S34
+    	if (left == null || stmt.getRval() == null ) {
+    		return false;
+    	}
+    	if (!left.isType(stmt.getRval().getType())) {
+    		outputError(stmt, "%s %s can not be assigned %s",
+    				left.getType(), prettyPrintToString(left), prettyPrintToString(stmt.getRval()));
+    		outputTypeError(stmt.getRval(), left.getType());
     		return false;
     	}
 
@@ -805,6 +826,20 @@ public class Semantics implements ASTVisitor<Boolean> {
 					parameters.size());
   			return false;
   		}
+
+  		int size = parameters.size();
+		for(int i = 0; i < size; i++) {
+			ScalarDecl parameter = parameters.get(i);
+			Expn argument = arguments.get(i);
+
+			if(!argument.isType(parameter.getType())) {
+				outputError(argument, "The type of the argument %s does not match the parameter %s %s",
+						prettyPrintToString(argument), parameter.getType(), parameter.getName());
+				outputTypeError(argument, parameter.getType());
+				return false;
+			}
+		}
+
 
   		return true;
   	}

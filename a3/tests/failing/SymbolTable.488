@@ -1,4 +1,16 @@
-% TODO write tests
-begin
+% Additional testing of the symbol table not covered by scopes and program
 
-end
+begin
+	integer x
+
+	x <= {exit yields 5}
+
+	loop
+		integer x
+	end
+
+	if true then
+		integer b
+	end
+
+end 

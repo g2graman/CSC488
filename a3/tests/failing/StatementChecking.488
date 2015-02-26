@@ -23,6 +23,13 @@ begin
 		put "Hello world", skip
 	end
 
+
+	%Exit statement directly inside loop but nested in procedure/function
+	loop
+		procedure foo begin
+			exit
+		end
+	end
 	x <= test1
 	test2
 end

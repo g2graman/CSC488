@@ -76,12 +76,12 @@ begin
 	proc4(true) % should print hello world followed by x is true
 	proc5 % should print 1
 
-	integer f2
+	boolean f2
 
 	% x is now 1
 	put add(1, 2) % should print 3
 	put addx(3) % should print 4
 	f2 <= foo2 % should print hello world followed by 3
-	put f2 % prints true
+	put 2 % prints true
 
 end

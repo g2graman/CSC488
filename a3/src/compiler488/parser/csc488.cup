@@ -218,8 +218,8 @@ statement ::= variable:LVALUE LESS EQUAL expression:RVALUE        // assignment 
     | LOOP declarationsAndStatements:BODY END     // loop statement
     {: RESULT = new LoopStmt( BODY ); RESULT.setLocation(BODYleft, BODYright); :}
 
-    | EXIT              // exit statements
-    {: RESULT = new ExitStmt(); :}
+    | EXIT:exit             // exit statements
+    {: RESULT = new ExitStmt(); RESULT.setLocation(exitleft, exitright); :}
 
     | EXIT WHEN expression:EXPN
     {: RESULT = new ExitStmt( EXPN ); RESULT.setLocation(EXPNleft, EXPNright); :}

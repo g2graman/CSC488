@@ -73,6 +73,8 @@ public class Semantics implements ASTVisitor<Boolean> {
 	private LinkedList<MajorScope> scopes;
 	private boolean isProgramScope;
 	private ScopeKind routineKind;
+	
+	private LoopingStmt currentLoop;
 
 	/** SemanticAnalyzer constructor */
 	public Semantics() {
@@ -85,6 +87,8 @@ public class Semantics implements ASTVisitor<Boolean> {
 		
 		isProgramScope = true;
 		routineKind = ScopeKind.NORMAL;
+		
+		currentLoop = null;
 
 		/* Initialize the symbol table */
 
@@ -295,7 +299,8 @@ public class Semantics implements ASTVisitor<Boolean> {
   		for(DeclarationPart part : parts) {
   			if(part instanceof ScalarDeclPart) {
   				ScalarDecl scalarDecl = new ScalarDecl(part.getName(), decl.getType());
-  				scalarDecl.setLocation(part.getLine(), part.getCol());
+  				// subtract 1 since setting location of declpart already adds 1
+  				scalarDecl.setLocation(part.getLine() - 1, part.getCol());
 
   				Boolean scalar = this.visit(scalarDecl);
   				declarationsValid = declarationsValid && scalar;
@@ -337,6 +342,10 @@ public class Semantics implements ASTVisitor<Boolean> {
   		routineKind = decl.getType() == null ? ScopeKind.PROCEDURE : ScopeKind.FUNCTION;
 
   		enterScope(routineKind, decl);
+
+  		// when creating a routine in a loop, you can't have an exit inside it.
+  		LoopingStmt old = currentLoop;
+  		currentLoop = null;
   		
     	// S15, S16
     	ASTList<ScalarDecl> parameters = decl.getParameters();
@@ -360,6 +369,9 @@ public class Semantics implements ASTVisitor<Boolean> {
     	}
 
     	exitScope();
+    	// reset the loop because after declaring a procedure in a loop,
+    	// you can exit
+    	currentLoop = old;
 
   		// S53
     	if(routineKind == ScopeKind.FUNCTION && decl.getReturnCount() < 1) {
@@ -381,12 +393,18 @@ public class Semantics implements ASTVisitor<Boolean> {
 
   	public Boolean visit(AnonFuncExpn expn) {
 
+  		// disallow the { exit yields expression } case
+  		LoopingStmt old = currentLoop;
+  		currentLoop = null;
+  		
     	if(!expn.getBody().accept(this)) {
     		return false;
     	}
     	if(!expn.getExpn().accept(this)) {
     		return false;
     	}
+    	
+  		currentLoop = old;
 
   		// S24
     	expn.setType(expn.getExpn().getType());
@@ -680,17 +698,23 @@ public class Semantics implements ASTVisitor<Boolean> {
   	}
   	public Boolean visit(ExitStmt stmt) {
 
+  		// check the when part of expression
     	if(stmt.getExpn() != null && !stmt.getExpn().accept(this)) {
     		return false;
     	}
 
   		// S30
+    	// exit when
   		if (stmt.getExpn() != null && !stmt.getExpn().isBoolean()) {
   			outputTypeError(stmt.getExpn(), new BooleanType());
   			return false;
   		}
 
     	// TODO S50
+  		if(currentLoop == null) {
+  			outputError(stmt, "An exit must be inside a loop!");
+  		}
+  		
   		return true;
   	}
   	public Boolean visit(IfStmt stmt) {
@@ -714,16 +738,19 @@ public class Semantics implements ASTVisitor<Boolean> {
   		return true;
   	}
   	public Boolean visit(LoopingStmt stmt) {
-    	if(stmt.getExpn() != null && !stmt.getExpn().accept(this)) {
+    	currentLoop = stmt;
+    	if(!this.visit(stmt.getBody())) {
     		return false;
     	}
-    	if(!stmt.getBody().accept(this)) {
-    		return false;
-    	}
+    	currentLoop = null;
 
   		return true;
   	}
-  	public Boolean visit(LoopStmt stmt) { return true; }
+  	
+  	public Boolean visit(LoopStmt stmt) {
+  		return this.visit( (LoopingStmt) stmt);
+  	}
+  	
   	public Boolean visit(ProcedureCallStmt stmt) {
 
     	if(!stmt.getArguments().accept(this)) {
@@ -849,15 +876,13 @@ public class Semantics implements ASTVisitor<Boolean> {
 
 	public Boolean visit(Stmt stmt) {return true;}
 	public Boolean visit(WhileDoStmt stmt) {
-
-    	if(!this.visit((LoopingStmt)stmt)) {
+		// check the body of the loop
+    	if(!this.visit( (LoopingStmt) stmt) ) {
     		return false;
     	}
 
+    	// check condition of whiledo
 		if (stmt.getExpn() != null && !stmt.getExpn().accept(this)) {
-			return false;
-		}
-		if (stmt.getExpn() != null && !stmt.getBody().accept(this)) {
 			return false;
 		}
 

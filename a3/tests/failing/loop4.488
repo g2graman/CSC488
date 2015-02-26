@@ -1,6 +1,0 @@
-% Test a while loop that is missing the end statement
-
-begin
-        while true do
-                put "Hello world!"
-end

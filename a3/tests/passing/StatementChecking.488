@@ -1,1 +1,5 @@
  
+%S50 Check that exit statement is directly inside a loop.
+%S51 Check that return is inside a function
+%S52 Check that return statement is inside a procedure.
+%S53 Check that a function body contains at least one return statement.

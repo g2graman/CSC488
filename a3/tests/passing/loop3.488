@@ -1,9 +1,0 @@
-% Test a nested loop
-
-begin
-        loop
-                loop
-                        put "hello world!"
-                end
-        end
-end

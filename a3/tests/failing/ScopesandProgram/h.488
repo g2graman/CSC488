@@ -1,0 +1,11 @@
+% S08 Start procedure scope.
+
+
+begin
+
+	% This never begins so it should fail
+	procedure test1
+		put "Hello world", skip
+	end
+
+end

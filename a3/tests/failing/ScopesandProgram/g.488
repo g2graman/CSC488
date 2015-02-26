@@ -1,0 +1,8 @@
+% S07 End ordinary scope.
+% Start a second scope without ending
+
+begin
+
+begin
+
+end

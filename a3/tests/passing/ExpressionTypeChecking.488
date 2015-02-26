@@ -1,1 +1,38 @@
  
+%S30 Check that type of expression is boolean.
+begin
+	boolean x
+	
+end
+%S31 Check that type of expression or variable is integer.
+begin
+
+end
+%S32 Check that left and right operand expressions are the sametype.
+begin
+
+end
+%S34 Check that variable and expression in assignment are the same type.
+begin
+
+end
+%S35 Check that expression type matches the return type of enclosing function.
+begin
+
+end
+%S36 Check that type of argument expression matches type of corresponding formal parameter.
+begin
+
+end
+%S37 Check that identifier has been declared as a scalar variable.
+begin
+
+end
+%S38 Check that identifier has been declared as an array.
+begin
+
+end
+%S39 Check that identifier has been declared as a parameter.
+begin
+
+end

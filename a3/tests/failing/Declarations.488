@@ -1,1 +1,13 @@
- 
+%S10 Declare scalar variable.
+%S11 Declare function with no parameters and specified type.
+%S12 Declare function with parameters and specified type.
+%S13 Associate scope with function/procedure.
+%S14 Set parameter count to zero.
+%S15 Declare parameter with specified type.
+%S16 Increment parameter count by one.
+%S17 Declare procedure with no parameters.
+%S18 Declare procedure with parameters.
+%S19 Declare array variable with specified lower and upper bounds.
+%S46 Check that lower bound is<=upper bound.
+%S47 Associate type with variables.
+%S48 Declare array variable with specified upper bound.

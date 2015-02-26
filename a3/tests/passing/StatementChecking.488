@@ -32,6 +32,14 @@ begin
 	loop
 		test2
 	end
+
+
+	%Exit statement directly inside loop but nested 
+	loop
+		procedure foo begin
+			exit
+		end
+	end
 	
 	x <= test1
 	test2

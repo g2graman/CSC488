@@ -1,4 +1,3 @@
- 
 %S40 Check that identifier has been declared as a function.
 %S41 Check that identifier has been declared as a procedure.
 %S42 Check that the function or procedure has no parameters.

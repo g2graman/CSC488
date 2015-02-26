@@ -262,7 +262,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 
 	public Boolean visit(ArrayDeclPart decl) {
         // S19 S48
-        SymbolTableEntry entry = lookup(decl.getName(), false);
+        SymbolTableEntry entry = lookup(decl.getName(), true);
         if (entry == null){
             addEntry(decl.getName(), decl.getType(), SymbolKind.ARRAY, decl);
         } else {
@@ -383,7 +383,7 @@ public class Semantics implements ASTVisitor<Boolean> {
   	}
   	public Boolean visit(ScalarDecl decl) {
   		// S10
-  		if ( lookup(decl.getName(), false) == null) {
+  		if ( lookup(decl.getName(), true) == null) {
   			addEntry(decl.getName(),decl.getType(), SymbolKind.SCALAR, decl);
   			return true;
   		}
@@ -571,21 +571,37 @@ public class Semantics implements ASTVisitor<Boolean> {
 		SymbolTableEntry entry = lookup(expn.getIdent(), false);
 
 		if(entry == null) {
-			// TODO error message for S25, S26
+			// error message for S25, S26
 			outputNotDeclaredError(expn, expn.getIdent());
 
 			return false;
 		}
+		
+		// check if the identifier is a procedure
+		if(entry.getKind() == SymbolKind.PROCEDURE) {
+			outputError(expn, "The procedure %s does not return a value", expn.getIdent());
+		}
+		
+		// S42
+		if(entry.getKind() == SymbolKind.FUNCTION) {
+			RoutineDecl node = (RoutineDecl) entry.getNode();
+			
+			if(node.getParameters().size() != 0) {
+				outputError(expn, "The function %s takes %d parameter(s)",
+						expn.getIdent(), node.getParameters().size());
+				// foo(integer x)
+				// calling this as
+				// foo
+				return false;
+			}
+		}
+		
 		expn.setType(entry.getType());
 
 		return true;
 	}
 
 	public Boolean visit(IntConstExpn expn) {
-		// this is quite annoying in the output :P
-//    	if(!expn.parentAccept(this)) {
-//    		return false;
-//    	}
 
     	// S21
     	expn.setType(new IntegerType());

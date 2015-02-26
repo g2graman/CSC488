@@ -1,7 +1,0 @@
- 
-%S40 Check that identifier has been declared as a function.
-%S41 Check that identifier has been declared as a procedure.
-%S42 Check that the function or procedure has no parameters.
-%S43 Check that the number of arguments is equal to the number of formal parameters.
-%S44 Set the argument count to zero.
-%S45 Increment the argument count by one.

@@ -1,10 +1,10 @@
 % sample of all types of statements
- begin 
-     integer I, J , K[100] 
+ begin
+     integer I, J , K[100]
      % assignment
      I <= 1
      K[I] <= J
-     boolean  P, Q, NP, R[100] 
+     boolean  P, Q, NP, R[100]
      R[I] <=! R[K[I]]
      % if
      if P = NP then  Q <= true end
@@ -14,21 +14,21 @@
      % while and loop
      integer X, Y[42], Z[ -2000 .. 0 , 17 ]
      while I <= J do  I <= I + J end
-     while J > I do  begin  J <= J - I  end  end 
+     while J > I do  begin  J <= J - I  end  end
      loop  I <= I + 1 exit when ! I < 0 end
-     loop   begin  P <= P + 1  end  exit when  NP end
+     loop   begin  I <= I + 1  end  exit when  NP end
      while! false do   begin  begin  begin  exit  end  end  end  end
      loop  if true then exit when P| Q end exit when  R[I] end
      % get, put
-     get I , J , K[I] 
-     put newline , I , newline , J , newline , K[J] 
+     get I , J , K[I]
+     put skip , I , skip , J , skip , K[J]
      %  procedureedure call, scopes
-      begin 
-          procedure A( integer B )  begin   if P!= NP then return end return  end 
-          begin 
-	      boolean  M[100], N 
+      begin
+          procedure A( integer B )  begin   if P!= NP then return end return  end
+          begin
+	      boolean  M[100], N
               A( I )
-          end 
-	  begin   begin   begin   P <= NP   integer X, Y[10]  A( 23 )  end   R[I] <= false  end  K[23] <= 17  end 
-      end 
- end 
+          end
+	  begin   begin   begin   P <= NP   integer X, Y[10]  A( 23 )  end   R[I] <= false  end  K[23] <= 17  end
+      end
+ end

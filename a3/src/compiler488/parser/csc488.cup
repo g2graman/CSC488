@@ -224,8 +224,8 @@ statement ::= variable:LVALUE LESS EQUAL expression:RVALUE        // assignment 
     | EXIT WHEN expression:EXPN
     {: RESULT = new ExitStmt( EXPN ); RESULT.setLocation(EXPNleft, EXPNright); :}
 
-    | RETURN              // return statements
-    {: RESULT = new ReturnStmt(); :}
+    | RETURN:token              // return statements
+    {: RESULT = new ReturnStmt(); RESULT.setLocation(tokenleft, tokenright); :}
 
     | RETURN L_PAREN expression:VALUE R_PAREN
     {: RESULT = new ReturnStmt( VALUE ); RESULT.setLocation(VALUEleft, VALUEright); :}

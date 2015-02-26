@@ -194,6 +194,17 @@ public class Semantics implements ASTVisitor<Boolean> {
 	public void exitScope() {
 		scopes.removeFirst();
 	}
+	
+	public MajorScope getFirstRoutine() {
+		for(MajorScope scope : scopes) {
+			if(scope.getKind() == ScopeKind.FUNCTION ||
+				scope.getKind() == ScopeKind.PROCEDURE) {
+				return scope;
+			}
+		}
+		
+		return null;
+	}
 
 	public String prettyPrintToString(PrettyPrintable printable) {
 		ByteArrayOutputStream printerStream = new ByteArrayOutputStream();
@@ -538,8 +549,8 @@ public class Semantics implements ASTVisitor<Boolean> {
 		// S42 S43
 		if(parameters.size() != args.size()) {
 			outputError(expn, "The number of arguments do not match the number of parameters!");
-			outputError(args, "%s", prettyPrintToString(args));
-			outputError(parameters, "%s %s (%s)", decl.getType(), decl.getName(), parameters);
+			outputError(parameters, "%s %s() has %d parameters", decl.getType(), decl.getName(),
+					parameters.size());
 			return false;
 		}
 
@@ -578,7 +589,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 		
 		// check if the identifier is a procedure
 		if(entry.getKind() == SymbolKind.PROCEDURE) {
-			outputError(expn, "The procedure %s does not return a value", expn.getIdent());
+			outputError(expn, "The %s %s does not return a value", SymbolKind.PROCEDURE, expn.getIdent());
 		}
 		
 		// S42
@@ -586,8 +597,8 @@ public class Semantics implements ASTVisitor<Boolean> {
 			RoutineDecl node = (RoutineDecl) entry.getNode();
 			
 			if(node.getParameters().size() != 0) {
-				outputError(expn, "The function %s takes %d parameter(s)",
-						expn.getIdent(), node.getParameters().size());
+				outputError(expn, "The %s %s takes %d parameter(s)",
+						SymbolKind.FUNCTION, expn.getIdent(), node.getParameters().size());
 				// foo(integer x)
 				// calling this as
 				// foo
@@ -726,7 +737,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 
     	// S50
   		if(currentLoop == null) {
-  			outputError(stmt, "An exit must be inside a loop!");
+  			outputError(stmt, "An exit must be inside a loop");
   		}
   		
   		return true;
@@ -752,11 +763,12 @@ public class Semantics implements ASTVisitor<Boolean> {
   		return true;
   	}
   	public Boolean visit(LoopingStmt stmt) {
+  		LoopingStmt old = currentLoop;
     	currentLoop = stmt;
     	if(!this.visit(stmt.getBody())) {
     		return false;
     	}
-    	currentLoop = null;
+    	currentLoop = old;
 
   		return true;
   	}
@@ -788,7 +800,9 @@ public class Semantics implements ASTVisitor<Boolean> {
   		RoutineDecl decl = (RoutineDecl) result.getNode();
   		ASTList<ScalarDecl> parameters = decl.getParameters();
   		if (parameters.size() != arguments.size()) {
-  			outputError(stmt, "parameter count mismatch");
+			outputError(stmt, "The number of arguments do not match the number of parameters!");
+			outputError(parameters, "%s %s() has %d parameters", SymbolKind.PROCEDURE, decl.getName(),
+					parameters.size());
   			return false;
   		}
 
@@ -822,17 +836,16 @@ public class Semantics implements ASTVisitor<Boolean> {
 			expn = false;
 		}
 		
-		MajorScope currentScope = scopes.getFirst();
-		ScopeKind scopeKind = currentScope.getKind();
+		MajorScope currentScope = getFirstRoutine();
 
 		// S51, S52
-		if(scopeKind != ScopeKind.FUNCTION
-				&& scopeKind != ScopeKind.PROCEDURE) {
+		if(currentScope == null) {
 			outputError(stmt, "A return statement must be inside a %s or %s",
 					ScopeKind.FUNCTION, ScopeKind.PROCEDURE);
 			return false;
 		}
-		
+
+		ScopeKind scopeKind = currentScope.getKind();
 		RoutineDecl decl = currentScope.getRoutine();
 		
 		if(scopeKind == ScopeKind.PROCEDURE) {

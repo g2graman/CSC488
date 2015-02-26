@@ -4,19 +4,20 @@ begin
    begin
       integer I, J, K
       boolean P[10], Q[-1 .. 1 ], R[ 20,40 ]
-      integer function F( boolean B ) 
+      integer function F( boolean B )
         begin
 	   % empty scope
+     return (1)
         end % F
    end
    % statements , no declarations
-   begin 
+   begin
      put "to B | ! to B", skip
      while  true != false do
          %     empty scope
          if { begin end yields true } then
             put "Yes"
-         else 
+         else
             put "No"
          end
          put skip
@@ -25,4 +26,4 @@ begin
         exit when false = true
      end
   end
-end  
+end

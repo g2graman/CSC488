@@ -1,13 +1,13 @@
 %  test all forms of correct expressions
- begin 
+ begin
 	% text constants
-        put "Hello World" , newline
-        put "goodby " , "cruel " , "world " , newline, newline
+        put "Hello World" , skip
+        put "goodby " , "cruel " , "world " , skip, skip
 	% primaries
-        integer I, J, K[10] 
+        integer I, J, K[10]
 	I < = 1
 	J < = -1
-        boolean P, Q, R[20] 
+        boolean P, Q, R[20]
 	P <= true
 	Q <= false
 	I <= K[J]
@@ -15,12 +15,12 @@
         K[J] <= 10
         R[I+1] <= false
 	% just in time declaration
-       integer function F  begin  return ( 1 )  end 
-       integer function G( integer H , boolean I ) begin  return ( 2 )    end 
+       integer function F  begin  return ( 1 )  end
+       integer function G( integer H , boolean I ) begin  return ( 2 )    end
 	I < = F
 	J < = G( I , Q )
-       boolean function S begin  return ( false ) end 
-       boolean function T( integer I , boolean P ) begin  return (  true ) end 
+       boolean function S begin  return ( false ) end
+       boolean function T( integer I , boolean P ) begin  return (  true ) end
 	R[F] <= S
 	R[G(I,false)] <= T( J , P )
 	% arithmetic expressions
@@ -49,4 +49,4 @@
         % anon functions
         Q <= { boolean P  P <= false yields ! P }
         K[ { integer Y  if Q then Y <= I + 1 else Y <= J - 1 end yields Y + 2 }] <= 7
- end 
+ end

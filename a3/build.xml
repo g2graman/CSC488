@@ -21,11 +21,11 @@
 
   <!-- where to get jar files from -->
   <!-- Locations for cdf.toronto.edu     -->
-  <property name="jflex.jar.url" 
+  <property name="jflex.jar.url"
         value="http://www.cdf.toronto.edu/~csc488h/winter/lib/JFlex.jar" />
-  <property name="cup.jar.url" 
+  <property name="cup.jar.url"
   	value="http://www.cdf.toronto.edu/~csc488h/winter/lib/java-cup-v11a.jar" />
-  <property name="runtime.jar.url" 
+  <property name="runtime.jar.url"
   	value="http://www.cdf.toronto.edu/~csc488h/winter/lib/java-cup-11a-runtime.jar" />
 
   <path id="running.classpath">
@@ -41,16 +41,16 @@
   </target>
 
   <target name="help" description="show help message">
-  	<echo message="Ant build file for CSC488. Useful targets:"/> 
-  	<echo message=""/> 
+  	<echo message="Ant build file for CSC488. Useful targets:"/>
+  	<echo message=""/>
 	<echo message="compiler488:      build the compiler"/>
-  	<echo message="clean:            remove all compiled files"/> 
-  	<echo message="gettools:         download development tools to local lib"/> 
+  	<echo message="clean:            remove all compiled files"/>
+  	<echo message="gettools:         download development tools to local lib"/>
 	<echo message="                  DO THIS FIRST to load required tools"/>
         <echo message="jflex:            run jflex to produce a scanner"/>
         <echo message="jcup:             run java_cup to produce a parser"/>
-  	<echo message="compile:          compile the compiler"/> 
-  	<echo message="dist:             build a portable compiler488.jar"/> 
+  	<echo message="compile:          compile the compiler"/>
+  	<echo message="dist:             build a portable compiler488.jar"/>
         <echo message="javadoc:          build javadoc documentation"/>
         <echo message="docclean:         remove all javadoc documentation"/>
         <echo message="jflexclean:       remove JFlex generated files"/>
@@ -59,13 +59,13 @@
   	<echo message="toolclean:        remove libraries imported by gettools"/>
         <echo message="distclean:        remove all files not in the distribution"/>
 	<echo message="rebuild:          realclean followed by compile"/>
-  	<echo message=""/> 
-  </target> 
+  	<echo message=""/>
+  </target>
 
 
   <target name="declare" description="define tasks for jflex and cup">
-    <taskdef 
-     classname="JFlex.anttask.JFlexTask" name="jflex" 
+    <taskdef
+     classname="JFlex.anttask.JFlexTask" name="jflex"
      classpath="${jflex.jar}"/>
 
     <taskdef
@@ -82,11 +82,11 @@
     <!-- unpack java_cup runtime for use in dist target -->
     <mkdir dir="${runlib}" />
     <exec executable="jar" dir="${runlib}">
-         <arg line="xf ${runtime.jar}"/> 
+         <arg line="xf '${runtime.jar}'"/>
     </exec>
   </target>
 
-  
+
   <target name="jflex" depends="declare,lexerUpdateCheck" description="generate scanner"
 	unless="LexerOK">
     <jflex file="${src}/compiler488/parser/csc488.flex" />
@@ -98,7 +98,7 @@
         targetfile="${src}/compiler488/parser/Lexer.java"
      />
   </target>
-	
+
   <target name="jflexclean">
     <delete file="${src}/compiler488/parser/Lexer.java" />
   </target>
@@ -111,14 +111,14 @@
   	 force="true"
          parser="Parser" />
   </target>
-  
+
   <target name="parserUpdateCheck" description="Check Parser.java is upto date">
      <uptodate property="parserOK"
 	srcfile="${src}/compiler488/parser/csc488.cup"
         targetfile="${src}/compiler488/parser/Parser.java"
      />
   </target>
-	
+
   <target name="jcupclean">
     <delete file="${src}/compiler488/parser/Parser.java"/>
     <delete file="${src}/compiler488/parser/sym.java"/>
@@ -127,7 +127,7 @@
   <target name="compile" depends="init,jflex,jcup"
     description="compiles the source">
     <!-- workaround for bug in ant 1.8 -->
-    <javac debug="${debug_build}" 
+    <javac debug="${debug_build}"
            includeantruntime="false"
 	   srcdir="${src}" destdir="${build}"   >
       <classpath>
@@ -148,7 +148,7 @@
       <!-- Also include files unpacked from java-cup-11a-runtime.jar so compiler488.jar  can run stand alone -->
       <fileset dir="${runlib}" />
       <manifest>
-	<attribute 
+	<attribute
 	 name="Main-Class" value="compiler488.compiler.Main"
 	 />
       </manifest>
@@ -162,7 +162,7 @@
     <!-- Put everything in ${build} into the csc488.jar file -->
     <jar destfile="submit/compiler488.jar" basedir="${build}">
       <manifest>
-	<attribute 
+	<attribute
 	 name="Main-Class" value="compiler488.compiler.Main"
 	 />
       </manifest>
@@ -171,7 +171,7 @@
 
   <target name="javadoc">
     <mkdir dir="${doc}"/>
-    <mkdir dir="${doc}/javadoc"/>    
+    <mkdir dir="${doc}/javadoc"/>
     <javadoc destdir="doc/javadoc" Use="true">
       <arg value="-private" />
       <fileset dir="${src}">

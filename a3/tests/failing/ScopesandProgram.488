@@ -1,9 +1,14 @@
-%S00 Start program scope.
-%S01 End program scope.
-%S03 Associate declarations and statements with scope.
-%S04 Start function scope.
-%S05 End function scope.
-%S06 Start ordinary scope.
-%S07 End ordinary scope.
-%S08 Start procedure scope.
-%S09 End procedure scope
+% S03 Associate declarations and statements with scope.
+
+begin
+
+	begin
+		integer scopeTest
+		scopeTest <= 1
+	end
+
+	integer scopeTest2
+
+	scopeTest2 = scopeTest 
+	% This should fail because scopeTest only exists in a different scope
+end

@@ -1,3 +1,0 @@
-% S01 End program scope.
-% The program scope is never ended, so this should fail
-start

@@ -5,6 +5,7 @@ begin
 	% This never ends so it should fail
 	procedure test1 begin
 		put "Hello world", skip
+		return
 
 
 end

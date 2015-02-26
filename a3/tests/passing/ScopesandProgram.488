@@ -21,6 +21,7 @@ begin % S00 Start program scope.
 	procedure test2 begin
 		scopeTest <= 10
 		put "Hello world", skip
+		return
 	% S09 End procedure scope
 	end
 	

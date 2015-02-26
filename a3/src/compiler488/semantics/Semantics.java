@@ -53,7 +53,9 @@ import compiler488.ast.stmt.Scope;
 import compiler488.ast.stmt.Stmt;
 import compiler488.ast.stmt.WhileDoStmt;
 import compiler488.ast.type.BooleanType;
+import compiler488.symbol.MajorScope.ScopeKind;
 import compiler488.symbol.SymbolTableEntry;
+import compiler488.symbol.SymbolTableEntry.SymbolKind;
 import compiler488.symbol.MajorScope;
 
 /** Implement semantic analysis for compiler 488
@@ -67,17 +69,22 @@ public class Semantics implements ASTVisitor<Boolean> {
 	private String traceFile = new String();
 	public FileWriter Tracer;
 	public File f;
-	
+
 	private LinkedList<MajorScope> scopes;
-	private boolean isProgramScope = true;
+	private boolean isProgramScope;
+	private ScopeKind routineKind;
 
 	/** SemanticAnalyzer constructor */
 	public Semantics() {
-		scopes = new LinkedList<MajorScope>();
 	}
+	
 	/** semanticsInitialize - called once by the parser at the */
 	/* start of compilation */
-	void Initialize() {
+	public void Initialize() {
+		scopes = new LinkedList<MajorScope>();
+		
+		isProgramScope = true;
+		routineKind = ScopeKind.NORMAL;
 
 		/* Initialize the symbol table */
 
@@ -92,7 +99,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 
 	/** semanticsFinalize - called by the parser once at the */
 	/* end of compilation */
-	void Finalize() {
+	public void Finalize() {
 
 		/* Finalize the symbol table */
 
@@ -108,7 +115,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 
 	/**
 	 * Perform one semantic analysis action
-	 * 
+	 *
 	 * @param actionNumber
 	 *            semantic analysis action number
 	 */
@@ -119,7 +126,6 @@ public class Semantics implements ASTVisitor<Boolean> {
 				// output trace to the file represented by traceFile
 				try {
 					// open the file for writing and append to it
-					File f = new File(traceFile);
 					Tracer = new FileWriter(traceFile, true);
 
 					Tracer.write("Sematics: S" + actionNumber + "\n");
@@ -149,18 +155,18 @@ public class Semantics implements ASTVisitor<Boolean> {
 	}
 
 	// ADDITIONAL FUNCTIONS TO IMPLEMENT SEMANTIC ANALYSIS GO HERE
-	
+
 	public void printAllSymbolTables() {
 		for(MajorScope scope : scopes) {
 			System.out.println(scope);
 		}
 	}
-	
+
 	public SymbolTableEntry lookup(String varname, boolean local) {
 		if(local) {
 			return scopes.getFirst().lookup(varname);
 		}
-		
+
 		for(MajorScope scope : scopes) {
 			SymbolTableEntry entry = scope.lookup(varname);
 			if(entry != null) {
@@ -169,27 +175,27 @@ public class Semantics implements ASTVisitor<Boolean> {
 		}
 		return null;
 	}
-	
-	public void addEntry(String varname, Type type, SymbolTableEntry.Kind kind, AST node) {
+
+	public void addEntry(String varname, Type type, SymbolKind kind, AST node) {
 		if(scopes.isEmpty()) {
 			return;
 		}
 		scopes.getFirst().addEntry(varname, type, kind, node);
 	}
-	
-	public void enterScope(MajorScope.ScopeKind kind, RoutineDecl routine) {
+
+	public void enterScope(ScopeKind kind, RoutineDecl routine) {
 		scopes.addFirst(new MajorScope(kind, routine));
 	}
-	
+
 	public void exitScope() {
 		scopes.removeFirst();
 	}
-	
+
 	public String prettyPrintToString(PrettyPrintable printable) {
 		ByteArrayOutputStream printerStream = new ByteArrayOutputStream();
 		PrettyPrinter printer = new BasePrettyPrinter(new PrintStream(printerStream));
 		printable.prettyPrint(printer);
-		
+
 		return printerStream.toString();
 	}
 
@@ -198,40 +204,40 @@ public class Semantics implements ASTVisitor<Boolean> {
 		args.add(ast.getLine());
 		args.add(ast.getCol());
 		args.addAll(Arrays.asList(inputArgs));
-		
+
 		String errorMessage = String.format("ERROR (line: %d, col %d): " + format, args.toArray());
 		System.err.println(errorMessage);
 	}
-	
+
 	public void outputTypeError(Expn expn, Type desiredType) {
 		outputError(expn, "%s is not a(n) %s", prettyPrintToString(expn), desiredType);
 	}
-	
+
 	public void outputAlreadyDeclaredError(AST ast, String name) {
 		SymbolTableEntry entry = lookup(name, false);
-		
+
 		outputError(ast, "'%s' is already declared on line %d", name, entry.getNode().getLine());
 	}
-	
-	public void outputNotDeclaredError(AST ast, String name, SymbolTableEntry.Kind kind) {
+
+	public void outputNotDeclaredError(AST ast, String name, SymbolKind kind) {
 		outputError(ast, "'%s' is not declared as a(n) %s", name, kind);
 	}
-	
+
 	public void outputNotDeclaredError(AST ast, String name) {
 		outputError(ast, "'%s' was not declared", name);
 	}
-	
+
 	// NOTE: Semantic actions not required to implement here
 	// TODO: double check these
 	// all of these are done by the AST / parser
-	// S03 
-	// S13 
-	// S14 
-	// S16 
+	// S03
+	// S13
+	// S14
+	// S16
 	// S23
 	// S37, S39
 	// S44, S45
-	
+
 	@Override
 	public Boolean visit(AST node) {
 		System.out.println("Hit ASTNode: " + node);
@@ -254,7 +260,7 @@ public class Semantics implements ASTVisitor<Boolean> {
         // S19 S48
         SymbolTableEntry entry = lookup(decl.getName(), false);
         if (entry == null){
-            addEntry(decl.getName(), decl.getType(), SymbolTableEntry.Kind.ARRAY, decl);
+            addEntry(decl.getName(), decl.getType(), SymbolKind.ARRAY, decl);
         } else {
         	outputAlreadyDeclaredError(decl, decl.getName());
             return false;
@@ -281,92 +287,92 @@ public class Semantics implements ASTVisitor<Boolean> {
 		return true;
 	}
   	public Boolean visit(Declaration decl) { return true; }
-  	
+
   	public Boolean visit(MultiDeclarations decl) {
   		ASTList<DeclarationPart> parts = decl.getParts();
-  		
+
   		Boolean declarationsValid = true;
   		for(DeclarationPart part : parts) {
   			if(part instanceof ScalarDeclPart) {
   				ScalarDecl scalarDecl = new ScalarDecl(part.getName(), decl.getType());
   				scalarDecl.setLocation(part.getLine(), part.getCol());
-  				
+
   				Boolean scalar = this.visit(scalarDecl);
   				declarationsValid = declarationsValid && scalar;
   			} else {
   				ArrayDeclPart arrayDecl = (ArrayDeclPart) part;
   				arrayDecl.setType(decl.getType());
-  				
+
   				Boolean array = this.visit(arrayDecl);
   				declarationsValid = declarationsValid && array;
   			}
   		}
-  		
+
         return declarationsValid;
   	}
-  	
+
   	public Boolean visit(RoutineDecl decl) {
   		// S11, S12
-    	
+
         // S17, S18
-        if (decl.getType() == null) { 
+        if (decl.getType() == null) {
         	// procedure has no return type
 	        if (lookup(decl.getName(), false) == null){
-	            addEntry(decl.getName(), decl.getType(), SymbolTableEntry.Kind.PROCEDURE, decl);
+	            addEntry(decl.getName(), decl.getType(), SymbolKind.PROCEDURE, decl);
 	        } else {
 	            outputAlreadyDeclaredError(decl, decl.getName());
 	            return false;
 	        }
-        } else { 
+        } else {
         	// function
 	        if (lookup(decl.getName(), false) == null){
-	            addEntry(decl.getName(), decl.getType(), SymbolTableEntry.Kind.FUNCTION, decl);
+	            addEntry(decl.getName(), decl.getType(), SymbolKind.FUNCTION, decl);
 	        } else {
 	            outputAlreadyDeclaredError(decl, decl.getName());
 	            return false;
 	        }
 	    }
-        
+
   		// S04, S08
-  		MajorScope.ScopeKind kind = decl.getType() == null ? MajorScope.ScopeKind.PROCEDURE : MajorScope.ScopeKind.FUNCTION;
-  		enterScope(kind, decl);
-        
+  		routineKind = decl.getType() == null ? ScopeKind.PROCEDURE : ScopeKind.FUNCTION;
+
+  		enterScope(routineKind, decl);
+  		
     	// S15, S16
     	ASTList<ScalarDecl> parameters = decl.getParameters();
     	boolean declParameters = true;
     	for(ScalarDecl parameter : parameters) {
       		// S10
       		if ( lookup(parameter.getName(), true) == null) {
-      			addEntry(parameter.getName(), parameter.getType(), SymbolTableEntry.Kind.SCALAR, parameter);
+      			addEntry(parameter.getName(), parameter.getType(), SymbolKind.SCALAR, parameter);
       		} else {
                 outputAlreadyDeclaredError(parameter, parameter.getName());
       			declParameters = false;
       		}
     	}
-    	
-    	if(!declParameters) {
+
+    	// check the body
+    	ASTList<Stmt> declBody = decl.getBody().getBody();
+
+    	boolean declAcceptBody = true; //Default to true on empty body
+    	if(declBody != null) {
+    		declAcceptBody = declBody.accept(this);
+    	}
+
+    	exitScope();
+
+  		// S53
+    	if(routineKind == ScopeKind.FUNCTION && decl.getReturnCount() < 1) {
+    		outputError(decl, "%s() must have a return statement!", decl.getName());
     		return false;
     	}
     	
-    	// check the body
-    	ASTList<Stmt> declBody = decl.getBody().getBody();
-    	
-    	boolean declAcceptBody = true; //Default to true on empty body
-    	if(declBody != null) {
-    		declAcceptBody = decl.getBody().accept(this);
-    	}
-
-  		// TODO S53
-    	
-    	// S05, S09
-    	exitScope();
-
-  		return declAcceptBody;
+  		return declParameters && declAcceptBody;
   	}
   	public Boolean visit(ScalarDecl decl) {
   		// S10
   		if ( lookup(decl.getName(), false) == null) {
-  			addEntry(decl.getName(),decl.getType(), SymbolTableEntry.Kind.SCALAR, decl);
+  			addEntry(decl.getName(),decl.getType(), SymbolKind.SCALAR, decl);
   			return true;
   		}
         outputAlreadyDeclaredError(decl, decl.getName());
@@ -374,24 +380,25 @@ public class Semantics implements ASTVisitor<Boolean> {
   	}
 
   	public Boolean visit(AnonFuncExpn expn) {
-  		
+
     	if(!expn.getBody().accept(this)) {
     		return false;
     	}
     	if(!expn.getExpn().accept(this)) {
     		return false;
     	}
-  		
+
   		// S24
     	expn.setType(expn.getExpn().getType());
+    	
   		return true;
   	}
   	public Boolean visit(ArithExpn expn) {
-  		
+
     	if(!this.visit((BinaryExpn) expn)) {
     		return false;
     	}
-  		
+
   		// S31
     	if (!expn.getLeft().isInteger()) {
     		outputTypeError(expn.getLeft(), new IntegerType());
@@ -401,7 +408,7 @@ public class Semantics implements ASTVisitor<Boolean> {
     		outputTypeError(expn.getRight(), new IntegerType());
     		return false;
     	}
- 
+
   		// S21
     	expn.setType(new IntegerType());
   		return true;
@@ -409,36 +416,36 @@ public class Semantics implements ASTVisitor<Boolean> {
 
 	@Override
 	public Boolean visit(BinaryExpn expn) {
-		
+
     	if(!expn.getLeft().accept(this)) {
     		return false;
     	}
         if(!expn.getRight().accept(this)) {
         	return false;
         }
-		
+
 		// S32
 		if (!(expn.getLeft().isType(expn.getRight().getType()))) {
 			outputError(expn, "(%s) and (%s) are not the same type!",
 					prettyPrintToString(expn.getLeft()), prettyPrintToString(expn.getRight()));
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	public Boolean visit(BoolConstExpn expn) {
 		// S20
     	expn.setType(new BooleanType());
 		return true;
 	}
-	
+
   	public Boolean visit(BoolExpn expn) {
-  		
+
     	if(!this.visit((BinaryExpn)expn)) {
     		return false;
     	}
-  		
+
   		// S30
   		if (!expn.getLeft().isBoolean()) {
     		outputTypeError(expn.getLeft(), new BooleanType());
@@ -458,7 +465,7 @@ public class Semantics implements ASTVisitor<Boolean> {
     	if(!this.visit((BinaryExpn)expn)) {
     		return false;
     	}
-    	
+
 		// S31
     	if (!expn.getLeft().isInteger()) {
     		outputTypeError(expn.getLeft(), new IntegerType());
@@ -468,26 +475,26 @@ public class Semantics implements ASTVisitor<Boolean> {
     		outputTypeError(expn.getRight(), new IntegerType());
     		return false;
     	}
-    	
+
 		// S20
 		expn.setType(new BooleanType());
-		
+
 		return true;
 	}
-	
+
 	public Boolean visit(ConstExpn expn) { return true; }
-	
+
   	public Boolean visit(EqualsExpn expn) {
 		// S32
     	if(!this.visit((BinaryExpn)expn)) {
     		return false;
     	}
-    	
+
   		// S20
   		expn.setType(new BooleanType());
   		return true;
   	}
-  
+
 	// S36
 	@Override
 	public Boolean visit(FunctionCallExpn expn) {
@@ -497,20 +504,20 @@ public class Semantics implements ASTVisitor<Boolean> {
             outputNotDeclaredError(expn, expn.getIdent());
             return false;
         }
-        
-        if (entry.getKind() != SymbolTableEntry.Kind.FUNCTION){
-            outputNotDeclaredError(expn, expn.getIdent(), SymbolTableEntry.Kind.FUNCTION);
+
+        if (entry.getKind() != SymbolKind.FUNCTION){
+            outputNotDeclaredError(expn, expn.getIdent(), SymbolKind.FUNCTION);
             return false;
         }
-		
+
 		if(!expn.getArguments().accept(this)) {
 			return false;
 		}
-        
+
         RoutineDecl decl = (RoutineDecl) entry.getNode();
 		ASTList<ScalarDecl> parameters = decl.getParameters();
 		ASTList<Expn> args = expn.getArguments();
-		
+
 		// S42 S43
 		if(parameters.size() != args.size()) {
 			outputError(expn, "The number of arguments do not match the number of parameters!");
@@ -518,25 +525,25 @@ public class Semantics implements ASTVisitor<Boolean> {
 			outputError(parameters, "%s %s (%s)", decl.getType(), decl.getName(), parameters);
 			return false;
 		}
-		
+
 		// check that each argument's type matches the parameters type
 		int size = parameters.size();
 		for(int i = 0; i < size; i++) {
 			ScalarDecl parameter = parameters.get(i);
 			Expn argument = args.get(i);
-			
+
 			if(!argument.isType(parameter.getType())) {
-				outputError(argument, "The type of the argument %s does not match the parameter %s %s", 
+				outputError(argument, "The type of the argument %s does not match the parameter %s %s",
 						prettyPrintToString(argument), parameter.getType(), parameter.getName());
 				outputTypeError(argument, parameter.getType());
 				return false;
 			}
 		}
 
-		
+
 		// S28
 		expn.setType(decl.getType());
-		
+
 		return true;
 	}
 
@@ -544,44 +551,44 @@ public class Semantics implements ASTVisitor<Boolean> {
 	@Override
 	public Boolean visit(IdentExpn expn) {
 		SymbolTableEntry entry = lookup(expn.getIdent(), false);
-		
+
 		if(entry == null) {
 			// TODO error message for S25, S26
 			outputNotDeclaredError(expn, expn.getIdent());
-			
+
 			return false;
 		}
 		expn.setType(entry.getType());
-		
+
 		return true;
 	}
-	
+
 	public Boolean visit(IntConstExpn expn) {
 		// this is quite annoying in the output :P
 //    	if(!expn.parentAccept(this)) {
 //    		return false;
 //    	}
-    	
+
     	// S21
     	expn.setType(new IntegerType());
 		return true;
 	}
   	public Boolean visit(NotExpn expn) {
-  		
+
     	if(!expn.parentAccept(this)) {
     		return false;
     	}
-  		
+
   		// S30
   		if (!expn.getOperand().isBoolean()) {
   			outputError(expn, "%s is not boolean type", prettyPrintToString(expn.getOperand()));
   		}
   		// S20
   		expn.setType(new BooleanType());
-  		
+
   		return true;
   	}
-  
+
   	public Boolean visit(SkipConstExpn expn) { return true; }
 
 	// S38
@@ -590,26 +597,26 @@ public class Semantics implements ASTVisitor<Boolean> {
 		// S38
 		// check if it was declared as an array
 		SymbolTableEntry entry = lookup(expn.getVariable(), false);
-		
+
 		if (entry == null) {
-			outputNotDeclaredError(expn, expn.getVariable(), SymbolTableEntry.Kind.ARRAY);
+			outputNotDeclaredError(expn, expn.getVariable(), SymbolKind.ARRAY);
 			return false;
 		}
-		if (entry.getKind() != SymbolTableEntry.Kind.ARRAY) {
-			outputNotDeclaredError(expn, expn.getVariable(), SymbolTableEntry.Kind.ARRAY);
+		if (entry.getKind() != SymbolKind.ARRAY) {
+			outputNotDeclaredError(expn, expn.getVariable(), SymbolKind.ARRAY);
 			return false;
 		}
-		
+
 		// check the first subscript
 		if(!expn.getSubscript1().accept(this)) {
 			return false;
 		}
-		
+
 		// S31
   		if (!expn.getSubscript1().isInteger()) {
   			outputTypeError(expn.getSubscript1(), new IntegerType());
   		}
-		
+
   		// check the second subscript
 		if(expn.getSubscript2() != null) {
 			if(!expn.getSubscript2().accept(this)) {
@@ -619,40 +626,40 @@ public class Semantics implements ASTVisitor<Boolean> {
 	  		if (!expn.getSubscript2().isInteger()) {
 	  			outputTypeError(expn.getSubscript2(), new IntegerType());
 	  		}
-	  		
+
 			return false;
 		}
-		
-		
+
+
 		// S27
 		expn.setType(entry.getType());
-		
+
 		return true;
 	}
 	public Boolean visit(TextConstExpn expn) { return true; }
   	public Boolean visit(UnaryExpn expn) {
-  		// S30 
+  		// S30
     	if(!expn.getOperand().accept(this)) {
     		return false;
     	}
   		return true;
   	}
   	public Boolean visit(UnaryMinusExpn expn) {
-  		
+
     	if(!expn.parentAccept(this)) {
     		return false;
     	}
-  		
+
   		// S31
   		if (!expn.getOperand().isInteger()) {
   			outputError(expn, "%s is not an integer!", prettyPrintToString(expn));
   		}
-  		
+
   		// S21
   		expn.setType(new IntegerType());
   		return true;
   	}
-  	
+
   	public Boolean visit(AssignStmt stmt) {
     	if(!stmt.getLval().accept(this)) {
     		return false;
@@ -660,7 +667,7 @@ public class Semantics implements ASTVisitor<Boolean> {
     	if(!stmt.getRval().accept(this)) {
     		return false;
     	}
-  		
+
   		// S34
     	if (stmt.getLval() == null || stmt.getRval() == null ) {
     		return false;
@@ -668,26 +675,26 @@ public class Semantics implements ASTVisitor<Boolean> {
     	if (!stmt.getLval().isType(stmt.getRval().getType())) {
     		return false;
     	}
-    	
+
   		return true;
   	}
   	public Boolean visit(ExitStmt stmt) {
-  		
+
     	if(stmt.getExpn() != null && !stmt.getExpn().accept(this)) {
     		return false;
     	}
-  		
-  		// S30	
+
+  		// S30
   		if (stmt.getExpn() != null && !stmt.getExpn().isBoolean()) {
   			outputTypeError(stmt.getExpn(), new BooleanType());
   			return false;
   		}
-    	
+
     	// TODO S50
   		return true;
   	}
   	public Boolean visit(IfStmt stmt) {
-  		
+
     	if(stmt.getCondition() != null && !stmt.getCondition().accept(this)) {
     		return false;
     	}
@@ -697,13 +704,13 @@ public class Semantics implements ASTVisitor<Boolean> {
     	if(stmt.getWhenFalse() != null && !stmt.getWhenFalse().accept(this)) {
     		return false;
     	}
-    	
+
     	// S30
     	if (!stmt.getCondition().isBoolean()) {
   			outputTypeError(stmt.getCondition(), new BooleanType());
     		return false;
     	}
-    	
+
   		return true;
   	}
   	public Boolean visit(LoopingStmt stmt) {
@@ -713,25 +720,24 @@ public class Semantics implements ASTVisitor<Boolean> {
     	if(!stmt.getBody().accept(this)) {
     		return false;
     	}
-  		
+
   		return true;
   	}
   	public Boolean visit(LoopStmt stmt) { return true; }
   	public Boolean visit(ProcedureCallStmt stmt) {
-  		
+
     	if(!stmt.getArguments().accept(this)) {
     		return false;
     	}
-  		
+
   		// S41
   		SymbolTableEntry result = lookup(stmt.getName(), false);
   		if ( result == null ) {
-  			printAllSymbolTables();
   			outputNotDeclaredError(stmt, stmt.getName());
   			return false;
   		} else {
-  			if ( result.getKind() != SymbolTableEntry.Kind.PROCEDURE ) {
-  				outputNotDeclaredError(stmt, stmt.getName(), SymbolTableEntry.Kind.PROCEDURE);
+  			if ( result.getKind() != SymbolKind.PROCEDURE ) {
+  				outputNotDeclaredError(stmt, stmt.getName(), SymbolKind.PROCEDURE);
   				return false;
   			}
   		}
@@ -744,21 +750,21 @@ public class Semantics implements ASTVisitor<Boolean> {
   			outputError(stmt, "parameter count mismatch");
   			return false;
   		}
-  		
+
   		return true;
   	}
-  	
+
 	public Boolean visit(Program stmt) {
 		if(stmt.getBody() == null) {
 			return true;
 		}
-		
+
 		// S00, S01
 		return this.visit( (Scope) stmt );
 	}
-	
+
   	public Boolean visit(PutStmt stmt) {
-  		
+
     	if(!stmt.getOutputs().accept(this)) {
     		return false;
     	}
@@ -769,37 +775,62 @@ public class Semantics implements ASTVisitor<Boolean> {
 	// S35
 	@Override
 	public Boolean visit(ReturnStmt stmt) {
-		
+
+		boolean expn = true;
 		if(stmt.getValue() != null && !stmt.getValue().accept(this)) {
+			expn = false;
+		}
+		
+		MajorScope currentScope = scopes.getFirst();
+		ScopeKind scopeKind = currentScope.getKind();
+
+		// S51, S52
+		if(scopeKind != ScopeKind.FUNCTION
+				&& scopeKind != ScopeKind.PROCEDURE) {
+			outputError(stmt, "A return statement must be inside a %s or %s",
+					ScopeKind.FUNCTION, ScopeKind.PROCEDURE);
 			return false;
 		}
 		
-		// TODO S51
+		RoutineDecl decl = currentScope.getRoutine();
 		
-		// TODO S52
-		
-		if(stmt.getValue() != null) {
-			// TODO S35: use the function checked by S51
-			Type functionType = new IntegerType();
-			Boolean isCorrectType = stmt.getValue().isType(functionType);
-			
-			if(!isCorrectType) {
-				outputTypeError(stmt.getValue(), functionType);
+		if(scopeKind == ScopeKind.PROCEDURE) {
+			// make sure that procedures return statement doesn't have an expression
+			if(stmt.getValue() != null) {
+				outputError(stmt, "%s can not return a value", decl.getName());
+				return false;
+			}
+		} else if(scopeKind == ScopeKind.FUNCTION) {
+			if(stmt.getValue() == null) {
+				// make sure the return statement has an expression for functions
+				outputError(stmt, "%s must return a value", decl.getName());
+				return false;
+			} else {
+				// check the type of the returned expression
+				Type functionType = decl.getType();
+				Boolean isCorrectType = stmt.getValue().isType(functionType);
+	
+				if(!isCorrectType) {
+					outputTypeError(stmt.getValue(), functionType);
+					expn = false;
+				}
 			}
 		}
 		
-		return true;
+		// so later S53 can check this
+		decl.incrementReturnCount();
+
+		return expn;
 	}
 
 	public Boolean visit(Scope stmt) {
-		// S06, S07
 
-		//Precondition: haven't already created a function 
-		// / procedure scope already since RoutineDecl will be visited before this
-		
-		MajorScope.ScopeKind kind = MajorScope.ScopeKind.NORMAL;
+		// S06
+		ScopeKind kind = ScopeKind.NORMAL;
+
 		if(isProgramScope) {
-			kind = MajorScope.ScopeKind.PROGRAM;
+			// S00
+			kind = ScopeKind.PROGRAM;
 			isProgramScope = false;
 		}
 		enterScope(kind, null);
@@ -809,41 +840,42 @@ public class Semantics implements ASTVisitor<Boolean> {
 		if(body != null) {
 			result = body.accept(this);
 		}
-		
+
+		//S01, S05, S07, S09
 		exitScope();
-		
+
 		return result;
 	}
-	
+
 	public Boolean visit(Stmt stmt) {return true;}
 	public Boolean visit(WhileDoStmt stmt) {
-    	
+
     	if(!this.visit((LoopingStmt)stmt)) {
     		return false;
     	}
-    	
+
 		if (stmt.getExpn() != null && !stmt.getExpn().accept(this)) {
 			return false;
 		}
 		if (stmt.getExpn() != null && !stmt.getBody().accept(this)) {
 			return false;
 		}
-		
+
     	// S30
     	if (!stmt.getExpn().isBoolean()) {
     		outputTypeError(stmt.getExpn(), new BooleanType());
     		return false;
     	}
-		
+
 		return true;
 	}
-  
+
 	public Boolean visit(BooleanType type) {return true;}
 	public Boolean visit(IntegerType type) {return true;}
-	
+
 	public Boolean visit(GetStmt stmt) {
 		return stmt.getInputs().accept(this);
 	}
 
-  
+
 }

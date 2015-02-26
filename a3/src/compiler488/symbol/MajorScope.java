@@ -3,6 +3,7 @@ package compiler488.symbol;
 import compiler488.ast.AST;
 import compiler488.ast.decl.RoutineDecl;
 import compiler488.ast.type.Type;
+import compiler488.symbol.SymbolTableEntry.SymbolKind;
 
 /** Symbol Table
  *  This almost empty class is a framework for implementing
@@ -22,7 +23,7 @@ public class MajorScope {
 		PROGRAM,
 		NORMAL
 	}
-	
+
 	private SymbolTable symbolTable;
 	private ScopeKind kind;
 	private RoutineDecl routine;
@@ -30,7 +31,7 @@ public class MajorScope {
     public MajorScope(ScopeKind kind) {
     	this(kind, null);
     }
-    
+
     public MajorScope(ScopeKind kind, RoutineDecl routine) {
         this.symbolTable = new SymbolTable();
         this.kind = kind;
@@ -40,11 +41,11 @@ public class MajorScope {
 	public SymbolTableEntry lookup(String varname) {
 		return symbolTable.lookup(varname);
 	}
-	
-	public void addEntry(String varname, Type type, SymbolTableEntry.Kind kind, AST node) {
+
+	public void addEntry(String varname, Type type, SymbolKind kind, AST node) {
 		symbolTable.addEntry(varname, type, kind, node);
 	}
-	
+
 	public ScopeKind getKind() {
 		return kind;
 	}

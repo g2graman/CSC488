@@ -19,6 +19,8 @@ public class RoutineDecl extends Declaration {
 
     /** The body of this routine (if any.) */
     private Scope body = null;
+    
+    private int returnCount;
 
     /**
      * Construct a function with parameters, and a definition of the body.
@@ -101,4 +103,12 @@ public class RoutineDecl extends Declaration {
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
+
+	public int getReturnCount() {
+		return returnCount;
+	}
+
+	public void incrementReturnCount() {
+		this.returnCount++;
+	}
 }

@@ -39,7 +39,7 @@ public abstract class BaseAST implements AST {
 
 	public void setLocation(int line, int column) {
 		this.line = line + 1;
-		this.column = column + 1;
+		this.column = column;
 	}
 
 	@Override

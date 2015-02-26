@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import compiler488.ast.AST;
 import compiler488.ast.type.Type;
+import compiler488.symbol.SymbolTableEntry.SymbolKind;
 
 /** Symbol Table
  *  This almost empty class is a framework for implementing
@@ -32,7 +33,7 @@ public class SymbolTable {
  	 *  to implement the Symbol Table
 	 *  GO HERE.
 	 */
-    
+
     /**
      * @param varname The name of the variable to lookup
      * @return The symbol table entry that corresponds to the specific variable name. Returns null
@@ -49,11 +50,11 @@ public class SymbolTable {
      * @param kind The kind(procedure, function, array or scalar) of the variable
      * @param node The AST node
      */
-    public void addEntry(String varname, Type type, SymbolTableEntry.Kind kind, AST node) {
+    public void addEntry(String varname, Type type, SymbolKind kind, AST node) {
         SymbolTableEntry st_entry = new SymbolTableEntry(varname, type, kind, node);
         entry.put(varname, st_entry);
     }
-    
+
     @Override
     public String toString() {
     	StringBuilder bldr = new StringBuilder();

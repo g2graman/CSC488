@@ -45,7 +45,7 @@ public class ASTList<E extends AST> extends LinkedList<E> implements AST {
     
 	public void setLocation(int line, int column) {
 		this.line = line + 1;
-		this.column = column + 1;
+		this.column = column;
 	}
     
     /**

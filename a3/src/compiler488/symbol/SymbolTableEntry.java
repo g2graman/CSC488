@@ -5,7 +5,7 @@ import compiler488.ast.type.Type;
 
 public class SymbolTableEntry {
 	
-	public static enum Kind {
+	public static enum SymbolKind {
 		SCALAR,
 		ARRAY,
 		FUNCTION,
@@ -14,10 +14,10 @@ public class SymbolTableEntry {
 	
 	private String varname;
 	private Type type;
-	private Kind kind; // can be either array, variable, function, procedure
+	private SymbolKind kind; // can be either array, variable, function, procedure
 	private AST node;
 
-	public SymbolTableEntry(String varname, Type type, Kind identifierType,
+	public SymbolTableEntry(String varname, Type type, SymbolKind identifierType,
 			AST node) {
 		this.varname = varname;
 		this.type = type;
@@ -33,7 +33,7 @@ public class SymbolTableEntry {
 		return type;
 	}
 
-	public Kind getKind() {
+	public SymbolKind getKind() {
 		return kind;
 	}
 

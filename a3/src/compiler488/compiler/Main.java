@@ -382,7 +382,9 @@ public class Main {
 
   private static void semanticAnalysis( Program  programAST ) {
   try{
-      ASTVisitor<Boolean> visitor = new Semantics();
+      Semantics visitor = new Semantics();
+      visitor.Initialize();
+      
       programAST.accept(visitor);
   }
         catch( Exception e)

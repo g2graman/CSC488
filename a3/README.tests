@@ -1,30 +1,32 @@
-Contributions
 
-Nicholas Dujay (c4dujayn)
-* Modified the parser to generate a complete AST with Benson
-* Designed and implemented the visitor pattern with Benson, modifying all AST Node class files and modularizing it so all focus would be in Semantics java class
-* Implemented Error handling with Benson, modified to include line & column number and printing out invalid syntax
-* Completed major and minor scope & general table scope searching through linked list, adding SymbolTable, SymbolTableEntry java class files, and modifying MajorScope
-* Implemented Expressions semantic checks S25,26,27,28,35,36,37,38,39
+Test Cases:
+Symbol Table ( Can be found in the ScopesAndPrograms.488 test file)
+*Major Scoping (begin end, function, procedure)
+*Minor Scoping (if statement, while loop, loop end)
 
-Benson Quach (g0quachb)
-* Modified the parser to generate a complete AST with Nicholas
-* Designed and implemented the visitor pattern with Nicholas, modifying all AST Node class files and modularizing it so all focus would be in Semantics java class
-* Implemented Error handling with Nicholas
-* Annotated cup file with line & column number, and capturing/declaring AST Node information
-* Handled entire Design Document write up
-* Implemented Expressions Types & Expression Type Checking semantic checks S20,21,23,24,30,31,32,34
+AST Building
+*We don’t have time to manually construct and check AST Building, but we are reassured that it works since Semantic Analysis testing works properly
+*Semantic Analysis (All other test case files)
 
-Eric Snyder (g4snyder)
-* Implemented Scopes and Program & Statement Checking semantic checks S00,01,03,04,05,06,07,08,09,50,51,52,53 with Francesco
-* Wrote first level major scoping with Francesco
-
-Francesco Gramano (g2graman)
-* Implemented Scopes and Program & Statement Checking semantic checks S00,01,03,04,05,06,07,08,09,50,51,52,53 with Eric Snyder
-* Wrote first level major scoping with Eric Snyder
-
-Eric Chen (g3chencm)
-* Implemented Declarations &  Functions, procedures and arguments semantic checks S10,11,12,13,14,15,16,17,18,19,46,47,48,40,41,42,43,44,45 with Winston
-
-Winston Yeung (g2yeungw)
-* Implemented Declarations &  Functions, procedures and arguments semantic checks S10,11,12,13,14,15,16,17,18,19,46,47,48,40,41,42,43,44,45 with Eric Chen
+Declarations
+*S46 Check that lower bound is<=upper bound.
+*Statement Checking
+*S50 Check that exit statement is directly inside a loop.
+*S51 Check that return is inside a function
+*S52 Check that return statement is inside a procedure.
+*S53 Check that a function body contains at least one return statement.
+*Expression Type Checking
+*S30 Check that type of expression is boolean.
+*S31 Check that type of expression or variable is integer.
+*S32 Check that left and right operand expressions are the same type.
+*S34 Check that variable and expression in assignment are the same type.
+*S35 Check that expression type matches the return type of enclosing function.
+*S36 Check that type of argument expression matches type of corresponding formal parameter.
+*S37 Check that identifier has been declared as a scalar variable.
+*S38 Check that identifier has been declared as an array.
+*S39 Check that identifier has been declared as a parameter.
+*Functions, procedures and arguments
+*S40 Check that identifier has been declared as a function.
+*S41 Check that identifier has been declared as a procedure.
+*S42 Check that the function or procedure has no parameters.
+*S43 Check that the number of arguments is equal to the number of formal parameters.

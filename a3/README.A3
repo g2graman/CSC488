@@ -1,30 +1,34 @@
-Contributions
-
 Nicholas Dujay (c4dujayn)
 * Modified the parser to generate a complete AST with Benson
 * Designed and implemented the visitor pattern with Benson, modifying all AST Node class files and modularizing it so all focus would be in Semantics java class
 * Implemented Error handling with Benson, modified to include line & column number and printing out invalid syntax
 * Completed major and minor scope & general table scope searching through linked list, adding SymbolTable, SymbolTableEntry java class files, and modifying MajorScope
-* Implemented Expressions semantic checks S25,26,27,28,35,36,37,38,39
+* Implemented Expressions & Expression Type Checking & modified/fixed various semantic checks S25,26,27,28,35,36,37,38,39,11,12,50,51,52,53
+* Contributed to passing/failing test case writeups
 
 Benson Quach (g0quachb)
-* Modified the parser to generate a complete AST with Nicholas
+* Modified the parser to generate a complete AST with Nicholas, Annotated cup file with line & column number, and capturing/declaring AST Node information
 * Designed and implemented the visitor pattern with Nicholas, modifying all AST Node class files and modularizing it so all focus would be in Semantics java class
-* Implemented Error handling with Nicholas
-* Annotated cup file with line & column number, and capturing/declaring AST Node information
-* Handled entire Design Document write up
-* Implemented Expressions Types & Expression Type Checking semantic checks S20,21,23,24,30,31,32,34
+* Implemented Error handling with Nicholas, including error handling function and respective calls
+* Handled Design Document formatting and write up, included README.A3 & README.tests, created test case files containing respective semantic operator descriptions for the team to write test cases
+* Implemented Expressions Types & Expression Type Checking & modified/fixed various semantic checks S20,21,23,24,30,31,32,34,11,12,50,51,52,53
+* Contributed to passing/failing test case writeups
+
+Eric Chen (g3chencm)
+* Implemented Declarations &  Functions, procedures and arguments semantic checks S10,13,14,15,16,17,18,19,46,47,48,40,41,42,43,44,45 with Winston
+* Contributed to passing/failing test case writeups, handled majority failing cases
+* Helped fix bugs found in the implementation
+
+Winston Yeung (g2yeungw)
+* Implemented Declarations &  Functions, procedures and arguments semantic checks S10,11,12,13,14,15,16,17,18,19,46,47,48,40,41,42,43,44,45 with Eric Chen
+* Contributed to passing/failing test case writeups, handled majority failing cases
+* Helped fix bugs found in the implementation
 
 Eric Snyder (g4snyder)
 * Implemented Scopes and Program & Statement Checking semantic checks S00,01,03,04,05,06,07,08,09,50,51,52,53 with Francesco
 * Wrote first level major scoping with Francesco
+* Contributed to passing/failing test case writeups
 
 Francesco Gramano (g2graman)
-* Implemented Scopes and Program & Statement Checking semantic checks S00,01,03,04,05,06,07,08,09,50,51,52,53 with Eric Snyder
+* Implemented Scopes and Program & Statement Checking semantic checks S00,01,03,04,05,06,07,08,09 with Eric Snyder
 * Wrote first level major scoping with Eric Snyder
-
-Eric Chen (g3chencm)
-* Implemented Declarations &  Functions, procedures and arguments semantic checks S10,11,12,13,14,15,16,17,18,19,46,47,48,40,41,42,43,44,45 with Winston
-
-Winston Yeung (g2yeungw)
-* Implemented Declarations &  Functions, procedures and arguments semantic checks S10,11,12,13,14,15,16,17,18,19,46,47,48,40,41,42,43,44,45 with Eric Chen

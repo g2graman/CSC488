@@ -1,0 +1,6 @@
+ begin 
+  % test syntax error detection 2
+  %  extra comma
+  integer i , , j  
+   i <= 3 
+ end 

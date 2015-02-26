@@ -1,5 +1,0 @@
- begin  
-   integer i, j, k 
-   %  missing statement 
-   i <= {  yields  42 }
- end  

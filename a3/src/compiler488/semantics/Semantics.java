@@ -549,7 +549,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 		// S42 S43
 		if(parameters.size() != args.size()) {
 			outputError(expn, "The number of arguments do not match the number of parameters!");
-			outputError(parameters, "%s %s() has %d parameters", decl.getType(), decl.getName(),
+			outputError(decl, "%s %s() has %d parameters", decl.getType(), decl.getName(),
 					parameters.size());
 			return false;
 		}
@@ -822,7 +822,7 @@ public class Semantics implements ASTVisitor<Boolean> {
   		ASTList<ScalarDecl> parameters = decl.getParameters();
   		if (parameters.size() != arguments.size()) {
 			outputError(stmt, "The number of arguments do not match the number of parameters!");
-			outputError(parameters, "%s %s() has %d parameters", SymbolKind.PROCEDURE, decl.getName(),
+			outputError(decl, "%s %s() has %d parameters", SymbolKind.PROCEDURE, decl.getName(),
 					parameters.size());
   			return false;
   		}

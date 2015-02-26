@@ -1,6 +1,0 @@
-% Test a loop with missing end
-
-begin
-        loop
-                put "Hello world!"
-end

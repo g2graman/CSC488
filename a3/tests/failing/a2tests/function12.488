@@ -1,8 +1,0 @@
-% Function with no name
-
-begin
-	integer function begin
-
-	end
-
-end

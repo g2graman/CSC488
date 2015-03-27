@@ -355,7 +355,6 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
 
     public void exitScope() {
-        num_var = scopes.getFirst().getSize();
         scopes.removeFirst();
     }
     
@@ -396,9 +395,9 @@ public class CodeGen implements ASTVisitor<Boolean>
  
     public Boolean visit(ArrayDeclPart decl) {
         System.out.println("ArrayDeclPart");
-
         if ( lookup(decl.getName(), true) == null) {
-            addEntry(decl.getName(),decl.getType(), SymbolKind.SCALAR, decl, scopes.getFirst().getSize());
+            addEntry(decl.getName(),decl.getType(), SymbolKind.SCALAR, decl, num_var);
+            num_var++;
         }
         for (int i=0; i<decl.getSize(); i++) {
             emitInstructions("PUSH UNDEFINED");
@@ -436,10 +435,23 @@ public class CodeGen implements ASTVisitor<Boolean>
         emitInstructions("PUSH 0");
         emitInstructions("BR");
 
+        ScopeKind routineKind = decl.getType() == null ? ScopeKind.PROCEDURE : ScopeKind.FUNCTION;
+
+        if ( lookup(decl.getName(), true) == null ) {
+            if (decl.getType() == null) {
+                addEntry(decl.getName(), decl.getType(), SymbolKind.PROCEDURE, decl, 0);
+            } else {
+                addEntry(decl.getName(), decl.getType(), SymbolKind.FUNCTION, decl, 0);
+            }
+        }
+
         // store the start location of the routine so it can be called alter
         hash.put(decl.getName(), instructionCounter.size());
 
-        ScopeKind routineKind = decl.getType() == null ? ScopeKind.PROCEDURE : ScopeKind.FUNCTION;
+        // store the current number of local variables
+        int temp = num_var;
+        // reset the number of local variable for the new scope
+        num_var = 0;
         enterScope(routineKind, decl);
 
         emitInstructions("PUSHMT");
@@ -458,10 +470,12 @@ public class CodeGen implements ASTVisitor<Boolean>
 
         this.visit(decl.getBody());
         exitScope();
-
-        // // pop all local variables
+        // pop all local variables
         emitInstructions("PUSH "+num_var);
         emitInstructions("POPN");
+
+        // restore number of local variables
+        num_var = temp;
 
         // pop all parameters
         emitInstructions("PUSH "+i);
@@ -482,7 +496,8 @@ public class CodeGen implements ASTVisitor<Boolean>
     public Boolean visit(ScalarDecl decl) {
         System.out.println("ScalarDecl");
         if ( lookup(decl.getName(), true) == null) {
-            addEntry(decl.getName(),decl.getType(), SymbolKind.SCALAR, decl, scopes.getFirst().getSize());
+            addEntry(decl.getName(),decl.getType(), SymbolKind.SCALAR, decl, num_var);
+            num_var++;
         }
         emitInstructions("PUSH UNDEFINED");
         return true;
@@ -494,10 +509,33 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(ArithExpn expn) {
         System.out.println("ArithExpn");
+        this.visit((BinaryExpn) expn);
+        switch(expn.getOpSymbol()) {
+            case ArithExpn.OP_PLUS:
+                emitInstructions("ADD");
+                break;
+            case ArithExpn.OP_MINUS:
+                emitInstructions("SUB");
+                break;
+            case ArithExpn.OP_TIMES:
+                emitInstructions("MUL");
+                break;
+            case ArithExpn.OP_DIVIDE:
+                emitInstructions("DIV");
+                break;
+        }
         return true;
     }
     public Boolean visit(BinaryExpn expn) {
         System.out.println("BinaryExpn");
+        expn.getLeft().accept(this);
+        if (expn.getLeft() instanceof IdentExpn) {
+            emitInstructions("LOAD");
+        }
+        expn.getRight().accept(this);
+        if (expn.getRight() instanceof IdentExpn) {
+            emitInstructions("LOAD");
+        }
         return true;
     }
     public Boolean visit(BoolConstExpn expn) {

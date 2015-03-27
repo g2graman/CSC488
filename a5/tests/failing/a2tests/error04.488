@@ -1,0 +1,6 @@
+% test of syntax error handling 04
+ begin 
+   % too many dimensions
+   integer A[ -12 .. 23 ] , B [ -2 , 0 .. 3 , -4 .. 16 ] 
+   A[ 0 ] <= 0 
+ end 

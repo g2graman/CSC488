@@ -1,0 +1,9 @@
+begin
+	integer x
+	boolean y
+
+	procedure test begin
+		integer x
+		boolean y
+	end
+end

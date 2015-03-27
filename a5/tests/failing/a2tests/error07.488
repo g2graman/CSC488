@@ -1,0 +1,6 @@
+ begin % test of syntax error handling
+   boolean A[ -32766 .. -32750 , 32750 .. 32766 ] 
+   % too many subscripts
+   A[ -32765 , 32764 , 1 ] <= false
+ end 
+

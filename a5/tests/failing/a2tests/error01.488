@@ -1,0 +1,7 @@
+% test of syntax error detection  01
+ begin 
+  integer i 
+  integer b,c,d 
+  % missing operator
+  i <=  b  c - d
+ end 

@@ -1,0 +1,8 @@
+begin
+
+	put {1}
+	integer x
+	x <= 1
+	(put "hello world" yield x)
+
+end

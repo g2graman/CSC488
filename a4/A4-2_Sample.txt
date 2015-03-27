@@ -1,0 +1,256 @@
+PUSHMT
+SETD 0
+
+PUSH 0
+PUSH 3
+DUPN % we push 3 zeros onto the stack as default values for a,b,c
+
+PUSH 0
+PUSH 3
+DUPN % likewise for p, q, r
+
+ADDR 0 5 % begin if
+LOAD % push value of p on top of stack
+ADDR 0 4
+LOAD % push value of p on top of stack
+OR
+PUSH 22 % push address to end of if
+BF % branch to end of if, if condition false
+ADDR 0 1
+PUSH 3
+STORE % assign 3 to a at LL 0, end if
+
+ADDR 0 6 %begin if
+LOAD % push value of q on top of the stack
+PUSH 1
+SUB % negate q
+PUSH 1
+SUB % negate q again for demorgan's
+ADDR 0 6
+LOAD % push value of q on top of the stack
+PUSH 1
+SUB % negate q
+PUSH 1
+SUB % negate q again for demorgan's
+OR
+NOT % A
+PUSH 44 % push address to (start of) else
+BF % branch to else, if condition false
+ADDR 0 2
+PUSH 2
+STORE % assign 2 to b at LL 0
+PUSH 47 % branch to end of else
+BR
+ADDR 0 2 % begin else
+PUSH 0
+STORE % assign 0 to b at LL 0
+% end else, end if
+
+PUSH 7 % begin while
+ADDR 0 3
+LOAD % push value of c on top of the stack
+LT
+PUSH 60 % push label for end of while
+BF % branch to end while
+ADDR 0 3 % begin else
+PUSH 8
+STORE % assign 8 to c at LL 0
+PUSH 49
+BR % Branch back to begin while label
+%end while
+
+ADDR 0 1 % begin loop
+PUSH 3
+STORE % assign 3 to a at LL 0
+PUSH 70 % push label for end loop
+BR %branch to end loop
+ADDR 0 2
+PUSH 7
+STORE % assign 7 to b at LL 0
+PUSH 62 % push label for begin loop
+BR % branch to begin loop
+%end loop
+
+ADDR 0 4 %begin while
+LOAD % push value of p on top of the stack
+PUSH 1
+SUB % negate p
+PUSH 1
+SUB % negate p again for demorgan's
+ADDR 0 5 
+LOAD % push value of q on top of the stack
+ADDR 0 6
+LOAD % push value of r on top of the stack
+OR
+PUSH 1
+SUB % negate and operand for demorgan's
+OR
+PUSH 1
+SUB % complete de morgan's
+PUSH 98 % push label for end while
+BF
+PUSH 10
+ADDR 0 2
+LOAD % push value of b on top of the stack
+EQ
+PUSH 1
+SUB
+PUSH 1
+SUB % evaluate the negation of the negation of b = 10
+PUSH 98 % push label for end 
+BF
+PUSH 74
+BR % Branch back to begin while label
+%end while
+
+PUSH 86 % Push "V"
+PRINTC
+PUSH 97 % Push "a"
+PRINTC
+PUSH 108 % Push "l"
+PRINTC
+PUSH 117 % Push "u"
+PRINTC
+PUSH 101 % Push "e"
+PRINTC
+PUSH 32 % Push space
+PRINTC
+PUSH 105 % Push "i"
+PRINTC
+PUSH 115 % Push "s"
+PUSH 32 % Push space
+PRINTC
+ADDR 0 2
+LOAD % load b
+ADDR 0 1
+LOAD % load a
+DIV
+PRINTI % print a/b
+PUSH 32 % Push space
+PRINTC
+PUSH 111 % Push "o"
+PRINTC
+PUSH 114 % Push "r"
+PRINTC
+PUSH 32 % Push space
+PRINTC
+ADDR 0 3
+LOAD % load c
+NEG
+ADDR 0 2
+LOAD
+MUL
+PRINTI % print b * -c
+PUSH 10 %PUSH newline for skip
+PRINTC
+
+ADDR 0 1 % get address for a
+READI
+STORE % assign get result to a
+ADDR 0 2 % get address for b
+READI
+STORE % assign get result to b
+ADDR 0 3 % get address for c
+READI
+STORE % assign get result to c
+
+PUSH 0
+PUSH 3
+DUPN % we push 3 zeros onto the stack as default values for m, n, c
+ADDR 1 1 % prepare address of m for assignment
+ADDR 0 2
+LOAD % load b from LL 0
+PUSH 7
+SUB
+ADDR 1 3
+LOAD % load c from LL 1
+ADD
+STORE % store result to m
+
+PUSH 0
+PUSH 3
+DUPN % we push 3 zeros onto the stack as default values for p, q, r
+ADDR 2 1 % prepare address of p for assignment
+ADDR 2 1 % prepare address of p for assignment
+ADDR 0 1 
+LOAD % load a from LL 0
+STORE % save p as a
+ADDR 0 2
+LOAD % load b from LL 0
+PUSH
+ADDR 2 3
+LOAD % load r from LL 2
+SUB
+STORE % store result of anonymous function to p
+
+ADDR 0 5 %begin while
+LOAD % load q from LL 0
+ADDR 0 4
+LOAD % load p from LL 0
+OR
+PUSH 1
+SUB % negate expression for while
+PUSH 254 % push label for end while
+BF
+ADDR 0 6
+LOAD % load p from LL 0
+PUSH 1
+SUB % negate p for demorgan's
+ADDR 0 4
+LOAD % load r from LL 0
+PUSH 1
+SUB % negate r for de morgan's
+OR
+PUSH 1
+SUB % complete demorgan's for exit when
+PUSH 1
+SUB % negate expression for exit when
+PUSH 254 % push label for end while
+BF
+PUSH 0 % begin loop
+PUSH 2
+DUPN % we push 2 zeros onto the stack as default values for w, x
+ADDR 2 1 % begin if
+LOAD % load w from LL 0
+ADDR 0 1 
+LOAD % load a from LL 0
+LT % check a < w
+PUSH 1
+SUB % negate for w <= a
+PUSH 245 % push label for end if
+BF
+PUSH 251 % push label for end loop
+BR
+PUSH 0
+PUSH 2
+DUPN % we push 2 zeros onto the stack as default values for t, u
+ADDR 2 3 % prepare address of t for assignment
+PUSH 0
+ADDR 3 1 % prepare address of m for assignment
+ADDR 2 3
+LOAD % load t from LL 2
+ADDR 2 1
+LOAD % load w from LL 2
+LT
+STORE % store result to m
+PUSH 245 % begin if, push label for end if
+BF
+ADDR 2 3 % prepare address of t for assignment
+ADDR 0 3
+LOAD % load c from LL 0
+ADDR 2 3
+LOAD % load t from LL 2
+ADD
+STORE % store result to t
+%end if
+ADDR 2 3 
+LOAD % load t from LL 2 for yield
+STORE % store result of anonymous function to t
+PUSH 224
+BR 
+%end loop
+PUSH 186 % push label for begin while
+BR
+%end while
+
+HALT

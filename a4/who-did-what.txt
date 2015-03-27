@@ -1,0 +1,14 @@
+Distribution of Labour:
+Storage 			- 	g4snyder
+Expressions			- 	g2graman
+Functions and Procedures	- 	g3chencm
+Statements 			- 	g2yeungw
+Other				- 	g4snyder
+-----------------------------------------------------
+A4-01 				- 	g2yeungw
+A4-02 				- 	g2graman
+A3-03 				- 	g3chencm
+
+Collectively, we all thoroughly reviewed the document 
+and made changes and edits to each other’s work after 
+doing the initial write up of the individual sections.

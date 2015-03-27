@@ -111,10 +111,9 @@ public class CodeGen implements ASTVisitor<Boolean>
     private ArrayList<String> instructionCounter;
     private int programCounter;
     private LinkedList<MajorScope> scopes;
-    private boolean isProgramScope;
     private int lexicalLevel;
-    private HashMap<String, Integer> hash;
-    private int num_var;
+    private HashMap<String, Integer> hash; // keep track where start of procedures and functions
+    private int num_var; //number of variables in a scope, for POPN use
 
     /**  
      *  Constructor to initialize code generation
@@ -143,7 +142,6 @@ public class CodeGen implements ASTVisitor<Boolean>
     instructionCounter = new ArrayList<String>();
     programCounter = 0;
     scopes = new LinkedList<MajorScope>();
-    isProgramScope = true;
     hash = new HashMap<>();
     num_var = 0;
     lexicalLevel = 0;
@@ -376,10 +374,11 @@ public class CodeGen implements ASTVisitor<Boolean>
         emitInstructions("PUSHMT");
         emitInstructions("SETD 0");
 
-        isProgramScope = false;
         enterScope(ScopeKind.PROGRAM, null);
         this.visit( (Scope) stmt );
         exitScope();
+
+        // pop all local variables
         emitInstructions("PUSH "+num_var);
         emitInstructions("POPN");
         emitInstructions("HALT");
@@ -437,14 +436,8 @@ public class CodeGen implements ASTVisitor<Boolean>
         emitInstructions("PUSH 0");
         emitInstructions("BR");
 
-
-        // if ( lookup(decl.getName(), true) == null) {
-        //     addEntry(decl.getName(),decl.getType(), SymbolKind.PROCEDURE, decl);
-        // }
-        // emitInstructions("PUSH 0");
-
+        // store the start location of the routine so it can be called alter
         hash.put(decl.getName(), instructionCounter.size());
-        //emitInstructions("PUSH "+(pc+5));
 
         ScopeKind routineKind = decl.getType() == null ? ScopeKind.PROCEDURE : ScopeKind.FUNCTION;
         enterScope(routineKind, decl);
@@ -464,16 +457,16 @@ public class CodeGen implements ASTVisitor<Boolean>
         }
 
         this.visit(decl.getBody());
+        exitScope();
+
         // // pop all local variables
-        // emitInstructions("PUSH "+num_var);
-        // emitInstructions("POPN");
+        emitInstructions("PUSH "+num_var);
+        emitInstructions("POPN");
 
         // pop all parameters
         emitInstructions("PUSH "+i);
         emitInstructions("POPN");
-        exitScope();
         lexicalLevel--;
-
         emitInstructions("BR");
 
         try {
@@ -623,6 +616,7 @@ public class CodeGen implements ASTVisitor<Boolean>
             emitInstructions("ADDR "+lexicalLevel+" "+lookup_offset(e.toString(), true));
             emitInstructions("LOAD");
         }
+
         emitInstructions("PUSH "+hash.get(stmt.getName()));
         emitInstructions("BR");
 
@@ -633,6 +627,7 @@ public class CodeGen implements ASTVisitor<Boolean>
         System.out.println("PutStmt");
 
         String out = stmt.getOutputs().toString();
+        // find a better way to detect string constant
         if (out.charAt(0) == '\"') {
             for (char c : out.toCharArray()) {
                 if (c != '\"') {

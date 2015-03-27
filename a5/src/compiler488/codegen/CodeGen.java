@@ -345,11 +345,11 @@ public class CodeGen implements ASTVisitor<Boolean>
         return 0;
     }
 
-    public void addEntry(String varname, Type type, SymbolKind kind, AST node) {
+    public void addEntry(String varname, Type type, SymbolKind kind, AST node, int off) {
         if(scopes.isEmpty()) {
             return;
         }
-        scopes.getFirst().addEntry(varname, type, kind, node, scopes.getFirst().getSize());
+        scopes.getFirst().addEntry(varname, type, kind, node, off);
     }
 
     public void enterScope(ScopeKind kind, RoutineDecl routine) {
@@ -380,7 +380,6 @@ public class CodeGen implements ASTVisitor<Boolean>
         enterScope(ScopeKind.PROGRAM, null);
         this.visit( (Scope) stmt );
         exitScope();
-        emitInstructions("HALT");
         emitInstructions("PUSH "+num_var);
         emitInstructions("POPN");
         emitInstructions("HALT");
@@ -400,7 +399,7 @@ public class CodeGen implements ASTVisitor<Boolean>
         System.out.println("ArrayDeclPart");
 
         if ( lookup(decl.getName(), true) == null) {
-            addEntry(decl.getName(),decl.getType(), SymbolKind.SCALAR, decl);
+            addEntry(decl.getName(),decl.getType(), SymbolKind.SCALAR, decl, scopes.getFirst().getSize());
         }
         for (int i=0; i<decl.getSize(); i++) {
             emitInstructions("PUSH UNDEFINED");
@@ -447,6 +446,8 @@ public class CodeGen implements ASTVisitor<Boolean>
         hash.put(decl.getName(), instructionCounter.size());
         //emitInstructions("PUSH "+(pc+5));
 
+        ScopeKind routineKind = decl.getType() == null ? ScopeKind.PROCEDURE : ScopeKind.FUNCTION;
+        enterScope(routineKind, decl);
 
         emitInstructions("PUSHMT");
         lexicalLevel++;
@@ -455,23 +456,22 @@ public class CodeGen implements ASTVisitor<Boolean>
         ASTList<ScalarDecl> parameters = decl.getParameters();
         int i = 0;
         while (!parameters.isEmpty()) {
-            ScalarDecl s = parameters.pollLast();
+            ScalarDecl s = parameters.pollFirst();
             if ( lookup(s.getName(), true) == null) {
                 i++;
-                addEntry(s.getName(), s.getType(), SymbolKind.SCALAR, s);
-                emitInstructions("ADDR "+lexicalLevel+" "+(-i));
-                emitInstructions("SWAP");
-                emitInstructions("STORE");
+                addEntry(s.getName(), s.getType(), SymbolKind.SCALAR, s, (-i));
             }
         }
+
         this.visit(decl.getBody());
         // // pop all local variables
         // emitInstructions("PUSH "+num_var);
         // emitInstructions("POPN");
 
         // pop all parameters
-        // emitInstructions("PUSH "+i);
-        // emitInstructions("POPN");
+        emitInstructions("PUSH "+i);
+        emitInstructions("POPN");
+        exitScope();
         lexicalLevel--;
 
         emitInstructions("BR");
@@ -489,7 +489,7 @@ public class CodeGen implements ASTVisitor<Boolean>
     public Boolean visit(ScalarDecl decl) {
         System.out.println("ScalarDecl");
         if ( lookup(decl.getName(), true) == null) {
-            addEntry(decl.getName(),decl.getType(), SymbolKind.SCALAR, decl);
+            addEntry(decl.getName(),decl.getType(), SymbolKind.SCALAR, decl, scopes.getFirst().getSize());
         }
         emitInstructions("PUSH UNDEFINED");
         return true;
@@ -616,7 +616,6 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(ProcedureCallStmt stmt){
         System.out.println("ProcedureCallStmt");
-
         emitInstructions("PUSH "+(instructionCounter.size()+5+stmt.getArguments().size()*4));
         while (!stmt.getArguments().isEmpty()) {
             Expn e = stmt.getArguments().pollLast();

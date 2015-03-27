@@ -301,6 +301,7 @@ public class CodeGen implements ASTVisitor<Boolean>
                         break;
                     case "false":
                         Machine.writeMemory( (short)instructionCounter.size(), Machine.MACHINE_FALSE );
+                        break;
                     default:
                         Machine.writeMemory( (short)instructionCounter.size() , Short.parseShort(token) );
                         break;
@@ -540,15 +541,41 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(BoolConstExpn expn) {
         System.out.println("BoolConstExpn");
+        System.out.println("PUSH "+expn.toString());
         emitInstructions("PUSH "+expn.toString());
         return true;
     }
     public Boolean visit(BoolExpn expn) {
         System.out.println("BoolExpn");
+        this.visit((BinaryExpn)expn);
+        switch(expn.getOpSymbol()) {
+            case BoolExpn.OP_OR:
+                emitInstructions("OR");
+                break;
+            case BoolExpn.OP_AND:
+                // TODO: implement AND
+                //emitInstructions("AND");
+                break;
+        }
         return true;
     }
     public Boolean visit(CompareExpn expn) {
         System.out.println("CompareExpn");
+        this.visit((BinaryExpn)expn);
+        switch(expn.getOpSymbol()) {
+            case CompareExpn.OP_LESS:
+                emitInstructions("LT");
+                break;
+            case CompareExpn.OP_LESS_EQUAL: // TODO: implement LE, GT, GE
+                //emitInstructions("LE");
+                break;
+            case CompareExpn.OP_GREATER:
+                //emitInstructions("GT");
+                break;
+            case CompareExpn.OP_GREATER_EQUAL:
+                //emitInstructions("GE");
+                break;
+          }
         return true;
     }
     public Boolean visit(ConstExpn expn) {
@@ -557,6 +584,16 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(EqualsExpn expn) {
         System.out.println("EqualsExpn");
+        this.visit((BinaryExpn)expn);
+        switch(expn.getOpSymbol()) {
+            case EqualsExpn.OP_EQUAL:
+                emitInstructions("EQ");
+                break;
+            case EqualsExpn.OP_NOT_EQUAL:
+                // TODO: implement NOT_EQ
+                //emitInstructions("NOT_EQ");
+                break;
+        }
         return true;
     }
     public Boolean visit(FunctionCallExpn expn) {

@@ -506,6 +506,9 @@ public class CodeGen implements ASTVisitor<Boolean>
 
     public Boolean visit(AnonFuncExpn expn) {
         System.out.println("AnonFuncExpn");
+        //TODO: C83
+        //TODO: C84
+        //TODO: C85
         return true;
     }
     public Boolean visit(ArithExpn expn) {
@@ -554,6 +557,7 @@ public class CodeGen implements ASTVisitor<Boolean>
                 break;
             case BoolExpn.OP_AND:
                 // TODO: implement AND
+                // Do not use OR, just branch
                 //emitInstructions("AND");
                 break;
         }
@@ -566,13 +570,26 @@ public class CodeGen implements ASTVisitor<Boolean>
             case CompareExpn.OP_LESS:
                 emitInstructions("LT");
                 break;
-            case CompareExpn.OP_LESS_EQUAL: // TODO: implement LE, GT, GE
-                //emitInstructions("LE");
+            case CompareExpn.OP_LESS_EQUAL: 
+                // TODO: C72
+                // Use a <= b = not(b < a), and avoid arithmetic
+                // emitInstructions("LE");
                 break;
             case CompareExpn.OP_GREATER:
-                //emitInstructions("GT");
+                // TODO: C73
+                // Use a > b = b < a (switch order and use LT)
+
+                // Assuming values of left and right expressions were computed, pop them off and push them again
+                // in reverse order
+                emitInstructions("PUSH "+ 2);
+                emitInstructions("POPN");
+                emitInstructions("PUSH "+ expn.getRight().toString());
+                emitInstructions("PUSH "+ expn.getLeft().toString());
+                emitInstructions("LT");
                 break;
             case CompareExpn.OP_GREATER_EQUAL:
+                //TODO: C74
+                // Use a >= b = not(a < b)
                 //emitInstructions("GE");
                 break;
           }
@@ -613,6 +630,11 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(NotExpn expn) {
         System.out.println("NotExpn");
+        //TODO: C65
+        this.visit(expn); //Evaluate the boolean expression
+        /*
+            TODO: Using branching, if the value of the expression was false return true, and vice versa.
+        */
         return true;
     }
 

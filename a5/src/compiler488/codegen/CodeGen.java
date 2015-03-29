@@ -689,6 +689,12 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(GetStmt stmt){
         System.out.println("GetStmt");
+        for (Expn e : stmt.getInputs()){
+            e.accept(this);
+            emitInstructions("READI");
+            emitInstructions("STORE");
+        }
+
         return true;
     }
     public Boolean visit(IfStmt stmt){
@@ -736,11 +742,22 @@ public class CodeGen implements ASTVisitor<Boolean>
         return true;
     }
     public Boolean visit(LoopingStmt stmt){
-        System.out.println("LoopingStmt");
+        if (stmt instanceof LoopStmt){
+            this.visit((LoopStmt) stmt);
+        } else if (stmt instanceof WhileDoStmt){
+            this.visit((WhileDoStmt) stmt);
+        } else {
+            //TODO: error?
+        }
         return true;
     }
     public Boolean visit(LoopStmt stmt){
         System.out.println("LoopStmt");
+        int loopBegin = instructionCounter.size();
+        this.visit(stmt.getBody());
+        emitInstructions("PUSH " + loopBegin);
+        emitInstructions("BR");
+        //TODO: patch exit statements
         return true;
     }
     public Boolean visit(ProcedureCallStmt stmt){
@@ -801,6 +818,24 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(WhileDoStmt stmt){
         System.out.println("WhileDoStmt");
+
+        int expnBegin = instructionCounter.size();
+        this.visit(stmt.getExpn());
+        int branchToEndAddr = instructionCounter.size() + 1;
+        emitInstructions("PUSH 0");
+        emitInstructions("BR");
+        this.visit(stmt.getBody());
+        emitInstructions("PUSH " + expnBegin); // loop back to beginning
+        emitInstructions("BR");
+        int loopEndAddr = instructionCounter.size();
+        try {
+            Machine.writeMemory((short) branchToEndAddr, (short) loopEndAddr);
+        } catch (MemoryAddressException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        //TODO: go back and patch exit statements
         return true;
     }
 

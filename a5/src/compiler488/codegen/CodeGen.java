@@ -568,7 +568,7 @@ public class CodeGen implements ASTVisitor<Boolean>
         System.out.println("CompareExpn");
         this.visit((BinaryExpn)expn);
 
-        if (expn.getOpSymbol().equals(CompareExpn.OP_LESS){
+        if (expn.getOpSymbol().equals(CompareExpn.OP_LESS)){
             emitInstructions("LT");
         } else if (expn.getOpSymbol().equals(CompareExpn.OP_LESS_EQUAL)){
             // TODO: C72

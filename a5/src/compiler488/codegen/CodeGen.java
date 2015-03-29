@@ -2,6 +2,8 @@ package compiler488.codegen;
 
 import java.io.*;
 import java.util.*;
+
+import com.sun.org.apache.xpath.internal.operations.Equals;
 import compiler488.compiler.Main;
 import compiler488.runtime.Machine;
 import compiler488.runtime.MemoryAddressException;
@@ -142,7 +144,7 @@ public class CodeGen implements ASTVisitor<Boolean>
     instructionCounter = new ArrayList<String>();
     programCounter = 0;
     scopes = new LinkedList<MajorScope>();
-    hash = new HashMap<>();
+    hash = new HashMap<String, Integer>();
     num_var = 0;
     lexicalLevel = 0;
 
@@ -514,20 +516,16 @@ public class CodeGen implements ASTVisitor<Boolean>
     public Boolean visit(ArithExpn expn) {
         System.out.println("ArithExpn");
         this.visit((BinaryExpn) expn);
-        switch(expn.getOpSymbol()) {
-            case ArithExpn.OP_PLUS:
-                emitInstructions("ADD");
-                break;
-            case ArithExpn.OP_MINUS:
-                emitInstructions("SUB");
-                break;
-            case ArithExpn.OP_TIMES:
-                emitInstructions("MUL");
-                break;
-            case ArithExpn.OP_DIVIDE:
-                emitInstructions("DIV");
-                break;
+        if (expn.getOpSymbol().equals(ArithExpn.OP_PLUS)){
+            emitInstructions("ADD");
+        } else if (expn.getOpSymbol().equals(ArithExpn.OP_MINUS)){
+            emitInstructions("SUB");
+        } else if (expn.getOpSymbol().equals(ArithExpn.OP_TIMES)){
+            emitInstructions("MUL");
+        } else if (expn.getOpSymbol().equals(ArithExpn.OP_DIVIDE)){
+            emitInstructions("DIV");
         }
+
         return true;
     }
     public Boolean visit(BinaryExpn expn) {
@@ -551,48 +549,50 @@ public class CodeGen implements ASTVisitor<Boolean>
     public Boolean visit(BoolExpn expn) {
         System.out.println("BoolExpn");
         this.visit((BinaryExpn)expn);
-        switch(expn.getOpSymbol()) {
-            case BoolExpn.OP_OR:
-                emitInstructions("OR");
-                break;
-            case BoolExpn.OP_AND:
-                // TODO: implement AND
-                // Do not use OR, just branch
-                //emitInstructions("AND");
-                break;
-        }
+
+
+//        switch(expn.getOpSymbol()) {
+//            case BoolExpn.OP_OR:
+//                //TODO: not supposed to use the OR expression
+//                emitInstructions("OR");
+//                break;
+//            case BoolExpn.OP_AND:
+//                // TODO: implement AND
+//                // Do not use OR, just branch
+//                //emitInstructions("AND");
+//                break;
+//        }
         return true;
     }
     public Boolean visit(CompareExpn expn) {
         System.out.println("CompareExpn");
         this.visit((BinaryExpn)expn);
-        switch(expn.getOpSymbol()) {
-            case CompareExpn.OP_LESS:
-                emitInstructions("LT");
-                break;
-            case CompareExpn.OP_LESS_EQUAL: 
-                // TODO: C72
-                // Use a <= b = not(b < a), and avoid arithmetic
-                // emitInstructions("LE");
-                break;
-            case CompareExpn.OP_GREATER:
-                // TODO: C73
-                // Use a > b = b < a (switch order and use LT)
 
-                // Assuming values of left and right expressions were computed, pop them off and push them again
-                // in reverse order
-                emitInstructions("PUSH "+ 2);
-                emitInstructions("POPN");
-                emitInstructions("PUSH "+ expn.getRight().toString());
-                emitInstructions("PUSH "+ expn.getLeft().toString());
-                emitInstructions("LT");
-                break;
-            case CompareExpn.OP_GREATER_EQUAL:
-                //TODO: C74
-                // Use a >= b = not(a < b)
-                //emitInstructions("GE");
-                break;
-          }
+        if (expn.getOpSymbol().equals(CompareExpn.OP_LESS){
+            emitInstructions("LT");
+        } else if (expn.getOpSymbol().equals(CompareExpn.OP_LESS_EQUAL)){
+            // TODO: C72
+            // Use a <= b = not(b < a), and avoid arithmetic
+            // emitInstructions("LE");
+        } else if (expn.getOpSymbol().equals(CompareExpn.OP_GREATER)){
+            // TODO: C73
+            // Use a > b = b < a (switch order and use LT)
+
+            // Assuming values of left and right expressions were computed, pop them off and push them again
+            // in reverse order
+            emitInstructions("PUSH "+ 2);
+            emitInstructions("POPN");
+            emitInstructions("PUSH "+ expn.getRight().toString());
+            emitInstructions("PUSH "+ expn.getLeft().toString());
+            emitInstructions("LT");
+        } else if (expn.getOpSymbol().equals(CompareExpn.OP_GREATER_EQUAL)){
+            //TODO: C74
+            // Use a >= b = not(a < b)
+            //emitInstructions("GE");
+        } else {
+            // ERROR
+        }
+
         return true;
     }
     public Boolean visit(ConstExpn expn) {
@@ -602,15 +602,14 @@ public class CodeGen implements ASTVisitor<Boolean>
     public Boolean visit(EqualsExpn expn) {
         System.out.println("EqualsExpn");
         this.visit((BinaryExpn)expn);
-        switch(expn.getOpSymbol()) {
-            case EqualsExpn.OP_EQUAL:
-                emitInstructions("EQ");
-                break;
-            case EqualsExpn.OP_NOT_EQUAL:
-                // TODO: implement NOT_EQ
-                //emitInstructions("NOT_EQ");
-                break;
+
+        if (expn.getOpSymbol().equals(EqualsExpn.OP_EQUAL)){
+            emitInstructions("EQ");
+        } else if (expn.getOpSymbol().equals(EqualsExpn.OP_NOT_EQUAL)){
+            // TODO: implement NOT_EQ
+            //emitInstructions("NOT_EQ");
         }
+
         return true;
     }
     public Boolean visit(FunctionCallExpn expn) {
@@ -693,7 +692,47 @@ public class CodeGen implements ASTVisitor<Boolean>
         return true;
     }
     public Boolean visit(IfStmt stmt){
-        System.out.println("IfStmt");
+        // first emit code for the condition
+        this.visit(stmt.getCondition());
+        int startOfIf = instructionCounter.size()+1; // address of instruction to branch to end of true branch
+        emitInstructions("PUSH 0");
+        emitInstructions("BF");
+        this.visit(stmt.getWhenTrue());
+        if (stmt.getWhenFalse() != null){ // else clause exists
+            int startOfElse = instructionCounter.size()+1; // address of instruction branch to end of else clause
+            emitInstructions("PUSH 0");
+            emitInstructions("BR");
+            int startOfElseBranch = instructionCounter.size() + 1;
+            this.visit(stmt.getWhenFalse());
+            try {
+                Machine.writeMemory((short) startOfIf, (short) startOfElseBranch);
+            } catch (MemoryAddressException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            int endOfConditional = instructionCounter.size() + 1;
+            try {
+                Machine.writeMemory((short) startOfElse, (short) endOfConditional);
+            } catch (MemoryAddressException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            int endOfConditional = instructionCounter.size()+1;
+            try {
+                Machine.writeMemory((short) startOfIf, (short) endOfConditional);
+            } catch (MemoryAddressException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
         return true;
     }
     public Boolean visit(LoopingStmt stmt){

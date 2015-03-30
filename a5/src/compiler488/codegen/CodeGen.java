@@ -117,6 +117,19 @@ public class CodeGen implements ASTVisitor<Boolean>
     private HashMap<String, Integer> hash; // keep track where start of procedures and functions
     private int num_var; //number of variables in a scope, for POPN use
 
+    /*
+    * A 2D array which keeps track of addresses of exit statements
+    * The first dimension will indicate the current loop we are in
+    * The second dimension will contain addresses that need to be patched
+    * When we enter a loop, push a new ArrayList<Integer> on
+    * Then we evaluate the statements. If an exit is come across, it will go to the
+    * latest ArrayList<Integer> in loopExits and push the address that needs to be patched on
+    * Then the statements in a loop are evaluated, the last ArrayList<Integer> should be popped off,
+    * and those addresses will be evaluated (if any)
+     */
+    private ArrayList<ArrayList<Integer>> loopExits;
+
+
     /**  
      *  Constructor to initialize code generation
      */
@@ -147,7 +160,7 @@ public class CodeGen implements ASTVisitor<Boolean>
     hash = new HashMap<String, Integer>();
     num_var = 0;
     lexicalLevel = 0;
-
+    loopExits = new ArrayList<ArrayList<Integer>>();
     return;
     }
 
@@ -685,6 +698,18 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(ExitStmt stmt){
         System.out.println("ExitStmt");
+        int patchAddr;
+        if (stmt.getExpn() != null){ // exit when statement
+            NotExpn notExpn = new NotExpn(stmt.getExpn()); // emit negated version of the expression
+            patchAddr = instructionCounter.size() + 1;
+            emitInstructions("PUSH 0"); // patch later
+            emitInstructions("BF");
+        } else { // regular exit statement
+            patchAddr = instructionCounter.size() + 1;
+            emitInstructions("PUSH 0");
+            emitInstructions("BR");
+        }
+        loopExits.get(loopExits.size() - 1).add(patchAddr); // add this patch address to latest loop
         return true;
     }
     public Boolean visit(GetStmt stmt){
@@ -754,10 +779,22 @@ public class CodeGen implements ASTVisitor<Boolean>
     public Boolean visit(LoopStmt stmt){
         System.out.println("LoopStmt");
         int loopBegin = instructionCounter.size();
+        loopExits.add(new ArrayList<Integer>());
         this.visit(stmt.getBody());
         emitInstructions("PUSH " + loopBegin);
         emitInstructions("BR");
-        //TODO: patch exit statements
+        // patch exit statements
+        int currInstr = instructionCounter.size();
+        ArrayList<Integer> patchAddresses = loopExits.remove(loopExits.size() - 1);
+        for (Integer i: patchAddresses){
+            try {
+                Machine.writeMemory(i.shortValue(), (short) currInstr);
+            } catch (MemoryAddressException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
         return true;
     }
     public Boolean visit(ProcedureCallStmt stmt){
@@ -819,6 +856,8 @@ public class CodeGen implements ASTVisitor<Boolean>
     public Boolean visit(WhileDoStmt stmt){
         System.out.println("WhileDoStmt");
 
+        loopExits.add(new ArrayList<Integer>());
+
         int expnBegin = instructionCounter.size();
         this.visit(stmt.getExpn());
         int branchToEndAddr = instructionCounter.size() + 1;
@@ -835,7 +874,17 @@ public class CodeGen implements ASTVisitor<Boolean>
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        //TODO: go back and patch exit statements
+
+        ArrayList<Integer> patchAddresses = loopExits.remove(loopExits.size() - 1);
+        for (Integer i: patchAddresses){
+            try {
+                Machine.writeMemory(i.shortValue(), (short) loopEndAddr);
+            } catch (MemoryAddressException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
         return true;
     }
 

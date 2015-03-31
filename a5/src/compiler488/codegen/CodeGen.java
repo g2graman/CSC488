@@ -584,26 +584,30 @@ public class CodeGen implements ASTVisitor<Boolean>
         if (expn.getOpSymbol().equals(CompareExpn.OP_LESS)){
             emitInstructions("LT");
         } else if (expn.getOpSymbol().equals(CompareExpn.OP_LESS_EQUAL)){
-            // TODO: C72
             // Use a <= b = not(b < a), and avoid arithmetic
-            // emitInstructions("LE");
+            CompareExpn flipped = 
+                    new CompareExpn(CompareExpn.OP_LESS, 
+                            expn.getRight(), 
+                            expn.getLeft());
+            NotExpn negated = (NotExpn) new NotExpn(flipped);
+            this.visit(flipped);
+            this.visit(negated);
         } else if (expn.getOpSymbol().equals(CompareExpn.OP_GREATER)){
-            // TODO: C73
             // Use a > b = b < a (switch order and use LT)
-
-            // Assuming values of left and right expressions were computed, pop them off and push them again
-            // in reverse order
-            emitInstructions("PUSH "+ 2);
-            emitInstructions("POPN");
-            emitInstructions("PUSH "+ expn.getRight().toString());
-            emitInstructions("PUSH "+ expn.getLeft().toString());
+            
+            emitInstructions("SWAP");
             emitInstructions("LT");
         } else if (expn.getOpSymbol().equals(CompareExpn.OP_GREATER_EQUAL)){
-            //TODO: C74
             // Use a >= b = not(a < b)
-            //emitInstructions("GE");
+            CompareExpn changeOp = 
+                    new CompareExpn(CompareExpn.OP_LESS, 
+                            expn.getLeft(), 
+                            expn.getRight());
+            NotExpn negated = (NotExpn) new NotExpn(changeOp);
+            this.visit(changeOp);
+            this.visit(negated);
         } else {
-            // ERROR
+            // TODO: error?
         }
 
         return true;
@@ -619,8 +623,11 @@ public class CodeGen implements ASTVisitor<Boolean>
         if (expn.getOpSymbol().equals(EqualsExpn.OP_EQUAL)){
             emitInstructions("EQ");
         } else if (expn.getOpSymbol().equals(EqualsExpn.OP_NOT_EQUAL)){
-            // TODO: implement NOT_EQ
-            //emitInstructions("NOT_EQ");
+            emitInstructions("EQ");
+            
+            //Emit negation
+            NotExpn negated = (NotExpn) new NotExpn((Expn) expn);
+            this.visit(negated);
         }
 
         return true;
@@ -642,11 +649,28 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(NotExpn expn) {
         System.out.println("NotExpn");
-        //TODO: C65
-        this.visit(expn); //Evaluate the boolean expression
-        /*
-            TODO: Using branching, if the value of the expression was false return true, and vice versa.
-        */
+        emitInstructions("PUSH "+ 0);
+        this.visit((Expn) expn); //Generate code for the expression
+        emitInstructions("SWAP");
+        
+        //Calculate the branch offset after visiting the expression
+        short BF_FALSE = (short) (((short) instructionCounter.size())
+                + (Machine.instructionLength[Machine.BF])
+                + (Machine.instructionLength[Machine.PUSH])*3
+                + (Machine.instructionLength[Machine.BR])
+                + (Machine.instructionLength[Machine.ADD])
+                + (Machine.instructionLength[Machine.SWAP]));
+        
+        emitInstructions("PUSH "+ BF_FALSE);
+        emitInstructions("ADD");
+        emitInstructions("SWAP");
+        emitInstructions("BF");
+        emitInstructions("PUSH "+ false); 
+        emitInstructions("PUSH "+ 
+            ((short) (BF_FALSE + (Machine.instructionLength[Machine.PUSH]))));
+        
+        emitInstructions("BR");
+        emitInstructions("PUSH "+ true); 
         return true;
     }
 
@@ -684,6 +708,9 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(UnaryMinusExpn expn){
         System.out.println("UnaryMinusExpn");
+        UnaryExpn e = (UnaryExpn) expn;
+        this.visit(e);
+        emitInstructions("NEG");
         return true;
     }
 
@@ -704,6 +731,7 @@ public class CodeGen implements ASTVisitor<Boolean>
             patchAddr = instructionCounter.size() + 1;
             emitInstructions("PUSH 0"); // patch later
             emitInstructions("BF");
+            this.visit(notExpn);
         } else { // regular exit statement
             patchAddr = instructionCounter.size() + 1;
             emitInstructions("PUSH 0");

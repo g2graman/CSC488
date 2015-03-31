@@ -483,7 +483,6 @@ public class CodeGen implements ASTVisitor<Boolean>
                 addEntry(s.getName(), s.getType(), SymbolKind.SCALAR, s, (-i));
             }
         }
-
         this.visit(decl.getBody());
         exitScope();
         // pop all local variables
@@ -523,7 +522,7 @@ public class CodeGen implements ASTVisitor<Boolean>
         System.out.println("AnonFuncExpn");
         //TODO: C83
         //TODO: C84
-        //TODO: C85
+        //TODO: C85 Winston
         return true;
     }
     public Boolean visit(ArithExpn expn) {
@@ -562,7 +561,7 @@ public class CodeGen implements ASTVisitor<Boolean>
     public Boolean visit(BoolExpn expn) {
         System.out.println("BoolExpn");
         this.visit((BinaryExpn)expn);
-
+        // TODO: FRAN
 
 //        switch(expn.getOpSymbol()) {
 //            case BoolExpn.OP_OR:
@@ -614,6 +613,7 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(ConstExpn expn) {
         System.out.println("ConstExpn");
+        // TODO: Eric
         return true;
     }
     public Boolean visit(EqualsExpn expn) {
@@ -634,6 +634,7 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(FunctionCallExpn expn) {
         System.out.println("FunctionCallExpn");
+        // TODO: Eric
         return true;
     }
     public Boolean visit(IdentExpn expn) {
@@ -676,6 +677,7 @@ public class CodeGen implements ASTVisitor<Boolean>
 
     public Boolean visit(SkipConstExpn expn){
         System.out.println("SkipConstExpn");
+        // TODO: winston
         return true;
     }
     public Boolean visit(SubsExpn expn){
@@ -700,10 +702,12 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(TextConstExpn expn){
         System.out.println("TextConstExpn");
+        // TODO: winston
         return true;
     }
     public Boolean visit(UnaryExpn expn){
         System.out.println("UnaryExpn");
+        // TODO: Frans
         return true;
     }
     public Boolean visit(UnaryMinusExpn expn){
@@ -864,17 +868,24 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(ReturnStmt stmt){
         System.out.println("ReturnStmt");
+        // TODO: Eric
         return true;
     }
     public Boolean visit(Scope stmt){
         System.out.println("Scope");
         
         ASTList<Stmt> body = stmt.getBody();
-        boolean result = true;
-        if(body != null) {
-            result = body.accept(this);
+        for (Stmt s : body){
+            if (s instanceof MultiDeclarations) {
+                s.accept(this);
+            }
         }
 
+        for (Stmt s : body){
+            if (!(s instanceof MultiDeclarations)) {
+                s.accept(this);
+            }
+        }
         return true;
     }
     public Boolean visit(Stmt stmt){
@@ -924,6 +935,5 @@ public class CodeGen implements ASTVisitor<Boolean>
         System.out.println("IntegerType");
         return true;
     }
-
 
 }

@@ -113,6 +113,8 @@ public class CodeGen implements ASTVisitor<Boolean>
     private int num_var; //number of variables in a scope, for POPN use
     private int num_par; // number of parameters for a function
 
+    private String anonFcnName = "";
+
     /*
     * A 2D array which keeps track of addresses of exit statements
     * The first dimension will indicate the current loop we are in
@@ -522,9 +524,31 @@ public class CodeGen implements ASTVisitor<Boolean>
 
     public Boolean visit(AnonFuncExpn expn) {
         System.out.println("AnonFuncExpn");
-        //TODO: C83
-        //TODO: C84
-        //TODO: C85 Winston
+        RoutineDecl anonFun = new RoutineDecl(anonFcnName, expn.getExpn().getType(), new Scope(expn.getBody()));
+
+        // store the current number of local variables
+        int temp = num_var;
+        // reset the number of local variable for the new scope
+        num_var = 0;
+        enterScope(ScopeKind.FUNCTION, anonFun);
+
+        emitInstructions("PUSHMT");
+        lexicalLevel++;
+        emitInstructions("SETD "+lexicalLevel);
+
+        this.visit(anonFun.getBody());
+        expn.getExpn().accept(this);
+
+        exitScope();
+
+        // pop all local variables
+        emitInstructions("PUSH "+num_var);
+        emitInstructions("POPN");
+
+        // restore number of local variables
+        num_var = temp;
+
+        lexicalLevel--;
         return true;
     }
     public Boolean visit(ArithExpn expn) {

@@ -658,9 +658,19 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(IdentExpn expn) {
         System.out.println("IdentExpn");
+
+        // check if this is a function by checking if it is in hash
+        if (hash.get(expn.toString()) == null){
+            emitInstructions("ADDR "+lexicalLevel+" "+lookup_offset(expn.toString(), false));
+        } else {
+            FunctionCallExpn fnCallExpn = new FunctionCallExpn(expn.toString(), new ASTList<Expn>());
+            fnCallExpn.accept(this);
+        }
+
+
         // System.out.println("display " + lexicalLevel);
         // System.out.println("display " + lookup_offset(expn.toString(), false));
-        emitInstructions("ADDR "+lexicalLevel+" "+lookup_offset(expn.toString(), false));
+
         return true;
     }
     public Boolean visit(IntConstExpn expn) {

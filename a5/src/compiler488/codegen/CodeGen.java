@@ -817,7 +817,7 @@ public class CodeGen implements ASTVisitor<Boolean>
             patchAddr = instructionCounter.size() + 1;
             emitInstructions("PUSH 0"); // patch later
             emitInstructions("BF");
-            this.visit(notExpn);
+            notExpn.accept(this);
         } else { // regular exit statement
             patchAddr = instructionCounter.size() + 1;
             emitInstructions("PUSH 0");
@@ -837,18 +837,22 @@ public class CodeGen implements ASTVisitor<Boolean>
         return true;
     }
     public Boolean visit(IfStmt stmt){
+        System.out.println("IfStmt");
         // first emit code for the condition
-        this.visit(stmt.getCondition());
+        stmt.getCondition().accept(this);
+        if (stmt.getCondition() instanceof IdentExpn){
+            emitInstructions("LOAD");
+        }
         int startOfIf = instructionCounter.size()+1; // address of instruction to branch to end of true branch
         emitInstructions("PUSH 0");
         emitInstructions("BF");
-        this.visit(stmt.getWhenTrue());
+        stmt.getWhenTrue().accept(this);
         if (stmt.getWhenFalse() != null){ // else clause exists
             int startOfElse = instructionCounter.size()+1; // address of instruction branch to end of else clause
             emitInstructions("PUSH 0");
             emitInstructions("BR");
-            int startOfElseBranch = instructionCounter.size() + 1;
-            this.visit(stmt.getWhenFalse());
+            int startOfElseBranch = instructionCounter.size();
+            stmt.getWhenFalse().accept(this);
             try {
                 Machine.writeMemory((short) startOfIf, (short) startOfElseBranch);
             } catch (MemoryAddressException e) {
@@ -856,7 +860,7 @@ public class CodeGen implements ASTVisitor<Boolean>
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-            int endOfConditional = instructionCounter.size() + 1;
+            int endOfConditional = instructionCounter.size();
             try {
                 Machine.writeMemory((short) startOfElse, (short) endOfConditional);
             } catch (MemoryAddressException e) {
@@ -866,7 +870,7 @@ public class CodeGen implements ASTVisitor<Boolean>
             }
 
         } else {
-            int endOfConditional = instructionCounter.size()+1;
+            int endOfConditional = instructionCounter.size();
             try {
                 Machine.writeMemory((short) startOfIf, (short) endOfConditional);
             } catch (MemoryAddressException e) {
@@ -894,7 +898,7 @@ public class CodeGen implements ASTVisitor<Boolean>
         System.out.println("LoopStmt");
         int loopBegin = instructionCounter.size();
         loopExits.add(new ArrayList<Integer>());
-        this.visit(stmt.getBody());
+        stmt.getBody().accept(this);
         emitInstructions("PUSH " + loopBegin);
         emitInstructions("BR");
         // patch exit statements
@@ -1012,11 +1016,14 @@ public class CodeGen implements ASTVisitor<Boolean>
         loopExits.add(new ArrayList<Integer>());
 
         int expnBegin = instructionCounter.size();
-        this.visit(stmt.getExpn());
+        stmt.getExpn().accept(this);
+        if (stmt.getExpn() instanceof IdentExpn){
+            emitInstructions("LOAD");
+        }
         int branchToEndAddr = instructionCounter.size() + 1;
         emitInstructions("PUSH 0");
-        emitInstructions("BR");
-        this.visit(stmt.getBody());
+        emitInstructions("BF");
+        stmt.getBody().accept(this);
         emitInstructions("PUSH " + expnBegin); // loop back to beginning
         emitInstructions("BR");
         int loopEndAddr = instructionCounter.size();

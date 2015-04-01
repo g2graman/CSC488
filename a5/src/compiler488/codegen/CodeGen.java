@@ -1,9 +1,7 @@
 package compiler488.codegen;
 
-import java.io.*;
 import java.util.*;
 
-import com.sun.org.apache.xpath.internal.operations.Equals;
 import compiler488.compiler.Main;
 import compiler488.runtime.Machine;
 import compiler488.runtime.MemoryAddressException;
@@ -12,9 +10,6 @@ import compiler488.runtime.ExecutionException ;
 import compiler488.ast.ASTList;
 import compiler488.ast.ASTVisitor;
 import compiler488.ast.AST;
-import compiler488.ast.BasePrettyPrinter;
-import compiler488.ast.PrettyPrintable;
-import compiler488.ast.PrettyPrinter;
 import compiler488.ast.decl.ArrayDeclPart;
 import compiler488.ast.decl.Declaration;
 import compiler488.ast.decl.DeclarationPart;
@@ -675,9 +670,14 @@ public class CodeGen implements ASTVisitor<Boolean>
         return true;
     }
 
+
+    /*
+    * The only time skip is used is within a put. So it is okay to emit the PRINTC here
+     */
     public Boolean visit(SkipConstExpn expn){
         System.out.println("SkipConstExpn");
-        // TODO: winston
+        emitInstructions("PUSH " + (int) '\n');
+        emitInstructions("PRINTC");
         return true;
     }
     public Boolean visit(SubsExpn expn){
@@ -700,9 +700,17 @@ public class CodeGen implements ASTVisitor<Boolean>
         }
         return true;
     }
-    public Boolean visit(TextConstExpn expn){
+
+    /*
+     * The only time TextConstExpn is within a Put. So it is okay to emit the print here.
+     */
+    public Boolean visit(TextConstExpn expn) {
         System.out.println("TextConstExpn");
-        // TODO: winston
+        String out = expn.getValue();
+        for (char c : out.toCharArray()) {
+            emitInstructions("PUSH " + (int) c);
+            emitInstructions("PRINTC");
+        }
         return true;
     }
     public Boolean visit(UnaryExpn expn){
@@ -848,22 +856,24 @@ public class CodeGen implements ASTVisitor<Boolean>
 
         System.out.println("PutStmt");
 
-        String out = stmt.getOutputs().toString();
-        // find a better way to detect string constant
-        if (out.charAt(0) == '\"') {
-            for (char c : out.toCharArray()) {
-                if (c != '\"') {
-                    emitInstructions("PUSH "+(int)c);
-                    emitInstructions("PRINTC");
-                }
-            }
-        } else {
-            for (Printable p : stmt.getOutputs()) {
-                p.accept(this);
+        ASTList<Printable> out = stmt.getOutputs();
+        for (Printable p: out){
+            p.accept(this);
+
+            if (p instanceof BinaryExpn){
+                emitInstructions("PRINTI");
+            } else if (p instanceof IntConstExpn){
+                emitInstructions("PRINTI");
+            } else if (p instanceof IdentExpn){
                 emitInstructions("LOAD");
+                emitInstructions("PRINTI");
+            } else if (p instanceof FunctionCallExpn){
+                emitInstructions("PRINTI");
+            } else if (p instanceof UnaryExpn){
                 emitInstructions("PRINTI");
             }
         }
+
         return true;
     }
     public Boolean visit(ReturnStmt stmt){

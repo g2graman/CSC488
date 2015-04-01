@@ -678,7 +678,6 @@ public class CodeGen implements ASTVisitor<Boolean>
                 emitInstructions("STORE");
                 c = c + 11;
             } else {
-                System.out.println("HERE");
                 c = c + 2;
             }
         }

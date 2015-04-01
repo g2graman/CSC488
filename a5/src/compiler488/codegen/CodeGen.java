@@ -638,17 +638,32 @@ public class CodeGen implements ASTVisitor<Boolean>
         System.out.println("FunctionCallExpn");
         // return value
         emitInstructions("PUSH 0");
-        emitInstructions("PUSH "+(instructionCounter.size()+5+expn.getArguments().size()*(3+8)));
+        int pc = instructionCounter.size() + 1;
+        int c = instructionCounter.size() + 5;
+        emitInstructions("PUSH "+0);
 
         this.visit(expn.getArguments());
         for (int i = expn.getArguments().size(); i > 0; i --) {
-            emitInstructions("PUSHMT");
-            emitInstructions("PUSH "+i);
-            emitInstructions("SUB");
-            emitInstructions("DUP");
-            emitInstructions("LOAD");
-            emitInstructions("LOAD");
-            emitInstructions("STORE");
+            if (expn.getArguments().get(expn.getArguments().size()-i) instanceof IdentExpn) {
+                emitInstructions("PUSHMT");
+                emitInstructions("PUSH "+i);
+                emitInstructions("SUB");
+                emitInstructions("DUP");
+                emitInstructions("LOAD");
+                emitInstructions("LOAD");
+                emitInstructions("STORE");
+                c = c + 11;
+            } else {
+                System.out.println("HERE");
+                c = c + 2;
+            }
+        }
+        try {
+            Machine.writeMemory( (short)pc, (short)c);
+        } catch (MemoryAddressException e) {
+            System.out.println(e);
+        } catch (ExecutionException e) {
+            System.out.println(e);
         }
 
         emitInstructions("PUSH "+hash.get(expn.getIdent()));
@@ -875,17 +890,33 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(ProcedureCallStmt stmt){
         System.out.println("ProcedureCallStmt");
-        emitInstructions("PUSH "+(instructionCounter.size()+5+stmt.getArguments().size()*(3+8)));
+
+        int pc = instructionCounter.size() + 1;
+        int c = instructionCounter.size() + 5;
+        emitInstructions("PUSH "+0);
 
         this.visit(stmt.getArguments());
         for (int i = stmt.getArguments().size(); i > 0; i --) {
-            emitInstructions("PUSHMT");
-            emitInstructions("PUSH "+i);
-            emitInstructions("SUB");
-            emitInstructions("DUP");
-            emitInstructions("LOAD");
-            emitInstructions("LOAD");
-            emitInstructions("STORE");
+            if (stmt.getArguments().get(stmt.getArguments().size()-i) instanceof IdentExpn) {
+                emitInstructions("PUSHMT");
+                emitInstructions("PUSH "+i);
+                emitInstructions("SUB");
+                emitInstructions("DUP");
+                emitInstructions("LOAD");
+                emitInstructions("LOAD");
+                emitInstructions("STORE");
+                c = c + 11;
+            } else {
+                c = c + 2;
+            }
+        }
+
+        try {
+            Machine.writeMemory( (short)pc, (short)c);
+        } catch (MemoryAddressException e) {
+            System.out.println(e);
+        } catch (ExecutionException e) {
+            System.out.println(e);
         }
 
         emitInstructions("PUSH "+hash.get(stmt.getName()));
@@ -921,9 +952,10 @@ public class CodeGen implements ASTVisitor<Boolean>
         System.out.println("ReturnStmt");
 
         emitInstructions("ADDR "+lexicalLevel+" "+(-(num_par+2)));
-        System.out.println("RETURN "+stmt.getValue());
         stmt.getValue().accept(this);
-        emitInstructions("LOAD");
+        if (stmt.getValue() instanceof IdentExpn) {
+            emitInstructions("LOAD");
+        }
         emitInstructions("STORE");
 
         return true;

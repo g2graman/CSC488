@@ -116,6 +116,7 @@ public class CodeGen implements ASTVisitor<Boolean>
     private int lexicalLevel;
     private HashMap<String, Integer> hash; // keep track where start of procedures and functions
     private int num_var; //number of variables in a scope, for POPN use
+    private int num_par; // number of parameters for a function
 
     /*
     * A 2D array which keeps track of addresses of exit statements
@@ -159,6 +160,7 @@ public class CodeGen implements ASTVisitor<Boolean>
     scopes = new LinkedList<MajorScope>();
     hash = new HashMap<String, Integer>();
     num_var = 0;
+    num_par = 0;
     lexicalLevel = 0;
     loopExits = new ArrayList<ArrayList<Integer>>();
     return;
@@ -391,8 +393,7 @@ public class CodeGen implements ASTVisitor<Boolean>
 
         enterScope(ScopeKind.PROGRAM, null);
         this.visit( (Scope) stmt );
-        exitScope();
-
+        exitScope();   
         // pop all local variables
         emitInstructions("PUSH "+num_var);
         emitInstructions("POPN");
@@ -474,27 +475,33 @@ public class CodeGen implements ASTVisitor<Boolean>
         lexicalLevel++;
         emitInstructions("SETD "+lexicalLevel);
 
+        int temp_par = num_par;
         ASTList<ScalarDecl> parameters = decl.getParameters();
         int i = 0;
-        while (!parameters.isEmpty()) {
-            ScalarDecl s = parameters.pollFirst();
+        for (ScalarDecl s : parameters) {
             if ( lookup(s.getName(), true) == null) {
+                addEntry(s.getName(), s.getType(), SymbolKind.SCALAR, s, (-decl.getParameters().size()+i));
                 i++;
-                addEntry(s.getName(), s.getType(), SymbolKind.SCALAR, s, (-i));
             }
         }
+        num_par = i;
+
         this.visit(decl.getBody());
         exitScope();
+
         // pop all local variables
         emitInstructions("PUSH "+num_var);
         emitInstructions("POPN");
 
         // restore number of local variables
         num_var = temp;
+        // restore number of parameters
+        num_par = temp_par;
 
         // pop all parameters
         emitInstructions("PUSH "+i);
         emitInstructions("POPN");
+
         lexicalLevel--;
         emitInstructions("BR");
 
@@ -634,11 +641,30 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(FunctionCallExpn expn) {
         System.out.println("FunctionCallExpn");
-        // TODO: Eric
+        // return value
+        emitInstructions("PUSH 0");
+        emitInstructions("PUSH "+(instructionCounter.size()+5+expn.getArguments().size()*(3+8)));
+
+        this.visit(expn.getArguments());
+        for (int i = expn.getArguments().size(); i > 0; i --) {
+            emitInstructions("PUSHMT");
+            emitInstructions("PUSH "+i);
+            emitInstructions("SUB");
+            emitInstructions("DUP");
+            emitInstructions("LOAD");
+            emitInstructions("LOAD");
+            emitInstructions("STORE");
+        }
+
+        emitInstructions("PUSH "+hash.get(expn.getIdent()));
+        emitInstructions("BR");
+        
         return true;
     }
     public Boolean visit(IdentExpn expn) {
         System.out.println("IdentExpn");
+        // System.out.println("display " + lexicalLevel);
+        // System.out.println("display " + lookup_offset(expn.toString(), false));
         emitInstructions("ADDR "+lexicalLevel+" "+lookup_offset(expn.toString(), false));
         return true;
     }
@@ -831,12 +857,17 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(ProcedureCallStmt stmt){
         System.out.println("ProcedureCallStmt");
-        emitInstructions("PUSH "+(instructionCounter.size()+5+stmt.getArguments().size()*4));
-        while (!stmt.getArguments().isEmpty()) {
-            Expn e = stmt.getArguments().pollLast();
-            this.visit(e);
-            emitInstructions("ADDR "+lexicalLevel+" "+lookup_offset(e.toString(), true));
+        emitInstructions("PUSH "+(instructionCounter.size()+5+stmt.getArguments().size()*(3+8)));
+
+        this.visit(stmt.getArguments());
+        for (int i = stmt.getArguments().size(); i > 0; i --) {
+            emitInstructions("PUSHMT");
+            emitInstructions("PUSH "+i);
+            emitInstructions("SUB");
+            emitInstructions("DUP");
             emitInstructions("LOAD");
+            emitInstructions("LOAD");
+            emitInstructions("STORE");
         }
 
         emitInstructions("PUSH "+hash.get(stmt.getName()));
@@ -868,22 +899,30 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(ReturnStmt stmt){
         System.out.println("ReturnStmt");
-        // TODO: Eric
+
+        emitInstructions("ADDR "+lexicalLevel+" "+(-(num_par+2)));
+        System.out.println("RETURN "+stmt.getValue());
+        stmt.getValue().accept(this);
+        emitInstructions("LOAD");
+        emitInstructions("STORE");
+
         return true;
     }
     public Boolean visit(Scope stmt){
         System.out.println("Scope");
         
         ASTList<Stmt> body = stmt.getBody();
-        for (Stmt s : body){
-            if (s instanceof MultiDeclarations) {
-                s.accept(this);
+        if (body != null ) {
+            for (Stmt s : body){
+                if (s instanceof MultiDeclarations) {
+                    s.accept(this);
+                }
             }
-        }
 
-        for (Stmt s : body){
-            if (!(s instanceof MultiDeclarations)) {
-                s.accept(this);
+            for (Stmt s : body){
+                if (!(s instanceof MultiDeclarations)) {
+                    s.accept(this);
+                }
             }
         }
         return true;

@@ -4,5 +4,5 @@ begin
     end
 
     integer z
-    z <= foo
+    z <= foo(1)
 end

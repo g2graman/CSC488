@@ -805,6 +805,9 @@ public class CodeGen implements ASTVisitor<Boolean>
         System.out.println("AssignStmt");
         stmt.getLval().accept(this);
         stmt.getRval().accept(this);
+        if (stmt.getRval() instanceof IdentExpn){
+            emitInstructions("LOAD");
+        }
         emitInstructions("STORE");
 
         return true;
@@ -991,21 +994,51 @@ public class CodeGen implements ASTVisitor<Boolean>
         System.out.println("Scope");
         
         ASTList<Stmt> body = stmt.getBody();
-        if (body != null ) {
-            for (Stmt s : body){
-                if (s instanceof MultiDeclarations) {
-                    s.accept(this);
-                }
-            }
-
-            for (Stmt s : body){
-                if (!(s instanceof MultiDeclarations)) {
-                    s.accept(this);
-                }
-            }
-        }
+        System.out.println("Body length before finding declarations: " + body.size());
+        findDeclarations(body);
+        System.out.println("Body length after finding declarations: " + body.size());
+        body.accept(this);
+//        if (body != null ) {
+//            for (Stmt s : body){
+//                if (s instanceof MultiDeclarations) {
+//                    s.accept(this);
+//                }
+//            }
+//
+//            for (Stmt s : body){
+//                if (!(s instanceof MultiDeclarations)) {
+//                    s.accept(this);
+//                }
+//            }
+//        }
         return true;
     }
+
+    private void findDeclarations(ASTList<Stmt> body){
+        if (body == null){
+            return;
+        }
+        ArrayList<Integer> toRemove = new ArrayList<Integer>();
+        for (int i = 0; i < body.size(); i++){
+            Stmt s = body.get(i);
+            if (s instanceof Declaration){
+                s.accept(this);
+                toRemove.add(i);
+            } else if (s instanceof LoopingStmt){
+                findDeclarations(((LoopingStmt) s).getBody());
+            } else if (s instanceof IfStmt){
+
+                findDeclarations(((IfStmt) s).getWhenTrue());
+                findDeclarations(((IfStmt) s).getWhenFalse());
+            }
+        }
+
+        // remove in reverse order
+        for (int j = toRemove.size() - 1; j >= 0; j--){
+            body.remove(toRemove.get(j).intValue());
+        }
+    }
+
     public Boolean visit(Stmt stmt){
         System.out.println("Stmt");
         return true;

@@ -1,0 +1,19 @@
+begin
+   integer i
+   i <= 0
+
+   while (i < 3) do
+      integer x
+      x <= i
+      i <= i + 1
+   end
+   % should print 2
+   put x
+   put i
+
+   if (x > 1) then
+      integer y
+      y <= 3
+   end
+   put x, i, y
+end

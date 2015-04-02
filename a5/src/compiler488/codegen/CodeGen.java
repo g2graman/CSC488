@@ -1,9 +1,7 @@
 package compiler488.codegen;
 
-import java.io.*;
 import java.util.*;
 
-import com.sun.org.apache.xpath.internal.operations.Equals;
 import compiler488.compiler.Main;
 import compiler488.runtime.Machine;
 import compiler488.runtime.MemoryAddressException;
@@ -12,9 +10,6 @@ import compiler488.runtime.ExecutionException ;
 import compiler488.ast.ASTList;
 import compiler488.ast.ASTVisitor;
 import compiler488.ast.AST;
-import compiler488.ast.BasePrettyPrinter;
-import compiler488.ast.PrettyPrintable;
-import compiler488.ast.PrettyPrinter;
 import compiler488.ast.decl.ArrayDeclPart;
 import compiler488.ast.decl.Declaration;
 import compiler488.ast.decl.DeclarationPart;
@@ -116,6 +111,9 @@ public class CodeGen implements ASTVisitor<Boolean>
     private int lexicalLevel;
     private HashMap<String, Integer> hash; // keep track where start of procedures and functions
     private int num_var; //number of variables in a scope, for POPN use
+    private int num_par; // number of parameters for a function
+
+    private String anonFcnName = "";
 
     /*
     * A 2D array which keeps track of addresses of exit statements
@@ -159,6 +157,7 @@ public class CodeGen implements ASTVisitor<Boolean>
     scopes = new LinkedList<MajorScope>();
     hash = new HashMap<String, Integer>();
     num_var = 0;
+    num_par = 0;
     lexicalLevel = 0;
     loopExits = new ArrayList<ArrayList<Integer>>();
     return;
@@ -391,8 +390,7 @@ public class CodeGen implements ASTVisitor<Boolean>
 
         enterScope(ScopeKind.PROGRAM, null);
         this.visit( (Scope) stmt );
-        exitScope();
-
+        exitScope();   
         // pop all local variables
         emitInstructions("PUSH "+num_var);
         emitInstructions("POPN");
@@ -474,28 +472,33 @@ public class CodeGen implements ASTVisitor<Boolean>
         lexicalLevel++;
         emitInstructions("SETD "+lexicalLevel);
 
+        int temp_par = num_par;
         ASTList<ScalarDecl> parameters = decl.getParameters();
         int i = 0;
-        while (!parameters.isEmpty()) {
-            ScalarDecl s = parameters.pollFirst();
+        for (ScalarDecl s : parameters) {
             if ( lookup(s.getName(), true) == null) {
+                addEntry(s.getName(), s.getType(), SymbolKind.SCALAR, s, (-decl.getParameters().size()+i));
                 i++;
-                addEntry(s.getName(), s.getType(), SymbolKind.SCALAR, s, (-i));
             }
         }
+        num_par = i;
 
         this.visit(decl.getBody());
         exitScope();
+
         // pop all local variables
         emitInstructions("PUSH "+num_var);
         emitInstructions("POPN");
 
         // restore number of local variables
         num_var = temp;
+        // restore number of parameters
+        num_par = temp_par;
 
         // pop all parameters
         emitInstructions("PUSH "+i);
         emitInstructions("POPN");
+
         lexicalLevel--;
         emitInstructions("BR");
 
@@ -521,9 +524,31 @@ public class CodeGen implements ASTVisitor<Boolean>
 
     public Boolean visit(AnonFuncExpn expn) {
         System.out.println("AnonFuncExpn");
-        //TODO: C83
-        //TODO: C84
-        //TODO: C85
+        RoutineDecl anonFun = new RoutineDecl(anonFcnName, expn.getExpn().getType(), new Scope(expn.getBody()));
+
+        // store the current number of local variables
+        int temp = num_var;
+        // reset the number of local variable for the new scope
+        num_var = 0;
+        enterScope(ScopeKind.FUNCTION, anonFun);
+
+        emitInstructions("PUSHMT");
+        lexicalLevel++;
+        emitInstructions("SETD "+lexicalLevel);
+
+        this.visit(anonFun.getBody());
+        expn.getExpn().accept(this);
+
+        exitScope();
+
+        // pop all local variables
+        emitInstructions("PUSH "+num_var);
+        emitInstructions("POPN");
+
+        // restore number of local variables
+        num_var = temp;
+
+        lexicalLevel--;
         return true;
     }
     public Boolean visit(ArithExpn expn) {
@@ -562,7 +587,7 @@ public class CodeGen implements ASTVisitor<Boolean>
     public Boolean visit(BoolExpn expn) {
         System.out.println("BoolExpn");
         this.visit((BinaryExpn)expn);
-
+        // TODO: FRAN
 
 //        switch(expn.getOpSymbol()) {
 //            case BoolExpn.OP_OR:
@@ -584,32 +609,37 @@ public class CodeGen implements ASTVisitor<Boolean>
         if (expn.getOpSymbol().equals(CompareExpn.OP_LESS)){
             emitInstructions("LT");
         } else if (expn.getOpSymbol().equals(CompareExpn.OP_LESS_EQUAL)){
-            // TODO: C72
             // Use a <= b = not(b < a), and avoid arithmetic
-            // emitInstructions("LE");
+            CompareExpn flipped = 
+                    new CompareExpn(CompareExpn.OP_LESS, 
+                            expn.getRight(), 
+                            expn.getLeft());
+            NotExpn negated = (NotExpn) new NotExpn(flipped);
+            this.visit(flipped);
+            this.visit(negated);
         } else if (expn.getOpSymbol().equals(CompareExpn.OP_GREATER)){
-            // TODO: C73
             // Use a > b = b < a (switch order and use LT)
-
-            // Assuming values of left and right expressions were computed, pop them off and push them again
-            // in reverse order
-            emitInstructions("PUSH "+ 2);
-            emitInstructions("POPN");
-            emitInstructions("PUSH "+ expn.getRight().toString());
-            emitInstructions("PUSH "+ expn.getLeft().toString());
+            
+            emitInstructions("SWAP");
             emitInstructions("LT");
         } else if (expn.getOpSymbol().equals(CompareExpn.OP_GREATER_EQUAL)){
-            //TODO: C74
             // Use a >= b = not(a < b)
-            //emitInstructions("GE");
+            CompareExpn changeOp = 
+                    new CompareExpn(CompareExpn.OP_LESS, 
+                            expn.getLeft(), 
+                            expn.getRight());
+            NotExpn negated = (NotExpn) new NotExpn(changeOp);
+            this.visit(changeOp);
+            this.visit(negated);
         } else {
-            // ERROR
+            // TODO: error?
         }
 
         return true;
     }
     public Boolean visit(ConstExpn expn) {
         System.out.println("ConstExpn");
+        // TODO: Eric
         return true;
     }
     public Boolean visit(EqualsExpn expn) {
@@ -619,19 +649,66 @@ public class CodeGen implements ASTVisitor<Boolean>
         if (expn.getOpSymbol().equals(EqualsExpn.OP_EQUAL)){
             emitInstructions("EQ");
         } else if (expn.getOpSymbol().equals(EqualsExpn.OP_NOT_EQUAL)){
-            // TODO: implement NOT_EQ
-            //emitInstructions("NOT_EQ");
+            emitInstructions("EQ");
+            
+            //Emit negation
+            NotExpn negated = (NotExpn) new NotExpn((Expn) expn);
+            this.visit(negated);
         }
 
         return true;
     }
     public Boolean visit(FunctionCallExpn expn) {
         System.out.println("FunctionCallExpn");
+        // return value
+        emitInstructions("PUSH 0");
+        int pc = instructionCounter.size() + 1;
+        int c = instructionCounter.size() + 5;
+        emitInstructions("PUSH "+0);
+
+        this.visit(expn.getArguments());
+        for (int i = expn.getArguments().size(); i > 0; i --) {
+            if (expn.getArguments().get(expn.getArguments().size()-i) instanceof IdentExpn) {
+                emitInstructions("PUSHMT");
+                emitInstructions("PUSH "+i);
+                emitInstructions("SUB");
+                emitInstructions("DUP");
+                emitInstructions("LOAD");
+                emitInstructions("LOAD");
+                emitInstructions("STORE");
+                c = c + 11;
+            } else {
+                c = c + 2;
+            }
+        }
+        try {
+            Machine.writeMemory( (short)pc, (short)c);
+        } catch (MemoryAddressException e) {
+            System.out.println(e);
+        } catch (ExecutionException e) {
+            System.out.println(e);
+        }
+
+        emitInstructions("PUSH "+hash.get(expn.getIdent()));
+        emitInstructions("BR");
+        
         return true;
     }
     public Boolean visit(IdentExpn expn) {
         System.out.println("IdentExpn");
-        emitInstructions("ADDR "+lexicalLevel+" "+lookup_offset(expn.toString(), false));
+
+        // check if this is a function by checking if it is in hash
+        if (hash.get(expn.toString()) == null){
+            emitInstructions("ADDR "+lexicalLevel+" "+lookup_offset(expn.toString(), false));
+        } else {
+            FunctionCallExpn fnCallExpn = new FunctionCallExpn(expn.toString(), new ASTList<Expn>());
+            fnCallExpn.accept(this);
+        }
+
+
+        // System.out.println("display " + lexicalLevel);
+        // System.out.println("display " + lookup_offset(expn.toString(), false));
+
         return true;
     }
     public Boolean visit(IntConstExpn expn) {
@@ -642,16 +719,39 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(NotExpn expn) {
         System.out.println("NotExpn");
-        //TODO: C65
-        this.visit(expn); //Evaluate the boolean expression
-        /*
-            TODO: Using branching, if the value of the expression was false return true, and vice versa.
-        */
+        emitInstructions("PUSH "+ 0);
+        this.visit((Expn) expn); //Generate code for the expression
+        emitInstructions("SWAP");
+        
+        //Calculate the branch offset after visiting the expression
+        short BF_FALSE = (short) (((short) instructionCounter.size())
+                + (Machine.instructionLength[Machine.BF])
+                + (Machine.instructionLength[Machine.PUSH])*3
+                + (Machine.instructionLength[Machine.BR])
+                + (Machine.instructionLength[Machine.ADD])
+                + (Machine.instructionLength[Machine.SWAP]));
+        
+        emitInstructions("PUSH "+ BF_FALSE);
+        emitInstructions("ADD");
+        emitInstructions("SWAP");
+        emitInstructions("BF");
+        emitInstructions("PUSH "+ false); 
+        emitInstructions("PUSH "+ 
+            ((short) (BF_FALSE + (Machine.instructionLength[Machine.PUSH]))));
+        
+        emitInstructions("BR");
+        emitInstructions("PUSH "+ true); 
         return true;
     }
 
+
+    /*
+    * The only time skip is used is within a put. So it is okay to emit the PRINTC here
+     */
     public Boolean visit(SkipConstExpn expn){
         System.out.println("SkipConstExpn");
+        emitInstructions("PUSH " + (int) '\n');
+        emitInstructions("PRINTC");
         return true;
     }
     public Boolean visit(SubsExpn expn){
@@ -674,16 +774,29 @@ public class CodeGen implements ASTVisitor<Boolean>
         }
         return true;
     }
-    public Boolean visit(TextConstExpn expn){
+
+    /*
+     * The only time TextConstExpn is within a Put. So it is okay to emit the print here.
+     */
+    public Boolean visit(TextConstExpn expn) {
         System.out.println("TextConstExpn");
+        String out = expn.getValue();
+        for (char c : out.toCharArray()) {
+            emitInstructions("PUSH " + (int) c);
+            emitInstructions("PRINTC");
+        }
         return true;
     }
     public Boolean visit(UnaryExpn expn){
         System.out.println("UnaryExpn");
+        // TODO: Frans
         return true;
     }
     public Boolean visit(UnaryMinusExpn expn){
         System.out.println("UnaryMinusExpn");
+        UnaryExpn e = (UnaryExpn) expn;
+        this.visit(e);
+        emitInstructions("NEG");
         return true;
     }
 
@@ -704,6 +817,7 @@ public class CodeGen implements ASTVisitor<Boolean>
             patchAddr = instructionCounter.size() + 1;
             emitInstructions("PUSH 0"); // patch later
             emitInstructions("BF");
+            notExpn.accept(this);
         } else { // regular exit statement
             patchAddr = instructionCounter.size() + 1;
             emitInstructions("PUSH 0");
@@ -723,18 +837,22 @@ public class CodeGen implements ASTVisitor<Boolean>
         return true;
     }
     public Boolean visit(IfStmt stmt){
+        System.out.println("IfStmt");
         // first emit code for the condition
-        this.visit(stmt.getCondition());
+        stmt.getCondition().accept(this);
+        if (stmt.getCondition() instanceof IdentExpn){
+            emitInstructions("LOAD");
+        }
         int startOfIf = instructionCounter.size()+1; // address of instruction to branch to end of true branch
         emitInstructions("PUSH 0");
         emitInstructions("BF");
-        this.visit(stmt.getWhenTrue());
+        stmt.getWhenTrue().accept(this);
         if (stmt.getWhenFalse() != null){ // else clause exists
             int startOfElse = instructionCounter.size()+1; // address of instruction branch to end of else clause
             emitInstructions("PUSH 0");
             emitInstructions("BR");
-            int startOfElseBranch = instructionCounter.size() + 1;
-            this.visit(stmt.getWhenFalse());
+            int startOfElseBranch = instructionCounter.size();
+            stmt.getWhenFalse().accept(this);
             try {
                 Machine.writeMemory((short) startOfIf, (short) startOfElseBranch);
             } catch (MemoryAddressException e) {
@@ -742,7 +860,7 @@ public class CodeGen implements ASTVisitor<Boolean>
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-            int endOfConditional = instructionCounter.size() + 1;
+            int endOfConditional = instructionCounter.size();
             try {
                 Machine.writeMemory((short) startOfElse, (short) endOfConditional);
             } catch (MemoryAddressException e) {
@@ -752,7 +870,7 @@ public class CodeGen implements ASTVisitor<Boolean>
             }
 
         } else {
-            int endOfConditional = instructionCounter.size()+1;
+            int endOfConditional = instructionCounter.size();
             try {
                 Machine.writeMemory((short) startOfIf, (short) endOfConditional);
             } catch (MemoryAddressException e) {
@@ -780,7 +898,7 @@ public class CodeGen implements ASTVisitor<Boolean>
         System.out.println("LoopStmt");
         int loopBegin = instructionCounter.size();
         loopExits.add(new ArrayList<Integer>());
-        this.visit(stmt.getBody());
+        stmt.getBody().accept(this);
         emitInstructions("PUSH " + loopBegin);
         emitInstructions("BR");
         // patch exit statements
@@ -799,12 +917,33 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(ProcedureCallStmt stmt){
         System.out.println("ProcedureCallStmt");
-        emitInstructions("PUSH "+(instructionCounter.size()+5+stmt.getArguments().size()*4));
-        while (!stmt.getArguments().isEmpty()) {
-            Expn e = stmt.getArguments().pollLast();
-            this.visit(e);
-            emitInstructions("ADDR "+lexicalLevel+" "+lookup_offset(e.toString(), true));
-            emitInstructions("LOAD");
+
+        int pc = instructionCounter.size() + 1;
+        int c = instructionCounter.size() + 5;
+        emitInstructions("PUSH "+0);
+
+        this.visit(stmt.getArguments());
+        for (int i = stmt.getArguments().size(); i > 0; i --) {
+            if (stmt.getArguments().get(stmt.getArguments().size()-i) instanceof IdentExpn) {
+                emitInstructions("PUSHMT");
+                emitInstructions("PUSH "+i);
+                emitInstructions("SUB");
+                emitInstructions("DUP");
+                emitInstructions("LOAD");
+                emitInstructions("LOAD");
+                emitInstructions("STORE");
+                c = c + 11;
+            } else {
+                c = c + 2;
+            }
+        }
+
+        try {
+            Machine.writeMemory( (short)pc, (short)c);
+        } catch (MemoryAddressException e) {
+            System.out.println(e);
+        } catch (ExecutionException e) {
+            System.out.println(e);
         }
 
         emitInstructions("PUSH "+hash.get(stmt.getName()));
@@ -816,37 +955,55 @@ public class CodeGen implements ASTVisitor<Boolean>
 
         System.out.println("PutStmt");
 
-        String out = stmt.getOutputs().toString();
-        // find a better way to detect string constant
-        if (out.charAt(0) == '\"') {
-            for (char c : out.toCharArray()) {
-                if (c != '\"') {
-                    emitInstructions("PUSH "+(int)c);
-                    emitInstructions("PRINTC");
-                }
-            }
-        } else {
-            for (Printable p : stmt.getOutputs()) {
-                p.accept(this);
+        ASTList<Printable> out = stmt.getOutputs();
+        for (Printable p: out){
+            p.accept(this);
+
+            if (p instanceof BinaryExpn){
+                emitInstructions("PRINTI");
+            } else if (p instanceof IntConstExpn){
+                emitInstructions("PRINTI");
+            } else if (p instanceof IdentExpn){
                 emitInstructions("LOAD");
+                emitInstructions("PRINTI");
+            } else if (p instanceof FunctionCallExpn){
+                emitInstructions("PRINTI");
+            } else if (p instanceof UnaryExpn){
                 emitInstructions("PRINTI");
             }
         }
+
         return true;
     }
     public Boolean visit(ReturnStmt stmt){
         System.out.println("ReturnStmt");
+
+        emitInstructions("ADDR "+lexicalLevel+" "+(-(num_par+2)));
+        stmt.getValue().accept(this);
+        if (stmt.getValue() instanceof IdentExpn) {
+            emitInstructions("LOAD");
+        }
+        emitInstructions("STORE");
+
         return true;
     }
     public Boolean visit(Scope stmt){
         System.out.println("Scope");
         
         ASTList<Stmt> body = stmt.getBody();
-        boolean result = true;
-        if(body != null) {
-            result = body.accept(this);
-        }
+        if (body != null ) {
+            for (Stmt s : body){
+                if (s instanceof MultiDeclarations) {
+                    s.accept(this);
+                }
+            }
 
+            for (Stmt s : body){
+                if (!(s instanceof MultiDeclarations)) {
+                    s.accept(this);
+                }
+            }
+        }
         return true;
     }
     public Boolean visit(Stmt stmt){
@@ -859,11 +1016,14 @@ public class CodeGen implements ASTVisitor<Boolean>
         loopExits.add(new ArrayList<Integer>());
 
         int expnBegin = instructionCounter.size();
-        this.visit(stmt.getExpn());
+        stmt.getExpn().accept(this);
+        if (stmt.getExpn() instanceof IdentExpn){
+            emitInstructions("LOAD");
+        }
         int branchToEndAddr = instructionCounter.size() + 1;
         emitInstructions("PUSH 0");
-        emitInstructions("BR");
-        this.visit(stmt.getBody());
+        emitInstructions("BF");
+        stmt.getBody().accept(this);
         emitInstructions("PUSH " + expnBegin); // loop back to beginning
         emitInstructions("BR");
         int loopEndAddr = instructionCounter.size();
@@ -896,6 +1056,5 @@ public class CodeGen implements ASTVisitor<Boolean>
         System.out.println("IntegerType");
         return true;
     }
-
 
 }

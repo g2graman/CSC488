@@ -1,0 +1,12 @@
+begin
+	begin
+		begin
+		end
+	end
+	begin
+		begin
+		end 
+	end 
+end
+integer failure
+failure <= 1

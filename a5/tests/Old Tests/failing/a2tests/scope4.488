@@ -1,0 +1,5 @@
+% Test missing end statement
+begin
+	begin
+		put "This should fail!"
+end

@@ -1,0 +1,13 @@
+begin
+        if (true) then
+                put "Hello world!"
+        else
+                put "ERROR"
+        end
+
+        if (false) then
+                put "Hello world!"
+        else
+                put "This works!"
+        end
+end

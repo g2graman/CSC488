@@ -1,0 +1,9 @@
+begin
+        if (true) then
+                put "Hello world!"
+        end
+
+        if (false) then
+                put "Error"
+        end
+end

@@ -1,0 +1,6 @@
+begin
+
+	integer x
+	x <= put "test"
+
+end

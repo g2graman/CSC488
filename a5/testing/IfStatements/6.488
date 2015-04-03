@@ -1,0 +1,13 @@
+begin
+        boolean x
+        boolean y
+        x <= true
+        y <= false
+        if (x) then
+                put "Hello world!"     
+        end
+        
+        if (y) then
+                put "ERROR"
+        end
+end

@@ -7,3 +7,7 @@ output: "Hello World!This works!"
 output "Hello world! How are you?"
 4. Nested if statement in the else clause
 output "Hello world!"
+5. Test that statements around the if statement blocks execute properly
+output "Hello world! How are you? I hope this passes! Fingers crossed!"
+6. Test boolean variable as the condition
+output "Hello world!"

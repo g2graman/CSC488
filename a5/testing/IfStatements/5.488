@@ -1,0 +1,15 @@
+begin
+        put "Hello world! "
+        if (true) then
+                put "How are you?"
+                if (true) then
+                        put " I hope this test passes!"
+                else
+                        put "ERROR"
+                end
+                put " This should work!"
+        else
+                put "ERROR"
+        end
+        put "Fingers Crossed!"
+end

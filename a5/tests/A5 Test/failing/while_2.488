@@ -1,0 +1,9 @@
+begin
+
+	integer x
+
+	while (x <= 1) do
+		put "test"
+	end
+
+end

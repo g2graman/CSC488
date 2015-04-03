@@ -1,0 +1,12 @@
+begin
+        if (false) then
+                put "ERROR"
+        else
+                if (true) then
+                        put "Hello "
+                else
+                        put "ERROR'
+                end
+                put "world!"
+        end
+end

@@ -3,3 +3,7 @@ IfStatements
 output: "Hello World!"
 2. If-else statements with a constant boolean as conditional
 output: "Hello World!This works!"
+3. Nested if statements
+output "Hello world! How are you?"
+4. Nested if statement in the else clause
+output "Hello world!"

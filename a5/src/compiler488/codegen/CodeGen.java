@@ -1023,7 +1023,7 @@ public class CodeGen implements ASTVisitor<Boolean>
         ArrayList<Integer> toRemove = new ArrayList<Integer>();
         for (int i = 0; i < body.size(); i++){
             Stmt s = body.get(i);
-            if (s instanceof Declaration){
+            if (s instanceof MultiDeclarations){
                 s.accept(this);
                 toRemove.add(i);
             } else if (s instanceof LoopingStmt){

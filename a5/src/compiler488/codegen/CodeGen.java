@@ -981,12 +981,14 @@ public class CodeGen implements ASTVisitor<Boolean>
     public Boolean visit(ReturnStmt stmt){
         System.out.println("ReturnStmt");
 
-        emitInstructions("ADDR "+lexicalLevel+" "+(-(num_par+2)));
-        stmt.getValue().accept(this);
-        if (stmt.getValue() instanceof IdentExpn) {
-            emitInstructions("LOAD");
+        if (stmt.getValue() != null) {
+            emitInstructions("ADDR "+lexicalLevel+" "+(-(num_par+2)));
+            stmt.getValue().accept(this);
+            if (stmt.getValue() instanceof IdentExpn) {
+                emitInstructions("LOAD");
+            }
+            emitInstructions("STORE");
         }
-        emitInstructions("STORE");
 
         return true;
     }

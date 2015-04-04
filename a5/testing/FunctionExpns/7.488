@@ -1,0 +1,20 @@
+begin
+
+	integer function foo begin
+		integer a
+		a <= x + z
+		integer function foo2 begin
+			integer b
+			b <= a - 6
+			return (b)
+		end
+		a <= foo2
+		return (a)
+	end
+	integer x, y, z
+	x <= 5
+	z <= 11
+	y <= foo
+	put y
+	
+end

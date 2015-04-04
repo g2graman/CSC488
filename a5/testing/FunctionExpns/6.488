@@ -1,0 +1,15 @@
+begin
+	integer x, y, z
+	x <= 5
+	z <= 12
+	procedure foo begin
+		y <= x + z
+		procedure foo2 begin
+			y <= y -5
+		end
+		foo2
+	end
+	foo
+	put y
+	
+end

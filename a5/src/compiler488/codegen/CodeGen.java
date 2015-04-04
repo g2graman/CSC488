@@ -604,8 +604,7 @@ public class CodeGen implements ASTVisitor<Boolean>
     public Boolean visit(BoolExpn expn) {
         System.out.println("BoolExpn");
 
-        BinaryExpn bin = (BinaryExpn) expn;
-        this.visit(bin.getLeft()); // Execute left operand
+        this.visit(expn.getLeft()); // Execute left operand
         int pc = instructionCounter.size();
         if(expn.getOpSymbol().equals(BoolExpn.OP_OR)) {
             int or_right = pc 
@@ -621,7 +620,7 @@ public class CodeGen implements ASTVisitor<Boolean>
             emitInstructions("BF"); // Branch to OR_RIGHT if false
             emitInstructions("PUSH " + or_end);
             emitInstructions("BR"); // Branch to OR_END with true atop stack, short-circuit
-            this.visit((BinaryExpn) expn.getRight()); //OR_RIGHT
+            this.visit(expn.getRight()); //OR_RIGHT
             emitInstructions("PUSH "+ or_end + 1);
             emitInstructions("BR"); //Right operand of OR expression stays atop stack, branch to end of OR
             emitInstructions("PUSH "+ true); //OR_END
@@ -634,7 +633,7 @@ public class CodeGen implements ASTVisitor<Boolean>
 
             emitInstructions("PUSH " + and_end);
             emitInstructions("BF"); // Branch to AND_END if false
-            this.visit(bin.getRight()); //evaluate right operand
+            this.visit(expn.getRight()); //evaluate right operand
             emitInstructions("PUSH "+ and_end + 1);
             emitInstructions("BR");
             emitInstructions("PUSH "+ false); // AND_END

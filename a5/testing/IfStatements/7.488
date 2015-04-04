@@ -1,0 +1,5 @@
+begin
+        if ({put "Hey!" yields true}) then
+                put " Hello world!"
+        end
+end

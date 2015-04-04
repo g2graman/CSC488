@@ -11,3 +11,5 @@ output "Hello world!"
 output "Hello world! How are you? I hope this passes! Fingers crossed!"
 6. Test boolean variable as the condition
 output "Hello world!"
+7. Test with anonymous function as the condition
+output "Hey! Hello world!"

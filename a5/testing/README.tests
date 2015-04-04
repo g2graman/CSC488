@@ -1,3 +1,9 @@
+A5 Tests:
+Passing: Pretty self explainitory, each folder contains one .488 file tests the respective code generation for the related specification for A5.
+Failing: A few specific test cases for code generation failures
+
+Old Tests: Tests from A1-3
+
 IfStatements
 1. If statements with a constant boolean
 output: "Hello World!"
@@ -7,3 +13,20 @@ output: "Hello World!This works!"
 output "Hello world! How are you?"
 4. Nested if statement in the else clause
 output "Hello world!"
+5. Test that statements around the if statement blocks execute properly
+output "Hello world! How are you? I hope this passes! Fingers crossed!"
+6. Test boolean variable as the condition
+output "Hello world!"
+7. Test with anonymous function as the condition
+output "Hey! Hello world!"
+
+LoopStatements
+1. Test a regular loop with exit statement, and regular loop with exit when statement
+output: "Hey!" 5 times and "Hello!" 5 times
+2. Test a while loop
+output: "Hey!" 5 times
+3. Test a while loop with an exit inside
+output: "hey!" 3 times
+4. Test a nested loop
+output: helloheyheyheyhey 5 times
+

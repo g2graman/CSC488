@@ -1,0 +1,19 @@
+begin
+        integer i
+        i <= 0
+        loop
+                put "Hey!", skip
+                i <= i + 1
+                if (i = 5) then
+                        exit
+                end
+        end
+
+        integer x
+        x <= 0
+        loop
+                put "Hello!", skip
+                x <= x + 1
+                exit when (x = 5)
+        end
+end

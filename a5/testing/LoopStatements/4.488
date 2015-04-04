@@ -1,0 +1,17 @@
+begin
+        integer x
+        x <= 0
+        loop
+                put "hello!"
+                integer y
+                y <= 0
+                loop
+                        y <= y + 1
+                        put "hey!
+                        exit when (y = 5)
+                end
+                put skip
+                x <= x + 1
+                exit when (x = 5)
+        end
+end

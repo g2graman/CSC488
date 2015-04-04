@@ -1,0 +1,9 @@
+begin
+        integer x
+        x <= 0 
+        while (x < 6) do
+                put "hey!"
+                x <= x + 1
+                exit when (x = 3)
+        end
+end

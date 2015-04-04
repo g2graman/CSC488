@@ -1,0 +1,15 @@
+begin
+	integer x, y, z
+	x <= 5
+	z <= 12
+	procedure foo(integer a, integer b, integer c) begin
+		y <= z + a + b + c
+		procedure foo2(integer d) begin
+			y <= y - d
+		end
+		foo2(2)
+	end
+	foo(3,5,9)
+	put y
+	
+end

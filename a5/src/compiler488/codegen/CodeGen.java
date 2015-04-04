@@ -851,7 +851,9 @@ public class CodeGen implements ASTVisitor<Boolean>
         stmt.getLval().accept(this);
         stmt.getRval().accept(this);
         if (stmt.getRval() instanceof IdentExpn) {
-            emitInstructions("LOAD");
+            if (hash.get(stmt.getRval().toString()) == null) {
+                emitInstructions("LOAD");
+            }
         }
         emitInstructions("STORE");
 

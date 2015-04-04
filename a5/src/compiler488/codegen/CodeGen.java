@@ -853,8 +853,10 @@ public class CodeGen implements ASTVisitor<Boolean>
         SymbolTableEntry array = lookup(expn.getVariable(), true);
         if (array.getNode() instanceof ArrayDeclPart) {
             expn.getSubscript1().accept(this);
-            if (!(expn.getSubscript1() instanceof IntConstExpn)) {
-                emitInstructions("LOAD");
+            if ((expn.getSubscript1() instanceof IdentExpn)) {
+                if (hash.get(expn.getSubscript1().toString()) == null) {
+                    emitInstructions("LOAD");
+                }
             }
             int lb1 = ((ArrayDeclPart)array.getNode()).getLowerBoundary1();
             emitInstructions("PUSH "+lb1);
@@ -872,8 +874,10 @@ public class CodeGen implements ASTVisitor<Boolean>
                 emitInstructions("MUL");
 
                 expn.getSubscript2().accept(this);
-                if (!(expn.getSubscript2() instanceof IntConstExpn)) {
-                    emitInstructions("LOAD");
+                if ((expn.getSubscript2() instanceof IdentExpn)) {
+                    if (hash.get(expn.getSubscript2().toString()) == null) {
+                        emitInstructions("LOAD");
+                    }
                 }
                 emitInstructions("PUSH "+lb2);
                 emitInstructions("SUB");
@@ -1092,9 +1096,9 @@ public class CodeGen implements ASTVisitor<Boolean>
                 emitInstructions("PRINTI");
             } else if (p instanceof UnaryExpn){
                 emitInstructions("PRINTI");
-            } else {
-//                emitInstructions("LOAD");
-//                emitInstructions("PRINTI");
+            } else if (p instanceof SubsExpn){
+               emitInstructions("LOAD");
+               emitInstructions("PRINTI");
             }
         }
 

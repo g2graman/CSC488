@@ -2,10 +2,10 @@ begin
 	integer x, y, z
 	x <= 5
 	z <= 12
-	procedure foo begin
-		y <= x + z
+	procedure foo(integer a, integer b) begin
+		z <= b + a
 	end
-	foo
-	put y
+	foo(3, 2)
+	put z
 	
 end

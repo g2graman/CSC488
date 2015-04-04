@@ -33,8 +33,13 @@ output: helloheyheyheyhey 5 times
 Function and Procedure Call statments
 1. Test with function with one parameter
 2. Test with function with multiple parameters
-3. Test with procedure with parameters
-4. Test with procedure with no parameters
+3. Test with procedure with no parameters
+4. Test with procedure with one parameters
+5. Test with procedure with multiple parameters
+6. Test with nested procedure with no parameters
+7. Test with nested function with no parameters
+8. Test with nested function with parameters
+9. Test with nested procedure with parameters
 
 AnonFunction
 1. Test with integer
@@ -72,4 +77,22 @@ output: prints numbers 1 and 2
 7. Check all comparison expressions with variables
 8. Check all comparison expressions with functions
 
-Arrays
+ArrayDecl
+1. Check simple array declaration and assignment
+2. Check general bound declaration and its assignment
+3. Check two dimensional array with single integer subscription
+4. Check two dimensional array with general bound subscription
+5. Check two dimensional array with variable bound
+6. Check one dimensional array with function bound
+7. Check one dimensional array with expression bound
+8. Check two dimensional array with function bound
+
+CompareExnp
+1. Check less equal expression with literals, variables and functions
+2. Check less than expression with literals, variables and functions
+3. Check more than expression with literals, variables and functions
+4. Check more equal expression with literals, variables and functions
+
+EqualExpn
+1. Check equal expression with literals, variables and functions
+2. Check not equal expression with literals, variables and functions

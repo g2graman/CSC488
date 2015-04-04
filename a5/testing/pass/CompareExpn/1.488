@@ -12,15 +12,17 @@ begin
 	boolean z
 	x <= 1
 	y <= 2
-	z <= x = y
+
+	z <= x <= y
 	put z
 
-	z <= 1 = 1
+	z <= 1 <= 1
 	put z
 
-	z <= foo = foo2(4,5)
+	z <= foo <= foo2(4,5)
 	put z
 
-	z <= foo = foo2(5,5)
+	z <= foo <= foo2(6,5)
 	put z
+
 end

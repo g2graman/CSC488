@@ -1,0 +1,14 @@
+begin
+	integer function foo (integer x, integer y) begin
+		integer b
+		b <= x + y
+		return (b)
+	end
+
+	integer x, y, z
+	x <= 5
+	z <= 12
+	y <= foo(5,12)
+	put y
+	
+end

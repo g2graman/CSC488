@@ -1,0 +1,33 @@
+begin
+    if (true & true) then
+        put "Hello world! 1", skip
+    end
+
+    if (true & false) then
+        put "ERROR1", skip
+    end
+
+    if (false & true) then
+        put "ERROR2", skip
+    end
+
+    if (false & false) then
+        put "ERROR3", skip
+    end
+
+    if (true | true) then
+        put "Hello world! 2", skip
+    end
+
+    if (true | false) then
+        put "Hello world! 3", skip
+    end
+
+    if (false | true) then
+        put "Hello world! 4", skip
+    end
+
+    if (false | false) then
+        put "ERROR4", skip
+    end
+end

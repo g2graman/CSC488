@@ -1,0 +1,104 @@
+begin
+    boolean x, y, a, b
+    x <= true
+    y <= false
+    a <= true
+    b <= false
+
+    if (x & a) then
+        put "1", skip
+    else
+        put "ERROR"
+    end
+
+    if (x & x) then
+        put "2", skip
+    else
+        put "ERROR"
+    end
+
+    if (x & y) then
+        put "ERROR", skip
+    else
+        put "3", skip
+    end
+
+    if (y & y) then
+        put "ERROR", skip
+    else
+        put "4", skip
+    end
+
+    if (x | x) then
+        put "5", skip
+    else
+        put "ERROR", skip
+    end
+
+    if (x | y) then
+        put "6", skip
+    else
+        put "ERROR", skip
+    end
+
+    if (y | y) then
+        put "ERROR", skip
+    else
+        put "7", skip
+    end
+
+    if (y | b) then
+        put "ERROR", skip
+    else
+        put "8", skip
+    end
+
+    if (true & x) then
+        put "9", skip
+    else
+        put "ERROR", skip
+    end
+
+    if (x & true) then
+        put "10", skip
+    else
+        put "ERROR", skip
+    end
+
+    if (x & false) then
+        put "ERROR", skip
+    else
+        put "11", skip
+    end
+
+    if (false & x) then
+        put "ERROR", skip
+    else
+        put "12", skip
+    end
+
+    if (x | true) then
+        put "13", skip
+    else
+        put "ERROR", skip
+    end
+
+    if (true | x) then
+        put "14", skip
+    else
+        put "ERROR", skip
+    end
+
+    if (x | false) then
+        put "15", skip
+    else
+        put "ERROR", skip
+    end
+
+    if (false | x) then
+        put "16", skip
+    else
+        put "ERROR", skip
+    end
+
+end

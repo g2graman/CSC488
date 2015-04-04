@@ -1,0 +1,12 @@
+begin
+   procedure helloWorld begin
+      put "Hello World!"
+   end
+   integer x
+   x <= {
+         put "Hey"
+         helloWorld
+         yields
+         1
+        }
+end

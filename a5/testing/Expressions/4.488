@@ -1,0 +1,18 @@
+begin
+    boolean function foo begin
+        put "ERROR should not have executed", skip
+        return (true)
+    end
+
+    if (false & foo) then
+        put "ERROR", skip
+    else
+        put 1
+    end
+
+    if (true | foo) then
+        put 2
+    else
+        put "ERROR", skip
+    end
+end

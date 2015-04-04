@@ -184,7 +184,7 @@ public class Semantics implements ASTVisitor<Boolean> {
 		if(scopes.isEmpty()) {
 			return;
 		}
-		scopes.getFirst().addEntry(varname, type, kind, node, scopes.getFirst().getSize());
+		scopes.getFirst().addEntry(varname, type, kind, node, scopes.getFirst().getSize(), scopes.getFirst().getSize());
 	}
 
 	public void enterScope(ScopeKind kind, RoutineDecl routine) {

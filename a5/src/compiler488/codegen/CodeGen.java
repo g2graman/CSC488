@@ -358,11 +358,25 @@ public class CodeGen implements ASTVisitor<Boolean>
         return 0;
     }
 
-    public void addEntry(String varname, Type type, SymbolKind kind, AST node, int off) {
+    public int lookup_lex(String varname, boolean local) {
+        if(local) {
+            return scopes.getFirst().lookup(varname).getLex();
+        }
+
+        for(MajorScope scope : scopes) {
+            SymbolTableEntry entry = scope.lookup(varname);
+            if(entry != null) {
+                return entry.getLex();
+            }
+        }
+        return 0;
+    }
+
+    public void addEntry(String varname, Type type, SymbolKind kind, AST node, int off, int lex) {
         if(scopes.isEmpty()) {
             return;
         }
-        scopes.getFirst().addEntry(varname, type, kind, node, off);
+        scopes.getFirst().addEntry(varname, type, kind, node, off, lex);
     }
 
     public void enterScope(ScopeKind kind, RoutineDecl routine) {
@@ -410,7 +424,7 @@ public class CodeGen implements ASTVisitor<Boolean>
     public Boolean visit(ArrayDeclPart decl) {
         System.out.println("ArrayDeclPart");
         if ( lookup(decl.getName(), true) == null) {
-            addEntry(decl.getName(),decl.getType(), SymbolKind.SCALAR, decl, num_var);
+            addEntry(decl.getName(),decl.getType(), SymbolKind.SCALAR, decl, num_var, lexicalLevel);
             num_var++;
         }
         for (int i=0; i<decl.getSize(); i++) {
@@ -453,9 +467,9 @@ public class CodeGen implements ASTVisitor<Boolean>
 
         if ( lookup(decl.getName(), true) == null ) {
             if (decl.getType() == null) {
-                addEntry(decl.getName(), decl.getType(), SymbolKind.PROCEDURE, decl, 0);
+                addEntry(decl.getName(), decl.getType(), SymbolKind.PROCEDURE, decl, 0, 0);
             } else {
-                addEntry(decl.getName(), decl.getType(), SymbolKind.FUNCTION, decl, 0);
+                addEntry(decl.getName(), decl.getType(), SymbolKind.FUNCTION, decl, 0, 0);
             }
         }
 
@@ -477,7 +491,7 @@ public class CodeGen implements ASTVisitor<Boolean>
         int i = 0;
         for (ScalarDecl s : parameters) {
             if ( lookup(s.getName(), true) == null) {
-                addEntry(s.getName(), s.getType(), SymbolKind.SCALAR, s, (-decl.getParameters().size()+i));
+                addEntry(s.getName(), s.getType(), SymbolKind.SCALAR, s, (-decl.getParameters().size()+i), lexicalLevel);
                 i++;
             }
         }
@@ -515,7 +529,7 @@ public class CodeGen implements ASTVisitor<Boolean>
     public Boolean visit(ScalarDecl decl) {
         System.out.println("ScalarDecl");
         if ( lookup(decl.getName(), true) == null) {
-            addEntry(decl.getName(),decl.getType(), SymbolKind.SCALAR, decl, num_var);
+            addEntry(decl.getName(),decl.getType(), SymbolKind.SCALAR, decl, num_var, lexicalLevel);
             num_var++;
         }
         emitInstructions("PUSH UNDEFINED");
@@ -699,7 +713,7 @@ public class CodeGen implements ASTVisitor<Boolean>
 
         // check if this is a function by checking if it is in hash
         if (hash.get(expn.toString()) == null){
-            emitInstructions("ADDR "+lexicalLevel+" "+lookup_offset(expn.toString(), false));
+            emitInstructions("ADDR "+lookup_lex(expn.toString(), false)+" "+lookup_offset(expn.toString(), false));
         } else {
             FunctionCallExpn fnCallExpn = new FunctionCallExpn(expn.toString(), new ASTList<Expn>());
             fnCallExpn.accept(this);
@@ -805,7 +819,7 @@ public class CodeGen implements ASTVisitor<Boolean>
         System.out.println("AssignStmt");
         stmt.getLval().accept(this);
         stmt.getRval().accept(this);
-        if (stmt.getRval() instanceof IdentExpn){
+        if (stmt.getRval() instanceof IdentExpn) {
             emitInstructions("LOAD");
         }
         emitInstructions("STORE");

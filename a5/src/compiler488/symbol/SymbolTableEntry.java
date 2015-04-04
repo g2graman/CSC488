@@ -17,14 +17,16 @@ public class SymbolTableEntry {
 	private SymbolKind kind; // can be either array, variable, function, procedure
 	private AST node;
 	private int off;
+	private int lex;
 
 	public SymbolTableEntry(String varname, Type type, SymbolKind identifierType,
-			AST node, int off) {
+			AST node, int off, int lex) {
 		this.varname = varname;
 		this.type = type;
 		this.kind = identifierType;
 		this.node = node;
 		this.off = off;
+		this.lex = lex;
 	}
 
 	public String getVarname() {
@@ -45,6 +47,9 @@ public class SymbolTableEntry {
 
 	public int getOff() {
 		return off;
+	}
+	public int getLex() {
+		return lex;
 	}
 	
 	@Override

@@ -42,8 +42,8 @@ public class MajorScope {
 		return symbolTable.lookup(varname);
 	}
 
-	public void addEntry(String varname, Type type, SymbolKind kind, AST node, int off) {
-		symbolTable.addEntry(varname, type, kind, node, off);
+	public void addEntry(String varname, Type type, SymbolKind kind, AST node, int off, int lex) {
+		symbolTable.addEntry(varname, type, kind, node, off, lex);
 	}
 
 	public ScopeKind getKind() {

@@ -50,8 +50,8 @@ public class SymbolTable {
      * @param kind The kind(procedure, function, array or scalar) of the variable
      * @param node The AST node
      */
-    public void addEntry(String varname, Type type, SymbolKind kind, AST node, int off) {
-        SymbolTableEntry st_entry = new SymbolTableEntry(varname, type, kind, node, off);
+    public void addEntry(String varname, Type type, SymbolKind kind, AST node, int off, int lex) {
+        SymbolTableEntry st_entry = new SymbolTableEntry(varname, type, kind, node, off, lex);
         entry.put(varname, st_entry);
     }
 

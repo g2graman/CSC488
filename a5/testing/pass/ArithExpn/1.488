@@ -1,0 +1,9 @@
+begin
+
+	integer x, y, z
+	x <= 1 + 10/5*3 - 5
+	y <= 1/5 + 4/5
+	z <= x + y
+	put z
+
+end

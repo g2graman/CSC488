@@ -586,11 +586,11 @@ public class CodeGen implements ASTVisitor<Boolean>
     public Boolean visit(BinaryExpn expn) {
         System.out.println("BinaryExpn");
         expn.getLeft().accept(this);
-        if (expn.getLeft() instanceof IdentExpn) {
+        if ((expn.getLeft() instanceof IdentExpn) && (hash.get(expn.getLeft().toString()) == null)) {
             emitInstructions("LOAD");
         }
         expn.getRight().accept(this);
-        if (expn.getRight() instanceof IdentExpn) {
+        if ((expn.getRight() instanceof IdentExpn) && (hash.get(expn.getRight().toString()) == null)) {
             emitInstructions("LOAD");
         }
         return true;

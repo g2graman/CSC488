@@ -1,0 +1,17 @@
+begin
+
+	integer function foo begin
+		return (10)
+	end
+
+	integer function foo2 (integer a, integer b) begin
+		return (a+b)
+	end
+
+	integer x, y, z
+	x <= 1 + foo/5*3 - 5
+	y <= foo2(4,5)*2 - 6/3 + 1*2
+	z <= x + y
+	put z
+
+end

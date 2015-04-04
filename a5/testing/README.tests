@@ -1,3 +1,9 @@
+A5 Tests:
+Passing: Pretty self explainitory, each folder contains one .488 file tests the respective code generation for the related specification for A5.
+Failing: A few specific test cases for code generation failures
+
+Old Tests: Tests from A1-3
+
 IfStatements
 1. If statements with a constant boolean
 output: "Hello World!"

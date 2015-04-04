@@ -2,6 +2,7 @@ begin
 	integer function foo (integer a) begin
 		integer x
 		x <= 123
+		return (x)
 	end
 	integer y
 	y <= foo(23)

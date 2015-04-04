@@ -30,3 +30,19 @@ output: "hey!" 3 times
 4. Test a nested loop
 output: helloheyheyheyhey 5 times
 
+Function and Procedure Call statments
+1. Test with function with one parameter
+2. Test with function with multiple parameters
+3. Test with procedure with parameters
+4. Test with procedure with no parameters
+
+AnonFunction
+1. Test with integer
+output: 3
+2. Test with boolean
+output: 0 123
+
+GetStatement
+1. Test one variable
+2. Test with multiple variables
+

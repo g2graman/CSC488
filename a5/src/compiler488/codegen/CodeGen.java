@@ -719,28 +719,31 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(NotExpn expn) {
         System.out.println("NotExpn");
-        emitInstructions("PUSH "+ 0);
-        this.visit((Expn) expn); //Generate code for the expression
-        emitInstructions("SWAP");
-        
-        //Calculate the branch offset after visiting the expression
-        short BF_FALSE = (short) (((short) instructionCounter.size())
-                + (Machine.instructionLength[Machine.BF])
-                + (Machine.instructionLength[Machine.PUSH])*3
-                + (Machine.instructionLength[Machine.BR])
-                + (Machine.instructionLength[Machine.ADD])
-                + (Machine.instructionLength[Machine.SWAP]));
-        
-        emitInstructions("PUSH "+ BF_FALSE);
-        emitInstructions("ADD");
-        emitInstructions("SWAP");
+
+        expn.getOperand().accept(this);
+        int pc1 = instructionCounter.size() + 1;
+        emitInstructions("PUSH 0");
         emitInstructions("BF");
-        emitInstructions("PUSH "+ false); 
-        emitInstructions("PUSH "+ 
-            ((short) (BF_FALSE + (Machine.instructionLength[Machine.PUSH]))));
-        
+        emitInstructions("PUSH " + Machine.MACHINE_FALSE);
+        int pc2 = instructionCounter.size() + 1;
+        emitInstructions("PUSH 0");
         emitInstructions("BR");
-        emitInstructions("PUSH "+ true); 
+        try {
+            Machine.writeMemory((short) pc1, (short) instructionCounter.size());
+        } catch (MemoryAddressException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        emitInstructions("PUSH " + Machine.MACHINE_TRUE);
+        try {
+            Machine.writeMemory((short) pc2, (short) instructionCounter.size());
+        } catch (MemoryAddressException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
         return true;
     }
 
@@ -817,10 +820,10 @@ public class CodeGen implements ASTVisitor<Boolean>
         int patchAddr;
         if (stmt.getExpn() != null){ // exit when statement
             NotExpn notExpn = new NotExpn(stmt.getExpn()); // emit negated version of the expression
+            notExpn.accept(this);
             patchAddr = instructionCounter.size() + 1;
             emitInstructions("PUSH 0"); // patch later
             emitInstructions("BF");
-            notExpn.accept(this);
         } else { // regular exit statement
             patchAddr = instructionCounter.size() + 1;
             emitInstructions("PUSH 0");

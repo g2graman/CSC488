@@ -13,3 +13,14 @@ output "Hello world! How are you? I hope this passes! Fingers crossed!"
 output "Hello world!"
 7. Test with anonymous function as the condition
 output "Hey! Hello world!"
+
+LoopStatements
+1. Test a regular loop with exit statement, and regular loop with exit when statement
+output: "Hey!" 5 times and "Hello!" 5 times
+2. Test a while loop
+output: "Hey!" 5 times
+3. Test a while loop with an exit inside
+output: "hey!" 3 times
+4. Test a nested loop
+output: helloheyheyheyhey 5 times
+

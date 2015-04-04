@@ -1,0 +1,9 @@
+begin
+	integer a
+	a <= 1
+	integer x[1,2]
+	x[a,1] <= 16
+	put x[a,1]
+
+
+end

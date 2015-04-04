@@ -428,10 +428,10 @@ public class CodeGen implements ASTVisitor<Boolean>
         System.out.println("ArrayDeclPart");
         if ( lookup(decl.getName(), true) == null) {
             addEntry(decl.getName(),decl.getType(), SymbolKind.SCALAR, decl, num_var, lexicalLevel);
-            num_var++;
         }
         for (int i=0; i<decl.getSize(); i++) {
             emitInstructions("PUSH UNDEFINED");
+            num_var++;
         }
 
         return true;
@@ -849,17 +849,41 @@ public class CodeGen implements ASTVisitor<Boolean>
 
         SymbolTableEntry array = lookup(expn.getVariable(), true);
         if (array.getNode() instanceof ArrayDeclPart) {
+            expn.getSubscript1().accept(this);
+            if (!(expn.getSubscript1() instanceof IntConstExpn)) {
+                emitInstructions("LOAD");
+            }
             int lb1 = ((ArrayDeclPart)array.getNode()).getLowerBoundary1();
-            int ub1 = ((ArrayDeclPart)array.getNode()).getUpperBoundary1();
-            int sub1 = Integer.parseInt(expn.getSubscript1().toString());
+            emitInstructions("PUSH "+lb1);
+            emitInstructions("SUB");
+
             if (((ArrayDeclPart)array.getNode()).isTwoDimensional() == true) {
+                // off = (ub2-lb2+1)*(sub1-lb1)+(sub2-lb2)
+                int ub2 = ((ArrayDeclPart)array.getNode()).getUpperBoundary2();
+                emitInstructions("PUSH "+ub2);
                 int lb2 = ((ArrayDeclPart)array.getNode()).getLowerBoundary2();
-                int sub2 = Integer.parseInt(expn.getSubscript2().toString());
-                int off = (ub1-lb1+1)*(sub1-lb1)+(sub2-lb2);
-                emitInstructions("ADDR "+lexicalLevel+" "+off);
+                emitInstructions("PUSH "+lb2);
+                emitInstructions("SUB");
+                emitInstructions("PUSH 1");
+                emitInstructions("ADD");
+                emitInstructions("MUL");
+
+                expn.getSubscript2().accept(this);
+                if (!(expn.getSubscript2() instanceof IntConstExpn)) {
+                    emitInstructions("LOAD");
+                }
+                emitInstructions("PUSH "+lb2);
+                emitInstructions("SUB");
+                emitInstructions("ADD");
+                emitInstructions("ADDR "+lookup_lex(expn.getVariable(), false)+" "+lookup_offset(expn.getVariable(), false));
+                emitInstructions("ADD");
+
             } else {
-                int off = sub1 - lb1;
-                emitInstructions("ADDR "+lexicalLevel+" "+off);
+
+                // off = sub1 - lb1;
+
+                emitInstructions("ADDR "+lookup_lex(expn.getVariable(), false)+" "+lookup_offset(expn.getVariable(), false));
+                emitInstructions("ADD");
             }
         }
         return true;
@@ -1064,6 +1088,9 @@ public class CodeGen implements ASTVisitor<Boolean>
             } else if (p instanceof FunctionCallExpn){
                 emitInstructions("PRINTI");
             } else if (p instanceof UnaryExpn){
+                emitInstructions("PRINTI");
+            } else {
+                emitInstructions("LOAD");
                 emitInstructions("PRINTI");
             }
         }

@@ -906,8 +906,14 @@ public class CodeGen implements ASTVisitor<Boolean>
     }
     public Boolean visit(UnaryMinusExpn expn){
         System.out.println("UnaryMinusExpn");
-        UnaryExpn e = (UnaryExpn) expn;
-        this.visit(e);
+
+        Expn e =  expn.getOperand();
+        e.accept(this);
+
+        if ((hash.get(e.toString()) == null) &&  (e instanceof IdentExpn)) {
+            emitInstructions("LOAD");
+        }
+
         emitInstructions("NEG");
         return true;
     }

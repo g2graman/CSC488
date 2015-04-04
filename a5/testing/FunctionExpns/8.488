@@ -1,0 +1,19 @@
+begin
+
+	integer x, y, z
+	x <= 5
+	z <= 11
+	integer function foo(integer a, integer b) begin
+		x <= a + b
+		integer function foo2(integer c) begin
+			z <= x - c
+			return (z)
+		end
+		a <= foo2(5)
+		return (a)
+	end
+	y <= foo(12, 9)
+	put y
+	put x
+	
+end

@@ -96,3 +96,8 @@ CompareExnp
 EqualExpn
 1. Check equal expression with literals, variables and functions
 2. Check not equal expression with literals, variables and functions
+
+ArithExpn
+1. Check operators with integer constants and variables
+2. Check operators with integer constants, variables and functions
+3. Check the negation operator with integer constants, variables and functions

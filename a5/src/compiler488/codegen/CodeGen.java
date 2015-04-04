@@ -113,6 +113,8 @@ public class CodeGen implements ASTVisitor<Boolean>
     private int num_var; //number of variables in a scope, for POPN use
     private int num_par; // number of parameters for a function
 
+    private boolean is_routine;
+
     private String anonFcnName = "";
 
     /*
@@ -160,6 +162,7 @@ public class CodeGen implements ASTVisitor<Boolean>
     num_par = 0;
     lexicalLevel = 0;
     loopExits = new ArrayList<ArrayList<Integer>>();
+    is_routine = false;
     return;
     }
 

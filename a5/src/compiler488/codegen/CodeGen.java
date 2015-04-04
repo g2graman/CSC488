@@ -1093,8 +1093,8 @@ public class CodeGen implements ASTVisitor<Boolean>
             } else if (p instanceof UnaryExpn){
                 emitInstructions("PRINTI");
             } else {
-                emitInstructions("LOAD");
-                emitInstructions("PRINTI");
+//                emitInstructions("LOAD");
+//                emitInstructions("PRINTI");
             }
         }
 

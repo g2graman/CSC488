@@ -730,9 +730,8 @@ public class CodeGen implements ASTVisitor<Boolean>
         } else if (expn.getOpSymbol().equals(EqualsExpn.OP_NOT_EQUAL)){
             emitInstructions("EQ");
             
-            //Emit negation
-            NotExpn negated = (NotExpn) new NotExpn((Expn) expn);
-            this.visit(negated);
+            emitInstructions("PUSH false");
+            emitInstructions("EQ");
         }
 
         return true;

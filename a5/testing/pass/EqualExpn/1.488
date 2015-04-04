@@ -1,0 +1,28 @@
+begin
+
+	integer function foo begin
+		return (10)
+	end
+
+	integer function foo2(integer a, integer b) begin
+		return (a+b)
+	end
+
+	integer x, y
+	boolean z
+	x <= 1
+	y <= 2
+
+	z <= x = y
+	put z
+
+	z <= 1 = 1
+	put z
+
+	z <= foo = foo2(4,5)
+	put z
+
+	z <= foo = foo2(6,5)
+	put z
+
+end

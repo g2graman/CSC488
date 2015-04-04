@@ -697,27 +697,19 @@ public class CodeGen implements ASTVisitor<Boolean>
             emitInstructions("LT");
         } else if (expn.getOpSymbol().equals(CompareExpn.OP_LESS_EQUAL)){
             // Use a <= b = not(b < a), and avoid arithmetic
-            CompareExpn flipped = 
-                    new CompareExpn(CompareExpn.OP_LESS, 
-                            expn.getRight(), 
-                            expn.getLeft());
-            NotExpn negated = (NotExpn) new NotExpn(flipped);
-            this.visit(flipped);
-            this.visit(negated);
+            emitInstructions("SWAP");
+            emitInstructions("LT");
+            emitInstructions("PUSH false");
+            emitInstructions("EQ");
         } else if (expn.getOpSymbol().equals(CompareExpn.OP_GREATER)){
             // Use a > b = b < a (switch order and use LT)
             
             emitInstructions("SWAP");
             emitInstructions("LT");
         } else if (expn.getOpSymbol().equals(CompareExpn.OP_GREATER_EQUAL)){
-            // Use a >= b = not(a < b)
-            CompareExpn changeOp = 
-                    new CompareExpn(CompareExpn.OP_LESS, 
-                            expn.getLeft(), 
-                            expn.getRight());
-            NotExpn negated = (NotExpn) new NotExpn(changeOp);
-            this.visit(changeOp);
-            this.visit(negated);
+            emitInstructions("LT");
+            emitInstructions("PUSH false");
+            emitInstructions("EQ");
         } else {
             // TODO: error?
         }

@@ -1,0 +1,109 @@
+begin
+integer a, b, c, d
+
+	a <= 1
+	b <= 1
+	c <= 2
+	d <= 2
+
+	if (a = a) then
+		put "success", skip
+	end
+
+	if (a = b) then
+		put "success", skip
+	end
+
+	if (a = 1) then
+		put "success", skip
+	end
+
+	if (a = c) then
+		put "fail", skip
+	end
+
+	if (a != a) then
+		put "fail", skip
+	end
+
+	if (a != b) then
+		put "fail", skip
+	end	
+
+	if (a != 1) then
+		put "fail", skip
+	end	
+
+	if (a != c) then
+		put "success", skip
+	end	
+
+	if (a < b) then
+		put "fail", skip
+	end	
+
+	if (a < c) then
+		put "success", skip
+	end	
+
+	if (a < 1) then
+		put "fail", skip
+	end	
+
+	if (a < 2) then
+		put "success", skip
+	end	
+
+	if (a <= a) then
+		put "success", skip
+	end	
+
+	if (a <= b) then
+		put "success", skip
+	end	
+
+	if (a <= 1) then
+		put "success", skip
+	end	
+
+	if (a <= 0) then
+		put "fail", skip
+	end	
+
+	if (a > b) then
+		put "fail", skip
+	end	
+
+	if (a > c) then
+		put "fail", skip
+	end	
+
+	if (a > 1) then
+		put "fail", skip
+	end	
+
+	if (a > 2) then
+		put "fail", skip
+	end
+
+	if (b > a) then
+		put "success", skip
+	end
+
+	if (a >= b) then
+		put "success", skip
+	end
+
+	if (a >= c) then
+		put "fail", skip
+	end
+
+	if (a >= 2) then
+		put "fail", skip
+	end
+
+	if (c >= 1) then
+		put "success", skip
+	end
+
+end

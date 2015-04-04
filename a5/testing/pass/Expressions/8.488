@@ -1,0 +1,145 @@
+begin
+    integer function test begin
+        return (1)
+    end
+
+    integer function test2 begin
+        return (2)
+    end
+
+    integer function test3 (integer a, integer b) begin
+        return (a + b)
+    end
+
+    integer x, y
+    x = 1
+    y = 2
+
+    if (test = 1) then
+    	put "success", skip
+    end
+
+    if (test = 2) then
+    	put "fail", skip
+    end
+
+    if (test = x) then
+    	put "success", skip
+    end
+
+    if (test3(1, 0) = test3(1, 0)) then
+    	put "success", skip
+    end
+
+    if (test3(1, 1) = test3(1, 0)) then
+    	put "fail", skip
+    end
+
+    if (test != x) then
+    	put "fail", skip
+    end
+
+    if (test != y) then
+    	put "success", skip
+    end
+
+    if (test != 2) then
+    	put "success", skip
+    end
+
+    if (test != 1) then
+    	put "fail", skip
+    end
+
+    if (test < test2) then
+    	put "success", skip
+    end
+
+    if (test < 2) then
+    	put "success", skip
+    end
+
+    if (test < 1) then
+    	put "fail", skip
+    end
+
+    if (test < y) then
+    	put "success", skip
+    end
+
+    if (test2 < x) then
+    	put "fail", skip
+    end
+
+    if (test <= test) then
+    	put "success", skip
+    end
+
+    if (test <= 1) then
+    	put "success", skip
+    end
+
+    if (test <= x) then
+    	put "success", skip
+    end
+
+    if (test2 <= test) then
+    	put "fail", skip
+    end
+
+    if (test2 <= 1) then
+    	put "fail", skip
+    end
+
+    if (test2 <= x) then
+    	put "fail", skip
+    end
+
+    if (test > test2) then
+    	put "fail", skip
+    end
+
+    if (test < test2) then
+    	put "success", skip
+    end
+
+    if (test > 2) then
+    	put "fail", skip
+    end
+
+    if (test > 1) then
+    	put "fail", skip
+    end
+
+    if (test > y) then
+    	put "fail", skip
+    end
+
+    if (test2 > x) then
+    	put "success", skip
+    end
+
+    if (test >= test) then
+    	put "success", skip
+    end
+
+    if (test >= 1) then
+    	put "success", skip
+    end
+
+    if (test >= x) then
+    	put "success", skip
+    end
+
+    if (test1 >= test2) then
+    	put "fail", skip
+    end
+
+    if (test >= 2) then
+    	put "fail", skip
+    end
+
+    if (test >= y) then
+    	put "fail", skip
+    end
+end

@@ -406,7 +406,7 @@ public class CodeGen implements ASTVisitor<Boolean>
         emitInstructions("SETD 0");
 
         enterScope(ScopeKind.PROGRAM, null);
-        this.visit( (Scope) stmt );
+        this.visit((Scope) stmt);
         exitScope();   
         // pop all local variables
         emitInstructions("PUSH "+num_var);
@@ -604,39 +604,85 @@ public class CodeGen implements ASTVisitor<Boolean>
     public Boolean visit(BoolExpn expn) {
         System.out.println("BoolExpn");
 
-        this.visit(expn.getLeft()); // Execute left operand
+        Expn left = expn.getLeft();
+        left.accept(this); // Execute left operand
+        if ((hash.get(left.toString()) == null) && !(left instanceof BoolConstExpn)) {
+            emitInstructions("LOAD");
+        }
+
+
+        Expn right = expn.getRight();
+
         int pc = instructionCounter.size();
         if(expn.getOpSymbol().equals(BoolExpn.OP_OR)) {
-            int or_right = pc 
-                + Machine.instructionLength[Machine.BF]
-                + Machine.instructionLength[Machine.PUSH]*2
-                + Machine.instructionLength[Machine.BR];
-
-            int or_end = or_right
-                + Machine.instructionLength[Machine.BR]
-                + Machine.instructionLength[Machine.PUSH]*2;
-
-            emitInstructions("PUSH " + or_right);
+            int pc1 = instructionCounter.size() + 1;
+            emitInstructions("PUSH 0");
             emitInstructions("BF"); // Branch to OR_RIGHT if false
-            emitInstructions("PUSH " + or_end);
+            emitInstructions("PUSH " + Machine.MACHINE_TRUE);
+            int pc2 = instructionCounter.size() + 1;
+            emitInstructions("PUSH 0");
             emitInstructions("BR"); // Branch to OR_END with true atop stack, short-circuit
-            this.visit(expn.getRight()); //OR_RIGHT
-            emitInstructions("PUSH "+ or_end + 1);
-            emitInstructions("BR"); //Right operand of OR expression stays atop stack, branch to end of OR
-            emitInstructions("PUSH "+ true); //OR_END
-            
-        } else if (expn.getOpSymbol().equals(BoolExpn.OP_AND)) {
-            int and_end = pc 
-                + Machine.instructionLength[Machine.BF]
-                + Machine.instructionLength[Machine.PUSH]*3
-                + Machine.instructionLength[Machine.BR];
+            try {
+                Machine.writeMemory((short) pc1, (short) (instructionCounter.size()));
+            } catch (MemoryAddressException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
 
-            emitInstructions("PUSH " + and_end);
-            emitInstructions("BF"); // Branch to AND_END if false
-            this.visit(expn.getRight()); //evaluate right operand
-            emitInstructions("PUSH "+ and_end + 1);
+            right.accept(this); // the value of the right side will dictate the value of overall expression since left is false
+            if ((hash.get(right.toString()) == null) && !(right instanceof BoolConstExpn)) {
+                emitInstructions("LOAD");
+            }
+
+            try {
+                Machine.writeMemory((short) pc2, (short) (instructionCounter.size()));
+            } catch (MemoryAddressException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
+        } else if (expn.getOpSymbol().equals(BoolExpn.OP_AND)) {
+            int pc1 = instructionCounter.size() + 1;
+            emitInstructions("PUSH 0");
+            emitInstructions("BF"); // Branch to end if false
+
+            right.accept(this);
+            if ((hash.get(right.toString()) == null) && !(right instanceof BoolConstExpn)) {
+                emitInstructions("LOAD");
+            }
+
+
+            int pc2 = instructionCounter.size() + 1;
+            emitInstructions("PUSH 0");
+            emitInstructions("BF");
+            emitInstructions("PUSH " + Machine.MACHINE_TRUE);
+
+
+            int pc3 = instructionCounter.size() + 1;
+            emitInstructions("PUSH 0");
             emitInstructions("BR");
-            emitInstructions("PUSH "+ false); // AND_END
+
+            try {
+                Machine.writeMemory((short) pc1, (short) (instructionCounter.size()));
+                Machine.writeMemory((short) pc2, (short) (instructionCounter.size()));
+            } catch (MemoryAddressException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            emitInstructions("PUSH "+ Machine.MACHINE_FALSE); // AND_END
+
+            try {
+                Machine.writeMemory((short) pc3, (short) (instructionCounter.size()));
+            } catch (MemoryAddressException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
+
 
         } else {
             //TODO: error?

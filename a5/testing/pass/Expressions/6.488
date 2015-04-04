@@ -1,0 +1,57 @@
+begin
+	if (5 = 5) then
+		put "1", skip
+	end
+
+	if (5 = 6) then
+		put "ERROR1", skip
+	end
+
+	if (5 != 6) then
+		put "2", skip
+	end
+
+	if (5 != 5) then
+		put "ERROR2", skip
+	end
+
+	if (5 < 6) then
+		put "3", skip
+	end
+
+	if (6 < 5) then
+		put "ERROR3", skip
+	end
+
+	if (5 <= 6) then
+		put "4", skip
+	end
+
+	if (6 <= 6) then
+		put "5", skip
+	end
+
+	if (6 <= 5) then
+		put "ERROR4", skip
+	end
+
+	if (6 > 5) then
+		put "6", skip
+	end
+
+	if (5 > 6) then
+		put "ERROR5", skip
+	end
+
+	if (6 >= 5) then
+		put "7", skip
+	end
+
+	if (6 >= 6) then
+		put "8", skip
+	end
+
+	if (5 >= 6) then
+		put "ERROR6", skip
+	end
+end

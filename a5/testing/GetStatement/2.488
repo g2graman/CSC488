@@ -1,0 +1,7 @@
+begin
+	integer x, y, z
+	get x, z
+	get y
+
+	put x, y, z
+end

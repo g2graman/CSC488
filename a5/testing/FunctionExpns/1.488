@@ -1,0 +1,9 @@
+begin
+	integer function foo (integer a) begin
+		integer x
+		x <= 123
+	end
+	integer y
+	y <= foo(23)
+	put y
+end

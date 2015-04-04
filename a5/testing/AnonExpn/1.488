@@ -1,0 +1,9 @@
+begin
+
+	integer x, y, z
+	x <= 1
+	y <= 2
+	z <= { put 123 yields x + y}
+	put z
+
+end

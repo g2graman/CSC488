@@ -1,0 +1,7 @@
+begin
+
+	integer x
+	get x
+	put x
+
+end

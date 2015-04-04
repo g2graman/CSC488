@@ -1,0 +1,8 @@
+begin
+
+	boolean x, y, z
+	z <= false
+	x <= { y <= 123 yields z = true}
+	put x, y
+
+end

@@ -1,0 +1,7 @@
+begin
+
+boolean x, z
+x <= true
+z <= !!x
+
+end

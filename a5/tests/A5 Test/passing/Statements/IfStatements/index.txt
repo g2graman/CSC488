@@ -1,0 +1,4 @@
+1 - Test an if statement with a constant
+2 - Test an if-else statement with a constant
+3 - Test an if statement where the conditional is a boolean variable
+4 - Test an if else statement where the conditional is a boolean variable

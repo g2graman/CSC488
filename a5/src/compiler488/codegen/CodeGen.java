@@ -606,7 +606,7 @@ public class CodeGen implements ASTVisitor<Boolean>
 
         Expn left = expn.getLeft();
         left.accept(this); // Execute left operand
-        if ((hash.get(left.toString()) == null) && !(left instanceof BoolConstExpn)) {
+        if ((hash.get(left.toString()) == null) && (left instanceof IdentExpn)) {
             emitInstructions("LOAD");
         }
 
@@ -631,7 +631,7 @@ public class CodeGen implements ASTVisitor<Boolean>
             }
 
             right.accept(this); // the value of the right side will dictate the value of overall expression since left is false
-            if ((hash.get(right.toString()) == null) && !(right instanceof BoolConstExpn)) {
+            if ((hash.get(right.toString()) == null) && (right instanceof IdentExpn)) {
                 emitInstructions("LOAD");
             }
 
@@ -649,7 +649,7 @@ public class CodeGen implements ASTVisitor<Boolean>
             emitInstructions("BF"); // Branch to end if false
 
             right.accept(this);
-            if ((hash.get(right.toString()) == null) && !(right instanceof BoolConstExpn)) {
+            if ((hash.get(right.toString()) == null) &&  (right instanceof IdentExpn)) {
                 emitInstructions("LOAD");
             }
 
@@ -808,6 +808,9 @@ public class CodeGen implements ASTVisitor<Boolean>
         System.out.println("NotExpn");
 
         expn.getOperand().accept(this);
+        if ((hash.get(expn.getOperand().toString()) == null) && (expn.getOperand() instanceof IdentExpn)) {
+            emitInstructions("LOAD");
+        }
         int pc1 = instructionCounter.size() + 1;
         emitInstructions("PUSH 0");
         emitInstructions("BF");

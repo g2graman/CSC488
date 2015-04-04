@@ -1,0 +1,30 @@
+begin
+    boolean x, y, z
+    x <= false
+    y <= false
+    z <= true
+
+    if !(x | y) then
+        put 1
+    else
+        put "ERROR", skip
+    end
+
+    if !!(x | y) then
+        put "ERROR", skip
+    else
+        put 2
+    end
+
+    if !(x & z) then
+        put 3
+    else
+        put "ERROR", skip
+    end
+
+    if !(!x & !y) then
+        put "ERROR", skip
+    else
+        put 4
+    end
+end

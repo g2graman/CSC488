@@ -61,6 +61,8 @@ output: prints numbers 1-16
 output: prints numbers 1 and 2
 5. Test unary operators
     a: test negation
-
+    output: 1-4
+    b: test negation with boolean expressions
+    output: 1-4
 
 Arrays

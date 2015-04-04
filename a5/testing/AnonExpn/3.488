@@ -1,0 +1,11 @@
+begin
+    integer x
+    x <= { integer y
+           put "hello world!", skip
+           y <= {
+                put "hey!", skip
+                yields 1
+           }
+           yields y}
+    put "the value of y is: ", y
+end

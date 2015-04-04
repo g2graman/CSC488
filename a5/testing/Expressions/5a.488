@@ -1,0 +1,32 @@
+begin
+    boolean x, y, z, a, b
+    x <= true
+    y <= !x
+    z <= !!x
+    a <= !!!!!!x % test lots of negations with result being true
+    b <= !!!!!!!x % test lots of negations with result being false
+
+    if (y) then
+        put "ERROR", skip
+    else
+        put 1
+    end
+
+    if (z) then
+        put 2
+    else
+        put "ERROR", skip
+    end
+
+    if (a) then
+        put 3
+    else
+        put "ERROR", skip
+    end
+
+    if (b) then
+        put "ERROR", skip
+    else
+        put 4
+    end
+end

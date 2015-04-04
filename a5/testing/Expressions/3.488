@@ -1,0 +1,102 @@
+begin
+    boolean function foo begin
+        return (true)
+    end
+
+    boolean function foo2 begin
+        return (false)
+    end
+
+    boolean x
+    x <= true
+
+    if (foo & true) then
+        put 1
+    else
+        put "ERROR", skip
+    end
+
+    if (foo & x) then
+        put 2
+    else
+        put "ERROR", skip
+    end
+
+    if (x & foo) then
+        put 3
+    else
+        put "ERROR", skip
+    end
+
+    if (true & foo) then
+        put 4
+    else
+        put "ERROR", skip
+    end
+
+    if (foo & foo) then
+        put 5
+    else
+        put "ERROR", skip
+    end
+
+    if (foo & foo2) then
+        put "ERROR", skip
+    else
+        put 6
+    end
+
+    if (foo | foo) then
+        put 7
+    else
+        put "ERROR", skip
+    end
+
+    if (foo | true) then
+        put 8
+    else
+        put "ERROR", skip
+    end
+
+    if (foo | x) then
+        put 9
+    else
+        put "ERROR", skip
+    end
+
+    if (true | foo) then
+        put 10
+    else
+        put "ERROR", skip
+    end
+
+    if (x | foo) then
+        put 11
+    else
+        put "ERROR", skip
+    end
+
+    if (foo | foo2) then
+        put 12
+    else
+        put "ERROR", skip
+    end
+
+    if (foo2 | foo) then
+        put 13
+    else
+        put "ERROR", skip
+    end
+
+    if (foo2 | false) then
+        put "ERROR", skip
+    else
+        put 14
+    end
+
+    if (false | foo2) then
+        put "ERROR", skip
+    else
+        put 15
+    end
+end

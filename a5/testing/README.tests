@@ -41,8 +41,26 @@ AnonFunction
 output: 3
 2. Test with boolean
 output: 0 123
+3. Test nested anonymous functions
+output: Hey! Hello World! 1
+4. Calling a procedure from an anonymous function
+output: Hey! Hello World!
 
 GetStatement
 1. Test one variable
 2. Test with multiple variables
 
+Expressions
+1. Check all binary boolean expressions with constants
+output: "Hello World!" five times
+2. Check all binary boolean expressions with variables
+output: prints numbers 1-16
+3. Check all binary boolean expressions with functions
+output: prints numbers 1-16
+4. Check the definition of conditional and and OR
+output: prints numbers 1 and 2
+5. Test unary operators
+    a: test negation
+
+
+Arrays

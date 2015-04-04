@@ -1,0 +1,30 @@
+begin
+    boolean function foo begin
+        return (true)
+    end
+
+    if (!foo) then
+        put "ERROR", skip
+    else
+        put 1
+    end
+
+    if (!!foo) then
+        put 2
+    else
+        put "ERROR", skip
+    end
+
+    if (!!!!!!!!!foo) then
+        put "ERROR", skip
+    else
+        put 3
+    end
+
+    if (!!!!!!!!!!foo) then
+        put 4
+    else
+        put "ERROR", skip
+    end
+
+end

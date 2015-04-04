@@ -1,0 +1,26 @@
+begin
+    if (!{integer x yields true}) then
+        put "ERROR", skip
+    else
+        put 1
+    end
+
+    if (!!{integer x yields true}) then
+        put 2
+    else
+        put "ERROR", skip
+    end
+
+    if (!!!!!!!!!{integer x yields true}) then
+        put "ERROR", skip
+    else
+        put 3
+    end
+
+    if (!!!!!!!!!!{integer x yields true}) then
+        put 4
+    else
+        put "ERROR", skip
+    end
+
+end

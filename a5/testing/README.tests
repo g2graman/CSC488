@@ -64,5 +64,9 @@ output: prints numbers 1 and 2
     output: 1-4
     b: test negation with boolean expressions
     output: 1-4
+    c: test negation of boolean functions
+    output: 1-4
+    d: test negation of anonymous functions
+    output: 1-5
 
 Arrays

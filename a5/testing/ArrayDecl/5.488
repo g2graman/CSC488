@@ -1,9 +1,13 @@
 begin
-	integer a
+	integer a, b
 	a <= 1
-	integer x[1,2]
-	x[a,1] <= 16
-	put x[a,1]
+	b <= 2
+	integer x[2,2]
+	x[a,a] <= 16
+	x[a,b] <= 3
+	x[b,a] <= 5
+	x[b,b] <= 10
+	put x[a,a], x[a,b], x[b,a], x[b,b]
 
 
 end

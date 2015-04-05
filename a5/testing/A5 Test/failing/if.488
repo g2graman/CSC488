@@ -1,9 +1,0 @@
-begin
-
-	integer x
-
-	if (x <= 1) then
-		put "test"
-	end
-
-end

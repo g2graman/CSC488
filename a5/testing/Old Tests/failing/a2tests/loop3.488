@@ -1,7 +1,0 @@
-% Test a while loop that is missing the while keyword
-
-begin
-        true do
-                put "hello world!"
-        end
-end

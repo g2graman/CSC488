@@ -1,0 +1,10 @@
+begin
+    integer function foo(integer x) begin
+        return (foo(1 + x))
+    end
+
+    integer z, y
+    z <= 1
+    y <= foo(z)
+
+end

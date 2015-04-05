@@ -30,4 +30,9 @@ begin
         put d
         % should be 1
 
+        put -(1 + 2) * y
+        % should be 3
+
+        put -(-(1 + -2) * y * -foo)
+        % should be -1
 end

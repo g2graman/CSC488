@@ -1,8 +1,0 @@
-begin
-    integer function foo (integer x) begin
-        return (x)
-    end
-
-    integer z
-    z <= foo(1)
-end

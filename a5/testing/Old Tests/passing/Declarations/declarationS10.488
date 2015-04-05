@@ -1,7 +1,0 @@
-% S10 passing test
-begin
-
-	integer x
-	boolean y
-
-end

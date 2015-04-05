@@ -1,5 +1,0 @@
-begin
-	integer 1
-	boolean _test_
-
-end

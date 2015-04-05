@@ -1,6 +1,0 @@
-begin
-	boolean b[10]
-
-	b[-5] = true
-
-end

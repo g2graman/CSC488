@@ -1,0 +1,35 @@
+Eric Chen (g3chencm)
+Implemented the visitor pattern for code generation
+Implemented the functions and procedure called
+Implemented the arithmetic expressions
+Implemented the procedures and code generation related to scoping
+Implemented array declaration
+Implemented storage and variable retrieval
+Debugged and fixed the comparison operators (<=, >=, = , >, <)
+Tested functions and procedures
+Tested arithmetic expressions
+Tested the storage and variable retrieval
+Tested array declaration
+Wrote the documentation with Winston Yeung
+
+Winston Yeung (g2yeungw)
+Implemented the put and get statements
+Implemented loops statements
+Implemented If statements
+Implemented anonymous functions
+Debugged and fixed the boolean operators (NOT, AND, OR)
+Tested the boolean expressions
+Tested the loop statements
+Tested the anonymous functions
+Tested the If statements
+Wrote the documentation with Eric Chen
+
+Francesco Gramano (g2graman)
+Implemented the initial boolean operators (NOT, AND, OR)
+Implemented the initial comparison operators
+Did informal testing of the above
+Looked over all test cases at the end
+
+Eric Snyder (g4snyder)
+Touched up on semantic analysis
+Wrote some test cases

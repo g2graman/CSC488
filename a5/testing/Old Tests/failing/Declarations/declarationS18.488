@@ -1,9 +1,0 @@
-% S18 failing test
-begin
-
-	procedure test (integer x, boolean y) begin
-	end
-
-	procedure test (boolean z) begin
-	end
-end

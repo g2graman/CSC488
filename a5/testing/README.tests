@@ -1,8 +1,13 @@
-A5 Tests:
-Passing: Pretty self explainitory, each folder contains one .488 file tests the respective code generation for the related specification for A5.
-Failing: A few specific test cases for code generation failures
+Testing plan:
+In our testing plan after we finished implementing each feature we would informally test the code generator with small and quick test cases. After it was established that the program is working, we would then write formal test cases for each section and debug the program. After the bug was addressed, we would go back to previous test cases the make sure that other parts of the codegen were not affected.
 
-Old Tests: Tests from A1-3
+Each test program addresses one feature of the language and the idea was that these programs would overlap each other to ensure that the entire code generation works as one piece. The reason for the programs being small was that we could isolate each feature of the program language, and it would make debugging easier as the generated machine code would be smaller and easier to walk through.
+
+When running the test cases we would run it with the flag -T x to see the instructions that were executed, and we also viewed the sample generated code.
+
+It is important to note that although there were no official test cases for the put statement, it was thoroughly used in testing and was evaluated indirectly.
+
+Passing Tests:
 
 IfStatements
 1. If statements with a constant boolean
@@ -101,3 +106,11 @@ ArithExpn
 1. Check operators with integer constants and variables
 2. Check operators with integer constants, variables and functions
 3. Check the negation operator with integer constants, variables and functions
+
+
+Failing Tests:
+1. Test array out of bounds
+2. Test divide by 0
+3. Test 2d array out of bounds
+4. Stack overflow
+5. A really big program that would make the machine run out of memory

@@ -1,9 +1,0 @@
-begin
-	
-	integer function test1 begin % C10
-		return (5) % C18
-	end % C11
-
-
-
-end

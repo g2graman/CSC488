@@ -1,0 +1,6 @@
+begin
+    integer y
+    y <= 1 / 0
+
+    put y
+end

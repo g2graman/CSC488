@@ -1,5 +1,0 @@
-% test of empty program
- begin 
-  % no declarations
-  % no statements
- end 

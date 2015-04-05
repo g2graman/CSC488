@@ -1,8 +1,0 @@
-% test of syntax error handling
- begin 
-    %    extra commas
-    procedure P( integer A , , boolean B )  begin 
-      return
-    end 
-   P( 3, false )
- end 

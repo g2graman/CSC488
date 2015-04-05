@@ -1,5 +1,0 @@
-begin
-integer i 
-% missing  expression
-i <= { integer i yields  }
-end

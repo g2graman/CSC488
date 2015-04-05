@@ -1,0 +1,10 @@
+begin
+    integer x[1, 2]
+    integer z, y
+    x[1,2] <= 4
+
+    z <= 20
+    y <= 10
+    put x[z, y]
+
+end

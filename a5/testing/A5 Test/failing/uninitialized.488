@@ -1,9 +1,0 @@
-begin
-	integer a
-
-	% Should fail on a being uninitialized and b being undefined
-	put a
-	put skip
-	put b
-
-end
